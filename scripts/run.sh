@@ -15,7 +15,7 @@ cd $DIR # Go to the project top level dir.
 # For running react locally, but using the OLD hosted flask api
 export REACT_APP_FLASK_URL=https://flaskapi-dot-openag-v1.appspot.com
 
-cd react_UI
+cd react
 
 npm start
 

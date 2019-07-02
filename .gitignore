@@ -1,5 +1,5 @@
 *service_account.json
-react_UI/node_modules/
+react/node_modules/
 .idea/
 
 # Byte-compiled / optimized / DLL files

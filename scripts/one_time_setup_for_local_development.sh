@@ -6,7 +6,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 cd $DIR # Go to the project top level dir.
 
-cd $DIR/react_UI
+cd $DIR/react
 rm -fr node_modules
 npm install --save
 
