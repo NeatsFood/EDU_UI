@@ -23,7 +23,7 @@ gcloud config list
 
 
 # The UI service URL: https://edu_ui-dot-openag-v1.appspot.com
-cd $DIR/react_UI
+cd $DIR/react
 gcloud app deploy
 
 
