@@ -123,10 +123,6 @@ class DeviceHomepage extends Component {
         this.changes = {led_panel_dac5578: {}}
         this.getUserDevices = this.getUserDevices.bind(this);
         this.getCurrentStats = this.getCurrentStats.bind(this);
-        //this.getTempDetails = this.getTempDetails.bind(this);
-        //this.getCO2Details = this.getCO2Details.bind(this);
-        //this.toggleRHData = this.toggleRHData.bind(this);
-        //this.toggleTempData = this.toggleTempData.bind(this);
         this.handleColorChange = this.handleColorChange.bind(this);
         this.modalToggle = this.modalToggle.bind(this);
         this.sensorOnChange = this.sensorOnChange.bind(this);
@@ -134,14 +130,10 @@ class DeviceHomepage extends Component {
         this.LEDPanelChange = this.LEDPanelChange.bind(this);
         this.handleApplySubmit = this.handleApplySubmit.bind(this);
         this.timeonChange = this.timeonChange.bind(this);
-        this.downloadCSV = this.downloadCSV.bind(this);
         this.getRecipeOnDevice = this.getRecipeOnDevice.bind(this);
         this.setLEDStates = this.setLEDStates.bind(this);
         this.LEDSpectrumSelection = this.LEDSpectrumSelection.bind(this);
         this.toggleEditMode = this.toggleEditMode.bind(this);
-        this.accessChamber = this.accessChamber.bind(this);
-        this.goToHarvest = this.goToHarvest.bind(this)
-        this.submitRecipe = this.submitRecipe.bind(this)
     }
 
     toggleEditMode() {
@@ -680,52 +672,6 @@ class DeviceHomepage extends Component {
         this.setState({action_isOpen: !this.state.action_isOpen})
     }
 
-    downloadCSV() {
-        return fetch(process.env.REACT_APP_FLASK_URL + '/api/download_as_csv/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'text/csv',
-                'Content-Type': 'text/csv',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                'user_token': this.props.cookies.get('user_token')
-            })
-        }).then(function (response) {
-            return response.blob();
-        }).then(function (blob) {
-            FileSaver.saveAs(blob, 'data.csv');
-        })
-    }
-
-    accessChamber() {
-        this.setState({selectedAction: "Log Chamber Access Only"})
-        return fetch(process.env.REACT_APP_FLASK_URL + '/api/submit_access_chamber/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                'user_token': this.props.cookies.get('user_token'),
-                'device_uuid': this.state.selected_device_uuid
-            })
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                console.log(responseJson)
-
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-
-    submitRecipe() {
-        window.location.href = "/horticulture_success/" + this.state.selected_device_uuid.toString();
-    }
-
     handleApplySubmit() {
         console.log(this.state)
         return fetch(process.env.REACT_APP_FLASK_URL + '/api/submit_recipe_change/', {
@@ -750,11 +696,6 @@ class DeviceHomepage extends Component {
             .catch((error) => {
                 console.error(error);
             });
-    }
-
-    goToHarvest() {
-        window.location.href = "/harvest/" + this.state.selected_device_uuid.toString();
-
     }
 
     render() {
@@ -796,28 +737,9 @@ class DeviceHomepage extends Component {
                         />
                     </div>
 
-                    {/* TODO: make this stuff work
-                    <div className="col-md-7">
-                        <Dropdown isOpen={this.state.action_isOpen} toggle={this.toggle_action_drop}>
-                            <DropdownToggle caret>
-                                {this.state.selectedAction}
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem onClick={this.accessChamber}>Log chamber access only</DropdownItem>
-                                <DropdownItem onClick={this.submitRecipe}>Take Horticulture
-                                    Measurements </DropdownItem>
-                                <DropdownItem onClick={this.downloadCSV}>Download data </DropdownItem>
-                                <DropdownItem onClick={this.toggleEditMode}>Edit Climate Recipe </DropdownItem>
-                                <DropdownItem onClick={this.goToHarvest}>Harvest Plant </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-                    */}
-
                     <div className="col-md-1">
                     </div>
                     <div className="col-md-2 no-padding">
-
                     </div>
                 </div>
 
