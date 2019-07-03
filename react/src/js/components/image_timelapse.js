@@ -18,18 +18,18 @@ export class ImageTimelapse extends React.PureComponent {
 
     onSliderChange = (e) => {
         this.setState({index: e.target.value});
-    }
+    };
 
     componentWillReceiveProps = (nextProps) => {
         // This resets the slider so that it doesn't try and
         // access an out of range array index when switching
         // sources.
-        if (!nextProps.images) {
+        if (!nextProps.images || nextProps.images.length < 1) {
             this.setState({disabled: true, index: 0});
         } else {
             this.setState({disabled: false, index: nextProps.images.length -1});
         }
-    }
+    };
 
     render() {
         if (!this.state.disabled) {
