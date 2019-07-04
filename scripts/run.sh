@@ -10,7 +10,7 @@ cd $DIR # Go to the project top level dir.
 #export REACT_APP_FLASK_URL=http://localhost:5000
 
 # For running react locally, but using the gcloud hosted flask Data_API
-#export REACT_APP_FLASK_URL=https://data_api-dot-openag-v1.appspot.com
+#export REACT_APP_FLASK_URL=https://data_api_v4_0-dot-openag-v1.appspot.com
 
 # For running react locally, but using the OLD hosted flask api
 export REACT_APP_FLASK_URL=https://flaskapi-dot-openag-v1.appspot.com

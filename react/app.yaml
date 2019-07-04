@@ -1,10 +1,10 @@
 service: edu_ui
 runtime: nodejs
-api_version: 4.0
+api_version: 4.0.1
 threadsafe: true
 env: flex
 resources:
   memory_gb: 2.0
 
 env_variables:
-  REACT_APP_FLASK_URL: https://data_api-dot-openag-v1.appspot.com
+  REACT_APP_FLASK_URL: https://data_api_v4_0-dot-openag-v1.appspot.com
