@@ -81,7 +81,7 @@ class RecipeDetails extends Component {
     applyToDevice = () => {
         console.log(`Recipe ${this.state.recipe_uuid} applied to device...`);
 
-        fetch(process.env.REACT_APP_FLASK_URL + '/api/apply_recipe_to_device/', {
+        fetch(process.env.REACT_APP_FLASK_URL + '/api/apply_to_device/', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
