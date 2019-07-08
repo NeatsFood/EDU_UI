@@ -448,7 +448,8 @@ class Home extends Component {
                     </div>
 
                     <DeviceImages
-                        deviceUUID={this.state.device_uuid}
+                        deviceUUID={this.state.selected_device_uuid}
+                        user_token={this.state.user_token}
                         enableTwitter
                     />
 

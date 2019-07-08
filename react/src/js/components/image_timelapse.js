@@ -13,13 +13,14 @@ export class ImageTimelapse extends React.PureComponent {
 
     state = {
         index: 0,
-        disabled: false
+        disabled: true
     }
 
     onSliderChange = (e) => {
         this.setState({index: e.target.value});
     };
 
+    /*
     componentWillReceiveProps = (nextProps) => {
         // This resets the slider so that it doesn't try and
         // access an out of range array index when switching
@@ -29,7 +30,29 @@ export class ImageTimelapse extends React.PureComponent {
         } else {
             this.setState({disabled: false, index: nextProps.images.length -1});
         }
+        this.updateParent();
     };
+    */
+
+    componentDidUpdate() {
+        if (!this.state.index) {
+            if (!this.props.images || this.props.images.length < 1) {
+                this.setState({disabled: true, index: 0});
+            } else {
+                this.setState({disabled: false, index: this.props.images.length - 1});
+            }
+        }
+        this.updateParent();
+    }
+
+
+    updateParent = () => {
+        if (this.props.imageNameCallback != null &&
+            !this.state.disabled ){
+            this.props.imageNameCallback(this.props.images[this.state.index].split("/").pop());
+        }
+    };
+
 
     render() {
         if (!this.state.disabled) {

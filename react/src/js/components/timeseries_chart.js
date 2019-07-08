@@ -143,7 +143,7 @@ export class TimeseriesChart extends React.PureComponent {
                             //console.log(responseJson)
                             if (responseJson["response_code"] === 200) {
 
-                                let co2Data = responseJson["results"]
+                                let co2Data = responseJson["results"];
 
                                 sensorData["co2Data"] = co2Data;
                             }

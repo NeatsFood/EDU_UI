@@ -23,13 +23,14 @@ export class DeviceImages extends React.PureComponent {
         this.state = {
                         imagesDeviceUUID: this.props.deviceUUID,
                         imagesEnableTwitter: enableTwitter,
-                        device_images: []
+                        device_images: [],
+                        user_token: this.props.user_token
         };
     };
 
-    // TODO: Change this to handle device-uuid prop
+
     componentWillReceiveProps = (nextProps) => {
-        if( nextProps.deviceUUID != this.state.imagesDeviceUUID){
+        if( nextProps.deviceUUID !== this.state.imagesDeviceUUID){
             this.getDeviceImages(nextProps.deviceUUID);
         }
     };
@@ -43,7 +44,7 @@ export class DeviceImages extends React.PureComponent {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
-                'user_token': this.props.cookies.get('user_token'),
+                'user_token': this.state.user_token,
                 'device_uuid': device_uuid
             })
         })
@@ -80,6 +81,7 @@ export class DeviceImages extends React.PureComponent {
     }
 
     imageNameCallback = (imageName) => {
+        console.log("device_images.imageNameCallback: " + imageName);
         this.setState({displayedImage: ""+imageName});
     };
 
@@ -96,12 +98,14 @@ export class DeviceImages extends React.PureComponent {
         return (
             <div className="timelapse">
                 <div class="row">
-                    <ImageTimelapse
-                        imageClass="timelapse-img"
-                        inputClass="range-slider__range"
-                        images={this.state.device_images}
-                        imageNameCallback={this.imageNameCallback}
-                    />
+                    <div className="col-md-12">
+                        <ImageTimelapse
+                            imageClass="timelapse-img"
+                            inputClass="range-slider__range"
+                            images={this.state.device_images}
+                            imageNameCallback={this.imageNameCallback}
+                        />
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
