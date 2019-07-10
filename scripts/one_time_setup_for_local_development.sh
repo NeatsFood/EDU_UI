@@ -7,7 +7,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 cd $DIR # Go to the project top level dir.
 
 cd $DIR/react
-rm -fr node_modules
+rm -fr node_modules package-lock.json
 npm install --save
 
 

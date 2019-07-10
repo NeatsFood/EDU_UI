@@ -509,6 +509,7 @@ class DeviceHomepage extends Component {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
+                'user_token': this.props.cookies.get('user_token'),
                 'device_uuid': device_uuid
             })
         })
@@ -621,6 +622,7 @@ class DeviceHomepage extends Component {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
+                'user_token': this.props.cookies.get('user_token'),
                 'selected_device_uuid': device_uuid
             })
         })
@@ -743,7 +745,7 @@ class DeviceHomepage extends Component {
                     </div>
                 </div>
 
-                <TimeseriesChart device_uuid={this.state.selected_device_uuid} />
+                <TimeseriesChart device_uuid={this.state.selected_device_uuid} user_token={this.props.cookies.get('user_token')} />
 
                     <div className="row graphs-row">
                         {/*<Draggable cancel="strong">*/}

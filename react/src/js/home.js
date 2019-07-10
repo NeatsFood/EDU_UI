@@ -209,6 +209,7 @@ class Home extends Component {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
+                'user_token': this.props.cookies.get('user_token'),
                 'device_uuid': device_uuid
             })
         })
@@ -366,6 +367,7 @@ class Home extends Component {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
+                'user_token': this.props.cookies.get('user_token'),
                 'device_uuid': this.state.selected_device_uuid,
                 'ID': ID
             })

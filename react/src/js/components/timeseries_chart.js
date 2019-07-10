@@ -38,6 +38,7 @@ export class TimeseriesChart extends React.PureComponent {
         super(props);
         const initialRange = new TimeRange([75 * 60 * 1000, 125 * 60 * 1000]);
         this.device_uuid = props.device_uuid;
+        this.user_token = props.user_token;
         // Storage for all the data channels
         const channels = {
             tempData: {
@@ -79,7 +80,7 @@ export class TimeseriesChart extends React.PureComponent {
 
     componentDidMount() {
         this.timerID = setInterval(
-            () => this.getData(this.props.device_uuid),
+            () => this.getData(this.props.device_uuid, this.props.user_token),
             1000 * 60 * 5  // update every 5 minutes
         );
     }
@@ -88,11 +89,12 @@ export class TimeseriesChart extends React.PureComponent {
         clearInterval(this.timerID);
     }
 
-    getData = (device_uuid) => {
+    getData = (device_uuid, user_token) => {
         if (device_uuid) {
             // First get the Temp and Humidity data
             var sensorData = {};
-            return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_temp_details/', {
+            return fetch(process.env.REACT_APP_FLASK_URL + 
+                    '/api/get_temp_details/', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -100,6 +102,7 @@ export class TimeseriesChart extends React.PureComponent {
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({
+                    'user_token': user_token,
                     'selected_device_uuid': device_uuid
                 })
             })
@@ -125,7 +128,8 @@ export class TimeseriesChart extends React.PureComponent {
                 .then( () => {
 
                     // Get CO2 Data
-                    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_co2_details/', {
+                    return fetch(process.env.REACT_APP_FLASK_URL + 
+                            '/api/get_co2_details/', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
@@ -133,6 +137,7 @@ export class TimeseriesChart extends React.PureComponent {
                             'Access-Control-Allow-Origin': '*'
                         },
                         body: JSON.stringify({
+                            'user_token': user_token,
                             'selected_device_uuid': device_uuid
                         })
                     })
@@ -160,6 +165,7 @@ export class TimeseriesChart extends React.PureComponent {
                 //             'Access-Control-Allow-Origin': '*'
                 //         },
                 //         body: JSON.stringify({
+                //             'user_token': user_token,
                 //             'device_uuid': device_uuid
                 //         })
                 //     })
@@ -188,7 +194,7 @@ export class TimeseriesChart extends React.PureComponent {
     componentDidUpdate(prevProps, prevState, snapshot) {
         // if the device_uuid dropdown has changed, well want to pull new data.
         if (this.props.device_uuid !== prevProps.device_uuid){
-            this.getData(this.props.device_uuid);
+            this.getData(this.props.device_uuid, this.props.user_token);
         }
     }
 
