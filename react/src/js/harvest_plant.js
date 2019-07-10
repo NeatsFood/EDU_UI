@@ -46,6 +46,7 @@ class HarvestPlant extends Component {
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
+                'user_token': this.props.cookies.get('user_token'),
                 device_uuid: this.state.device_uuid,
                 plant_height: this.state.plant_height,
                 leaf_count: this.state.leaf_count,
