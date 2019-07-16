@@ -13,43 +13,51 @@ export class ImageTimelapse extends React.PureComponent {
 
     state = {
         index: 0,
-        disabled: true
+        disabled: true,
+        imageNameCallback: this.props.imageNameCallback
     }
 
     onSliderChange = (e) => {
         this.setState({index: e.target.value});
     };
 
-    /*
-    componentWillReceiveProps = (nextProps) => {
-        // This resets the slider so that it doesn't try and
-        // access an out of range array index when switching
-        // sources.
-        if (!nextProps.images || nextProps.images.length < 1) {
-            this.setState({disabled: true, index: 0});
-        } else {
-            this.setState({disabled: false, index: nextProps.images.length -1});
-        }
-        this.updateParent();
-    };
-    */
 
-    componentDidUpdate() {
-        if (!this.state.index) {
-            if (!this.props.images || this.props.images.length < 1) {
-                this.setState({disabled: true, index: 0});
+    componentWillReceiveProps = (nextProps) => {
+        // Check to see if we've recieved new images.
+        if (nextProps.images.length !== this.props.images.length ||
+           (nextProps.images.length > 0 && this.props.length > 0 && nextProps.images[0] !== this.props.images[0])) {
+            if(nextProps.images.length > 0) {
+                this.setState({disabled: false, index: nextProps.images.length - 1, images: nextProps.images});
             } else {
-                this.setState({disabled: false, index: this.props.images.length - 1});
+                this.setState({disabled: true, index: -1, images: nextProps.images});
             }
         }
-        this.updateParent();
-    }
+        // this.updateParent();
+    };
+
+
+    componentDidUpdate() {
+        //if (this.state.index >= 0 && this.state.index < this.state.images.length) {
+            this.updateParent();
+        //}
+    };
 
 
     updateParent = () => {
-        if (this.props.imageNameCallback != null &&
-            !this.state.disabled ){
-            this.props.imageNameCallback(this.props.images[this.state.index].split("/").pop());
+        /*if (this.props.imageNameCallback != null &&
+            this.props.images &&
+            !disabled &&
+            index < this.props.images.length){
+            this.props.imageNameCallback(this.props.images[index].split("/").pop());
+        } else
+*/
+        if (this.state.imageNameCallback != null &&
+            this.state.images &&
+            !this.state.disabled &&
+            this.state.index < this.state.images.length){
+            this.state.imageNameCallback(this.state.images[this.state.index].split("/").pop());
+        } else {
+            this.state.imageNameCallback("");
         }
     };
 
@@ -59,19 +67,19 @@ export class ImageTimelapse extends React.PureComponent {
             return (
                 <React.Fragment>
                     <img
-                        src={this.props.images[this.state.index]} alt=''
+                        src={this.state.images[this.state.index]} alt=''
                         className={this.props.imageClass} />
                     <input
                         className={this.props.inputClass}
                         type="range"
                         min="0"
                         value={this.state.index}
-                        max={this.props.images.length - 1}
+                        max={this.state.images.length - 1}
                         onChange={this.onSliderChange} />
                 </React.Fragment>
             );
         }
-        return (
+       /* return (
             <React.Fragment>
                 <img
                     src={placeholder} alt=''
@@ -84,7 +92,8 @@ export class ImageTimelapse extends React.PureComponent {
                     max="1"
                     disabled />
             </React.Fragment>
-        );
+        );*/
+       return("");
     }
 
 }
