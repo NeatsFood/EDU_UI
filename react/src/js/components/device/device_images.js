@@ -50,7 +50,8 @@ export class DeviceImages extends React.PureComponent {
         })
             .then(response => response.json())
             .then(responseJson => {
-                if(responseJson["image_urls"].length > 0) {
+                if(responseJson["image_urls"] &&
+                    responseJson["image_urls"].length > 0) {
                     this.setState({
                         imagesDeviceUUID: device_uuid,
                         device_images: responseJson['image_urls']
@@ -81,7 +82,7 @@ export class DeviceImages extends React.PureComponent {
     }
 
     imageNameCallback = (imageName) => {
-        console.log("device_images.imageNameCallback: " + imageName);
+        // console.log("device_images.imageNameCallback: " + imageName);
         this.setState({displayedImage: ""+imageName});
     };
 
