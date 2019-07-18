@@ -14,7 +14,8 @@ export class ImageTimelapse extends React.PureComponent {
     state = {
         index: 0,
         disabled: true,
-        imageNameCallback: this.props.imageNameCallback
+        imageNameCallback: this.props.imageNameCallback,
+        images: []
     }
 
     onSliderChange = (e) => {
@@ -24,8 +25,9 @@ export class ImageTimelapse extends React.PureComponent {
 
     componentWillReceiveProps = (nextProps) => {
         // Check to see if we've recieved new images.
-        if (nextProps.images.length !== this.props.images.length ||
-           (nextProps.images.length > 0 && this.props.length > 0 && nextProps.images[0] !== this.props.images[0])) {
+
+        if (nextProps.images.length !== this.state.images.length ||
+           (nextProps.images.length > 0 && this.props.images.length > 0 && (nextProps.images[0] !== this.props.images[0]))) {
             if(nextProps.images.length > 0) {
                 this.setState({disabled: false, index: nextProps.images.length - 1, images: nextProps.images});
             } else {
