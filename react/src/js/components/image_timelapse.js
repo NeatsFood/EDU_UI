@@ -27,7 +27,7 @@ export class ImageTimelapse extends React.PureComponent {
         // Check to see if we've recieved new images.
 
         if (nextProps.images.length !== this.state.images.length ||
-           (nextProps.images.length > 0 && this.props.images.length > 0 && (nextProps.images[0] !== this.state.images[0]))) {
+           (nextProps.images.length > 0 && this.props.images.length > 0 && (nextProps.images[0] !== this.props.images[0]))) {
             if(nextProps.images.length > 0) {
                 this.setState({disabled: false, index: nextProps.images.length - 1, images: nextProps.images});
             } else {
