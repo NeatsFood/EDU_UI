@@ -11,19 +11,15 @@ import {DeviceIsRunningModal} from './components/device_is_running_modal';
 import * as api from './utils/api';
 import Collapsible from "react-collapsible";
 
+/* TODO debugrob, this entire wod of doodoo is hard coded for basil and a recipe with only two environments day/night.  The recipe has to be parsed to properly display its contents
+ */
 class RecipeDetails extends Component {
     constructor(props) {
         super(props);
         this.recipe_uuid = this.props.location.pathname.replace("/recipe_details/", "").replace("#", "")
         this.state = {
-            recipe_name: "",
-            recipe_image: '',
-            recipe_description: "",
-            recipe_plant: "",
             recipe_uuid: this.recipe_uuid,
             recipe_json: {},
-            peripherals: [],
-            history: {},
             devices: [],
             standard_day_duration: "",
             standard_night_duration: "",
@@ -140,30 +136,17 @@ class RecipeDetails extends Component {
             .then((responseJson) => {
                 console.log(responseJson)
                 if (responseJson["response_code"] === 200) {
-                    let resultJson = responseJson["results"][0]
-                    this.setState({recipe_name: resultJson["name"]})
-                    this.setState({recipe_image: resultJson["image_url"]})
-                    this.setState({recipe_description: resultJson["description"]})
-                    this.setState({recipe_plant: resultJson["plant_type"]})
-                    this.setState({modified_at: resultJson["modified_at"]})
-                    this.setState({recipe_json: resultJson["recipe_json"]})
-                    this.setState({peripherals: (resultJson["peripherals"])})
+                    let recipe_json = responseJson["recipe"]
+                    this.setState({recipe_json: recipe_json})
                     this.setState({devices: responseJson["devices"]})
-                    let standard_day = resultJson["recipe_json"]['environments']['standard_day']
-                    let standard_night = resultJson["recipe_json"]['environments']['standard_night']
-                    this.setState({standard_day_duration: resultJson["recipe_json"]["phases"][0]["cycles"][0]["duration_hours"]})
-                    this.setState({standard_night_duration: resultJson["recipe_json"]["phases"][0]["cycles"][1]["duration_hours"]})
 
-                    let led_data = {
-                        'on_illumination_distance': standard_day['light_illumination_distance_cm'],
-                        "off_selected_spectrum": standard_night["spectrum_key"],
-                        "on_selected_spectrum": standard_day["spectrum_key"],
-                        'off_illumination_distance': standard_day['light_illumination_distance_cm']
-                    };
+                    /* TODO: need to calculate these from the recipe_json
+                    standard_day_duration
+                    standard_night_duration
                     this.setState({
                         led_panel_dac5578: led_data
                     })
-                    console.log(led_data, "FF")
+                     */
                     var devs = [];                  // make array
                     devs = responseJson["devices"]; // assign array
                     if (devs.length > 0) {         // if we have devices

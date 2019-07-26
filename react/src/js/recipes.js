@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router} from "react-router-dom";
-import '../scss/recipes.scss';
 import {withCookies} from "react-cookie";
 import {
     Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter,
 } from 'reactstrap';
-
 import {RecipeCard} from './components/recipe_card';
+import '../scss/recipes.scss';
 import * as api from './utils/api';
 
 class recipes extends Component {
@@ -31,6 +30,8 @@ class recipes extends Component {
         this.apply_to_device = this.apply_to_device.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.goToRecipe = this.goToRecipe.bind(this);
+        this.newRecipe = this.newRecipe.bind(this);
+        this.editRecipe = this.editRecipe.bind(this);
     }
 
     componentDidMount() {
@@ -53,9 +54,15 @@ class recipes extends Component {
     };
 
     goToRecipe(value, e) {
-        //console.log(value);
-        //console.log(e);
         window.location.href = "/recipe_details/" + (value).toString()
+    }
+
+    newRecipe() {
+        window.location.href = "/edit_recipe/new"
+    }
+
+    editRecipe(value, e) {
+        window.location.href = "/edit_recipe/" + (value).toString()
     }
 
     toggle(recipe, recipe_json) {
@@ -220,8 +227,6 @@ class recipes extends Component {
 
     render() {
         let listRecipes = [];
-
-
         let recipes = [];
         if (this.state.all_recipes.size) {
             switch (this.state.filter_recipe_button_state) {
@@ -244,6 +249,7 @@ class recipes extends Component {
                     onSelectRecipe={this.goToRecipe}
                     onSaveRecipe={this.onSaveRecipe}
                     onUnsaveRecipe={this.onUnsaveRecipe}
+                    onEditRecipe={this.editRecipe}
                 />
             ));
         }
@@ -251,6 +257,15 @@ class recipes extends Component {
             <Router>
                 <div className="recipe-container">
                     <div className="buttons-row">
+                        <ButtonGroup>
+                            <Button
+                                outline
+                                onClick={() => this.newRecipe()}
+                                color="primary">
+                                Create a New Recipe
+                            </Button>
+                        </ButtonGroup>
+                        <div> &nbsp; &nbsp; </div>
                         <ButtonGroup>
                             <Button
                                 outline
