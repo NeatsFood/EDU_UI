@@ -181,7 +181,9 @@ class EditRecipe extends React.Component {
     }
 
     //-------------------------------------------------------------------------
+    // Only called when page is first loaded.
     getRecipe = () => {
+        // If we are creating a new recipe, just initialize our objs.
         if ('new' === this.props.match.params.recipe_uuid) {
             let recipe_obj = this.state.recipe_obj;
             recipe_obj.uuid = null;
@@ -190,6 +192,7 @@ class EditRecipe extends React.Component {
             this.buildPhaseRowsFromState();
             return;
         }
+        // Otherwise we have to fetch the recipe JSON from the API.
         return fetch(process.env.REACT_APP_FLASK_URL + 
                             '/api/get_recipe_by_uuid/', {
             method: 'POST',
@@ -628,7 +631,7 @@ class EditRecipe extends React.Component {
     //-------------------------------------------------------------------------
     handleAddPhase = () => {
         let phases = this.state.phases;
-        phases.push({'name': '',
+        phases.push({'name': 'phase',
                      'repeat': 1,
                      'cycles': [] });
         this.setState({phases: phases}, function() {
@@ -681,7 +684,7 @@ class EditRecipe extends React.Component {
         let phase_index = event.target.value;
         let phases = this.state.phases;
         let phase = phases[phase_index];
-        phase.cycles.push({'name': '',
+        phase.cycles.push({'name': 'cycle',
                            'environment': '',
                            'duration_hours': 0});
         this.setState({phases: phases}, function() {
@@ -978,9 +981,9 @@ class EditRecipe extends React.Component {
             }
 
             // Validate the sum of all cycle hours for each phase.  
-            if (24 !== total) {
+            if (0 === total) {
                 let err = 'Phase ' + phase.name + 
-                    ' cycles must sum to 24 hours.';
+                    ' cycles must sum more than zero hours.';
                 this.setState({error_message: err});
                 alert(err);
                 return;
@@ -1012,14 +1015,15 @@ class EditRecipe extends React.Component {
         })
         .then((response) => response.json())
         .then((responseJson) => {
-            if (! responseJson.ok) {
+            if (responseJson["response_code"] !== 200) {
                 let error = responseJson["message"];
                 console.error('edit_recipe handleSubmit:', error);
                 this.setState({error_message: error});
                 return;
             }
-
-            // update the modification date
+            // update DOM object based on response
+            recipe_obj.uuid = responseJson["recipe_uuid"]; 
+            this.setState({recipe_obj: recipe_obj});
             this.setState({modified: responseJson["modified"]});
             this.setState({error_message: ''});
             alert("Successfully saved recipe.");
@@ -1034,12 +1038,9 @@ class EditRecipe extends React.Component {
     render() {
         let dupe_but = [];
         let page_name = 'Create Recipe';
-        if ('new' !== this.props.match.params.recipe_uuid) {
-            dupe_but.push(<Button onClick={this.duplicateRecipe.bind(this)} color="success">Duplicate this Recipe</Button>);
+        if( null !== this.state.recipe_obj.uuid) { // recipe exists
+            dupe_but.push(<Button onClick={this.duplicateRecipe.bind(this)} color="success" key={this.getNextEnvKey()}>Duplicate this Recipe</Button>);
             page_name = 'Edit Recipe';
-            let recipe_obj = this.state.recipe_obj;
-            recipe_obj.uuid = null;
-            this.setState({recipe_obj: recipe_obj});
         }
 
         return (

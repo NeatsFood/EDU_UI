@@ -11,31 +11,18 @@ import {DeviceIsRunningModal} from './components/device_is_running_modal';
 import * as api from './utils/api';
 import Collapsible from "react-collapsible";
 
-/* TODO debugrob, this entire wod of doodoo is hard coded for basil and a recipe with only two environments day/night.  The recipe has to be parsed to properly display its contents
- */
 class RecipeDetails extends Component {
     constructor(props) {
         super(props);
         this.recipe_uuid = this.props.location.pathname.replace("/recipe_details/", "").replace("#", "")
         this.state = {
             recipe_uuid: this.recipe_uuid,
-            recipe_json: {},
             devices: [],
-            standard_day_duration: "",
-            standard_night_duration: "",
-            led_panel_dac5578: {
-                'on_illumination_distance': 5,
-                'off_illumination_distance': 5,
-                'off_selected_spectrum': "flat",
-                "on_selected_spectrum": "flat",
-            },
             apply_to_device_modal: false,
             apply_confirmation_modal: false
         };
         this.getRecipeDetails = this.getRecipeDetails.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.LEDPanelChange = this.LEDPanelChange.bind(this);
-        this.LEDSpectrumSelection = this.LEDSpectrumSelection.bind(this);
     }
 
     handleChange(event) {
@@ -43,18 +30,6 @@ class RecipeDetails extends Component {
             [event.target.name]: event.target.value
         });
         event.preventDefault();
-
-    }
-
-    LEDPanelChange(led_data_type, color_channel, value) {
-
-        console.log("View Only")
-
-    }
-
-    LEDSpectrumSelection(led_data_type, color_channel, spectrum_type, value) {
-
-        console.log("View Only")
 
     }
 
@@ -136,17 +111,51 @@ class RecipeDetails extends Component {
             .then((responseJson) => {
                 console.log(responseJson)
                 if (responseJson["response_code"] === 200) {
-                    let recipe_json = responseJson["recipe"]
-                    this.setState({recipe_json: recipe_json})
                     this.setState({devices: responseJson["devices"]})
+                    let recipe_json = responseJson["recipe"]
+                    let recipe = JSON.parse(recipe_json);
 
-                    /* TODO: need to calculate these from the recipe_json
-                    standard_day_duration
-                    standard_night_duration
-                    this.setState({
-                        led_panel_dac5578: led_data
-                    })
-                     */
+                    let modified = '';
+                    if(recipe.creation_timestamp_utc !== undefined) {
+                        modified = recipe.creation_timestamp_utc;
+                    }
+                    this.setState({modified: modified});
+
+                    let name = '';
+                    if(recipe.name !== undefined) {
+                        name = recipe.name;
+                    }
+                    this.setState({name: name});
+
+                    let description = '';
+                    if(recipe.description !== undefined && 
+                        recipe.description.brief !== undefined) {
+                        description = recipe.description.brief;
+                    }
+                    if(recipe.description !== undefined && 
+                        recipe.description.verbose !== undefined) {
+                        description = recipe.description.verbose;
+                    }
+                    this.setState({description: description});
+
+                    let authors = '';
+                    if(recipe.authors !== undefined) {
+                        authors = recipe.authors[0].name;
+                    }
+                    this.setState({authors: authors});
+
+                    let cultivars = '';
+                    if(recipe.cultivars !== undefined) {
+                        cultivars = recipe.cultivars[0].name;
+                    }
+                    this.setState({cultivars: cultivars});
+
+                    let cultivation_methods = '';
+                    if(recipe.creation_timestamp_utc !== undefined) {
+                        cultivation_methods = recipe.cultivation_methods[0].name;
+                    }
+                    this.setState({cultivation_methods: cultivation_methods});
+
                     var devs = [];                  // make array
                     devs = responseJson["devices"]; // assign array
                     if (devs.length > 0) {         // if we have devices
@@ -162,33 +171,7 @@ class RecipeDetails extends Component {
             });
     }
 
-
     render() {
-        let culinairy_show_more = (<div className="row" >
-
-            <div className="col-md-3">CULINARY USES</div>
-            <div className="col-md-9 pull-right" style={{"textAlign": "right"}}><img height="16" alt=''
-                                                                                      src={"http://www.jmkxyy.com/dropdown-arrow-icon/dropdown-arrow-icon-7.jpg"}/>
-            </div>
-        </div>)
-        let desired_env_more = (<div className="row">
-            <div className="col-md-3">DESIRED ENVIRONMENT</div>
-            <div className="col-md-9 pull-right" style={{"textAlign": "right"}}><img height="16" alt=''
-                                                                                      src={"http://www.jmkxyy.com/dropdown-arrow-icon/dropdown-arrow-icon-7.jpg"}/>
-            </div>
-        </div>)
-        let settings_env_more = (<div className="row">
-            <div className="col-md-3">SETTINGS</div>
-            <div className="col-md-9 pull-right" style={{"textAlign": "right"}}><img height="16" alt=''
-                                                                                      src={"http://www.jmkxyy.com/dropdown-arrow-icon/dropdown-arrow-icon-7.jpg"}/>
-            </div>
-        </div>)
-        let horticulture_show_more = (<div className="row">
-            <div className="col-md-3">FIELD NOTES</div>
-            <div className="col-md-9 pull-right" style={{"textAlign": "right"}}><img height="16" alt=''
-                                                                                      src={"http://www.jmkxyy.com/dropdown-arrow-icon/dropdown-arrow-icon-7.jpg"}/>
-            </div>
-        </div>)
         return (
 
             <div className="recipe-detail-container">
@@ -199,9 +182,8 @@ class RecipeDetails extends Component {
                 </div>
                 <div className="row home-row">
                     <div className="col-md-3">
-                        {/*<div className="row card-row"></div>*/}
                         <div className="row card-row image-row">
-                            <img src={basil} className="image-recipe" height="500" alt=''/>
+                            <img src={basil} className="image-recipe" height="300" alt=''/>
                         </div>
                     </div>
 
@@ -209,169 +191,53 @@ class RecipeDetails extends Component {
                         <div className="row card-row">
                             <div className="col-md-12">
                                 <div className="row padded-left-row">
-                                    <div className="col-md-12 "><h3> Get growing recipe for
-                                         Basil </h3>
+                                    <div className="col-md-12 ">
+                                        <h3>{this.state.name}</h3>
                                     </div>
                                 </div>
+
                                 <div className="row padded-row">
-                                    <div className="col-md-3"><h6>SCIENTIFIC NAME</h6></div>
-                                    <div className="col-md-9">Ocimum basilicum</div>
-                                </div>
-                                <div className="row padded-row">
-                                    <div className="col-md-3"><h6>NATIVE TO</h6></div>
-                                    <div className="col-md-9">Tropical regions from Central Africa to
-                                        Southeast Asia
+                                  <div className="col-md-12">
+                                    <div className="row">
+                                      <div className="col-md-3">SETTINGS</div>
                                     </div>
-                                </div>
-                                <div className="row padded-row">
-                                    <div className="col-md-3"><h6>DAYS TO MATURITY</h6></div>
-                                    <div className="col-md-9">4-6 Weeks</div>
-                                </div>
-                                <div className="row padded-row">
-                                    <div className="col-md-12"><Collapsible trigger={culinairy_show_more} triggerStyle={{'borderBottom':"1px solid black"}}>
-                                        <p>Basil is most commonly used fresh in recipes. In general, it is added at the
-                                            last moment, as cooking quickly destroys the flavor. The fresh herb can be
-                                            kept for a short time in plastic bags in the refrigerator, or for a longer
-                                            period in the freezer, after being blanched quickly in boiling water. The
-                                            dried herb also loses most of its flavor, and what little flavor remains
-                                            tastes very different, with a weak coumarin flavor, like hay.</p>
-                                    </Collapsible></div>
-                                </div>
-                                <div className="row padded-row">
-                                    <div className="col-md-12"><Collapsible trigger={horticulture_show_more}>
-                                        <p>As basil is growing in the PFC_EDU, take notes on what is changing on the plant. For example, look for any spots both on the top and bottom of the leaf. Many times if there is a bug problem, such as mites, they will start eating on the underside of the leaf. Other field notes to take include any discoloration of leaves, wilting or damage to the stem. A unique quality of growing hydroponically is that you can easily look at the roots. Check the color and smell of the roots as indicators of plant health. If the roots are white and do not have a fishy smell, they are healthy... and healthy roots = healthy shoots! </p>
-                                    </Collapsible></div>
-                                </div>
-
-
-                                <div className="row padded-row">
-                                    <div className="col-md-12"><Collapsible trigger={settings_env_more} open={true}>
+                                    <div className="row">
+                                      <div className="col-md-12">
                                         <div className="row">
-                                            <div className="col-md-12">
-                                                <div className="row">
-                                                    <div className="col-md-4"><b>Name</b></div>
-                                                    <div className="col-md-4"><b>Actuator/Sensor</b></div>
-                                                    <div className="col-md-4"><b>Value</b></div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">LED Spectrum for standard day</div>
-                                                    <div className="col-md-4">LED Panel</div>
-                                                    <div
-                                                        className="col-md-4">{this.state.led_panel_dac5578["on_selected_spectrum"].toUpperCase()}
-                                                        <span>  Spectrum </span>
-                                                    </div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">LED illumination distance for standard
-                                                        day
-                                                    </div>
-                                                    <div className="col-md-4">LED Panel</div>
-                                                    <div
-                                                        className="col-md-4">{this.state.led_panel_dac5578["on_illumination_distance"]}
-                                                        <span> cm </span>
-                                                    </div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">LED Spectrum for standard night</div>
-                                                    <div className="col-md-4">LED Panel</div>
-                                                    <div
-                                                        className="col-md-4">{this.state.led_panel_dac5578["off_selected_spectrum"].toUpperCase()}
-                                                        <span>  Spectrum </span>
-                                                    </div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">LED illumination distance for standard
-                                                        night
-                                                    </div>
-                                                    <div className="col-md-4">LED Panel</div>
-                                                    <div
-                                                        className="col-md-4">{this.state.led_panel_dac5578["off_illumination_distance"]}
-                                                        <span> cm </span>
-                                                    </div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">Standard night</div>
-                                                    <div className="col-md-4">LED Panel</div>
-                                                    <div className="col-md-4">{this.state.standard_night_duration}
-                                                        <span> hours </span>
-                                                    </div>
-
-                                                </div>
-
-                                                <div className="row">
-                                                    <div className="col-md-4">Standard day</div>
-                                                    <div className="col-md-4">LED Panel</div>
-                                                    <div className="col-md-4">{this.state.standard_day_duration}
-                                                        <span> hours </span>
-                                                    </div>
-
-                                                </div>
-                                                 <div className="row">
-                                                    <div className="col-md-4">Sampling Frequency - Temperature</div>
-                                                    <div className="col-md-4">Temperature Sensor</div>
-                                                    <div className="col-md-4">Everytime temperature changes
-                                                    </div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">Sampling Frequency - Humidity</div>
-                                                    <div className="col-md-4">Humidity Sensor</div>
-                                                    <div className="col-md-4">Everytime humidity changes
-                                                    </div>
-
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">Sampling Frequency - CO2</div>
-                                                    <div className="col-md-4">CO2 Sensor</div>
-                                                    <div className="col-md-4">Everytime CO2 changes
-                                                    </div>
-                                                </div>
-
-                                            </div>
+                                          <div className="col-md-3"><b>Name</b></div>
+                                          <div className="col-md-9"><b>Value</b></div>
                                         </div>
-                                    </Collapsible></div>
-                                </div>
 
-
-                                <div className="row padded-row">
-                                    <div className="col-md-12"><Collapsible trigger={desired_env_more} open={true}>
                                         <div className="row">
-                                            <div className="col-md-12">
-                                                <div className="row">
-                                                    <div className="col-md-4"><b>Name</b></div>
-                                                    <div className="col-md-4"><b>Value</b></div>
-                                                    <div className="col-md-4"><b>Measured By</b></div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">Temperature Set Point</div>
-                                                    <div className="col-md-4">25 (<sup>o</sup>C) Celsius</div>
-                                                    <div className="col-md-4">Temperature Sensor</div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">Humidity Set Point</div>
-                                                    <div className="col-md-4">65 (%) Percent</div>
-                                                    <div className="col-md-4">Humidity Sensor</div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-4">CO2 Set Point</div>
-                                                    <div className="col-md-4">450 <sup>o</sup>ppm (Parts per
-                                                        million)
-                                                    </div>
-                                                    <div className="col-md-4">CO2 Sensor</div>
-                                                </div>
-                                            </div>
+                                          <div className="col-md-3">Description</div>
+                                          <div className="col-md-9">{this.state.description}</div>
                                         </div>
-                                    </Collapsible></div>
-                                </div>
 
+                                        <div className="row">
+                                          <div className="col-md-3">Authors</div>
+                                          <div className="col-md-9">{this.state.authors}</div>
+                                        </div>
+
+                                        <div className="row">
+                                          <div className="col-md-3">Cultivars</div>
+                                          <div className="col-md-9">{this.state.cultivars}</div>
+                                        </div>
+
+                                        <div className="row">
+                                          <div className="col-md-3">Cultivation Methods</div>
+                                          <div className="col-md-9">{this.state.cultivation_methods}</div>
+                                        </div>
+
+                                        <div className="row">
+                                          <div className="col-md-3">Modified</div>
+                                          <div className="col-md-9">{this.state.modified}</div>
+                                        </div>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
