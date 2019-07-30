@@ -134,10 +134,11 @@ class recipes extends Component {
         })
         .then((response) => response.json())
         .then((responseJson) => {
-            console.log(`Recipe: ${recipe_uuid} saved.`);
 
             // save the new uuid for this recipe (returned by the API)
-            recipe.uuid = responseJson["recipe_uuid"]; 
+            recipe.recipe_uuid = responseJson["recipe_uuid"]; 
+            recipe.recipe_json.uuid = responseJson["recipe_uuid"]; 
+            console.log(`Recipe: ${recipe.recipe_uuid} saved.`);
 
             // add to user recipes map
             const user_recipes_map = new Map(this.state.user_recipes);

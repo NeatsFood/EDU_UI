@@ -723,7 +723,7 @@ class EditRecipe extends React.Component {
         if(event === undefined || event === null || event.target === null) {
             hours = 0;
         } else {
-            hours = parseInt(event.target.value);
+            hours = parseFloat(event.target.value);
         }
         if (hours < 0 || hours > 24) {
             let err = 'Cycle hours range is 1 to 24.';

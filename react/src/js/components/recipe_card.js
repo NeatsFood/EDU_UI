@@ -50,7 +50,7 @@ export class RecipeCard extends React.Component {
                     </CardTitle>
                     <img src="https://cdn.shopify.com/s/files/1/0156/0137/products/refill_0012_basil.jpg?v=1520501227" alt=''/>
                     <h6 className="text-muted">
-                        {this.props.recipe.description}
+                        {this.props.recipe.recipe_json.description.brief}
                     </h6>
                 </CardBody>
                 <CardFooter>
