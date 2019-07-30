@@ -50,15 +50,11 @@ class Home extends Component {
         this.state = {
             user_token: props.cookies.get('user_token') || '',
             add_device_error_message: '',
-            add_access_modal: false,
-            access_code_error_message: '',
             user_uuid: this.user_uuid,
             device_reg_no: this.vcode,
             add_device_modal: this.set_modal,
             user_devices: new Map(),
             selected_device: 'Loading',
-            // TODO: REMOVE device_images: [placeholder],
-            current_plant_type: '',
             current_recipe_runtime: '',
             current_temp: '',
             progress: 10.0,
@@ -108,50 +104,6 @@ class Home extends Component {
             })
     };
 
-    /* TODO: SRM: Remove
-    getDeviceImages(device_uuid) {
-        return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_device_images/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                'user_token': this.props.cookies.get('user_token'),
-                'device_uuid': device_uuid
-            })
-        })
-            .then(response => response.json())
-            .then(responseJson => {
-                if(responseJson["image_urls"].length > 0) {
-                    this.setState({
-                        device_images: responseJson['image_urls']
-                    });
-                }
-                else {
-                    this.setState({
-                        device_images: [placeholder]
-                    });
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            })
-    };
-*/
-    getCurrentRecipeInfo(device_uuid) {
-        api.getCurrentRecipeInfo(
-            this.props.cookies.get('user_token'),
-            device_uuid
-        ).then(response => {
-            /*console.log(response, "getCurrentRecipeInfo")*/
-            this.setState({
-                current_recipe_uuid: response.recipe_uuid,
-                current_plant_type: response.plant_type
-            })
-        });
-    };
 
     getUserDevices() {
         console.log(process.env.REACT_APP_FLASK_URL, "getUserDevices")
@@ -263,15 +215,6 @@ class Home extends Component {
         });
     };
 
-    toggleAccessCodeModal = () => {
-        this.setState(prevState => {
-            return {
-                add_access_modal: !prevState.add_access_modal,
-                access_code_error_message: ''
-            }
-        });
-    };
-
     changeRegNo = (reg_no) => {
         this.setState({device_reg_no:reg_no})
     };
@@ -310,36 +253,6 @@ class Home extends Component {
             });
     };
 
-    onSubmitAccessCode = (modal_state) => {
-        return fetch(process.env.REACT_APP_FLASK_URL + '/api/submit_access_code/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                'user_token': this.props.cookies.get('user_token'),
-                'access_code': modal_state.access_code
-            })
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                /*console.log(responseJson)*/
-                if (responseJson["response_code"] === 200) {
-                    this.toggleAccessCodeModal();
-                    this.getUserDevices();
-                } else {
-                    this.setState({
-                        access_code_error_message: responseJson['message']
-                    });
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
     onSelectDevice = (device_uuid) => {
         if (device_uuid !== this.state.selected_device_uuid) {
             const device = this.state.user_devices.get(device_uuid);
@@ -348,9 +261,7 @@ class Home extends Component {
                 selected_device: name,
                 selected_device_uuid: device.device_uuid
             }, () => {
-                this.getCurrentRecipeInfo(device_uuid);
                 this.saveSelectedDevice();
-                //this.getDeviceImages(device_uuid);
                 this.getCurrentDeviceStatus(device_uuid);
                 this.getDeviceNotifications(device_uuid);
             });
@@ -395,6 +306,9 @@ class Home extends Component {
             notification_bell_image = <img src={notification} alt=''/>
         }
         let notification_buttons = this.state.notifications.map((n) => {
+            if(undefined === n || undefined === n.message) {
+                return(<div key='12345'></div>)
+            }
             let message = n["message"];
             if(n["URL"] !== null && n["URL"] !== '') {
                 message = <a href={n["URL"]} target="_blank" rel="noopener noreferrer"> {n["message"]} </a>
@@ -422,7 +336,6 @@ class Home extends Component {
                         selectedDevice={this.state.selected_device}
                         onSelectDevice={this.onSelectDevice}
                         onAddDevice={this.toggleDeviceModal}
-                        onAddAccessCode={this.toggleAccessCodeModal}
                     />
                     <div className="card notifications">
                         <div className="card-body">
@@ -430,16 +343,10 @@ class Home extends Component {
                                 <h3>Notifications</h3>
                                 {notification_bell_image}
                             </div>
-                            {this.state.current_plant_type ? (
-                                <p>
-                                    Your {this.state.current_plant_type} is {this.state.age_in_days}
-                                    &nbsp;old. Congratulations!
-                                </p>
-                            ) : (
-                                <p>
-                                    Loading recipe information.
-                                </p>
-                            )}
+                            <p>
+                                Your plant is {this.state.age_in_days}
+                                &nbsp;old. Congratulations!
+                            </p>
                             <hr/>
 
                             {notification_buttons} 
