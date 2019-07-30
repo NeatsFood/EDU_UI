@@ -1,0 +1,44 @@
+.edit-recipe-container {
+
+  textarea {
+    padding: 10px;
+  }
+
+  .row.dropdown-row {
+    padding-left: 13px;
+  }
+
+  .button-row {
+    margin-top:20px;
+  }
+
+  .form-row {
+    width: 100%;
+    margin-top:10px;
+  }
+
+  .input-row {
+    width:100%;
+  }
+
+  .submit-button-row {
+    width:100%;
+    margin-top:10px;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .select-cell {
+    width: 200px;
+  }
+
+  .env-cell {
+    width: 300px;
+  }
+
+  .value-cell {
+    width: 75px;
+  }
+}

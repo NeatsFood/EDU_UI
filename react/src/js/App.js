@@ -7,7 +7,7 @@ import login from "./login";
 import profile from "./profile";
 import Home from "./home";
 import recipes from "./recipes";
-import NewRecipe from "./new_recipe";
+import EditRecipe from "./edit_recipe";
 import {instanceOf} from 'prop-types';
 import {Cookies, withCookies} from "react-cookie";
 import MyPFC from "./my_pfc";
@@ -141,7 +141,7 @@ class App extends Component {
                             <Route path='/signup' component={SignUp}/>
                             <RequireAuth path='/profile' loggedIn={this.checkLogin()} component={profile}/>
                             <RequireAuth path='/device_homepage' loggedIn={this.checkLogin()} component={DeviceHomepage}/>
-                            <RequireAuth path='/new_recipe/:recipe_uuid' loggedIn={this.checkLogin()} component={NewRecipe}/>
+                            <RequireAuth path='/edit_recipe/:recipe_uuid' loggedIn={this.checkLogin()} component={EditRecipe}/>
                             <RequireAuth path='/device/:device_uuid' loggedIn={this.checkLogin()} component={MyPFC}/>
                             <RequireAuth path='/recipe_details/:recipe_uuid' loggedIn={this.checkLogin()} component={RecipeDetails} />
                             <RequireAuth path='/horticulture_success/:device_uuid' loggedIn={this.checkLogin()} component={HorticultureSuccess} />

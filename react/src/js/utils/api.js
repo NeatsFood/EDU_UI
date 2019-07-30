@@ -16,16 +16,6 @@ function jsonRequest(endpoint, data, method = 'POST') {
         });
 }
 
-export function saveRecipe(user_token, recipe_uuid) {
-    const data = { user_token, recipe_uuid };
-    return jsonRequest('/api/save_for_later/', data);
-}
-
-export function unsaveRecipe(user_token, recipe_uuid) {
-    const data = { user_token, recipe_uuid };
-    return jsonRequest('/api/unsave_for_later/', data);
-}
-
 export function getCurrentRecipeInfo(user_token, device_uuid) {
     const data = { user_token, device_uuid };
     return jsonRequest('/api/get_current_recipe_info/', data);
