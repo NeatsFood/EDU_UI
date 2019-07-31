@@ -23,8 +23,6 @@ import {ImageTimelapse} from './components/image_timelapse';
 import {DevicesDropdown} from './components/devices_dropdown';
 import {AddDeviceModal} from './components/add_device_modal';
 import {Line} from 'rc-progress';
-
-import * as api from './utils/api';
 import {DeviceImages} from "./components/device/device_images";
 
 const querystring = require('querystring');
@@ -132,7 +130,7 @@ class Home extends Component {
                         user_devices: devices_map
                     }, () => {
                         if (!this.restoreSelectedDevice()) {
-                            // default the selected device to the first/only dev.
+                            // default to the first/only dev.
                             this.onSelectDevice(devices[0].device_uuid)
                         }
                     });
@@ -426,8 +424,6 @@ class Home extends Component {
                     />
                 </div>
             </Router>
-
-
         );
     }
 }

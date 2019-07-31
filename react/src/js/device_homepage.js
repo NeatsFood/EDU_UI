@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
+import {BrowserRouter as Router} from "react-router-dom";
 import '../scss/device_homepage.scss';
 import {withCookies} from "react-cookie";
-// import Draggable from 'react-draggable';
 import Plot from 'react-plotly.js';
 import 'rc-time-picker/assets/index.css';
 import Console from 'react-console-component';
@@ -189,7 +189,7 @@ class DeviceHomepage extends Component {
                         user_devices: devices_map
                     }, () => {
                         if (!this.restoreSelectedDevice()) {
-                            // default the selected device to the first/only dev.
+                            // default to the first/only dev.
                             this.onSelectDevice(devices[0].device_uuid)
                         }
                     });
@@ -361,24 +361,14 @@ class DeviceHomepage extends Component {
 
     render() {
         return (
-
+          <Router>
             <div className="device-homepage-container">
-                <div className="row dropdown-row">
-                    <div className="col-md-2">
-                        <DevicesDropdown
-                            devices={[...this.state.user_devices.values()]}
-                            selectedDevice={this.state.selected_device}
-                            onSelectDevice={this.onSelectDevice}
-                            onAddDevice={this.toggleDeviceModal}
-                        />
-                    </div>
-
-                    <div className="col-md-1">
-                    </div>
-                    <div className="col-md-2 no-padding">
-                    </div>
-                </div>
-
+                <DevicesDropdown
+                    devices={[...this.state.user_devices.values()]}
+                    selectedDevice={this.state.selected_device}
+                    onSelectDevice={this.onSelectDevice}
+                    onAddDevice={this.toggleDeviceModal}
+                />
                 <TimeseriesChart device_uuid={this.state.selected_device_uuid} user_token={this.props.cookies.get('user_token')} />
 
                     <div className="row graphs-row">
@@ -419,8 +409,8 @@ class DeviceHomepage extends Component {
                     error_message={this.state.add_device_error_message}
                 />
             </div>
-        )
-
+          </Router>
+        );
     }
 }
 

@@ -57,5 +57,4 @@ export class DevicesDropdown extends React.PureComponent {
             </Dropdown>
         );
     }
-
 }
