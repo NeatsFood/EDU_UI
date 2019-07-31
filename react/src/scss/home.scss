@@ -179,20 +179,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
-  .btn {
-    .btn-secondary {
-      .btn-block {
-        .social-buttons {
-          width: 100%;
-          margin-top: 10px;
-          border-radius: 0px;
-          background-color: rgb(149, 38, 106);
-          border-color: rgb(149, 38, 106);
-          color: white;
-        }
-      }
-    }
-  }
+
   .btn-secondary {
     background-color: rgb(149, 38, 106);
     border-color: rgb(149, 38, 106);
@@ -202,9 +189,9 @@
     background-color: #358A49;
     border-color: #358A49;
   }
+
   .bottom-row {
     margin-top: 5px;
-
   }
   .dropdown-toggle.btn.btn-secondary
   {
@@ -221,12 +208,6 @@
   }
   .padding-0 {
     padding-left: 0;
-  }
-  .discourse-container {
-    height: 400px;
-    padding-top: 10px;
-    max-height: 400px;
-    overflow-y: scroll;
   }
   .btn-group {
     width: 92%;

@@ -6,8 +6,6 @@ import "../scss/recipe_detail.scss";
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import basil from '../images/basil.jpg'
-import {DeviceIsRunningModal} from './components/device_is_running_modal';
-
 import * as api from './utils/api';
 import Collapsible from "react-collapsible";
 
@@ -18,8 +16,7 @@ class RecipeDetails extends Component {
         this.state = {
             recipe_uuid: this.recipe_uuid,
             devices: [],
-            apply_to_device_modal: false,
-            apply_confirmation_modal: false
+            apply_to_device_modal: false
         };
         this.getRecipeDetails = this.getRecipeDetails.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -43,12 +40,6 @@ class RecipeDetails extends Component {
         }));
     }
 
-    toggleApplyConfirmation = () => {
-        this.setState(prevState => ({
-            apply_confirmation_modal: !prevState.apply_confirmation_modal
-        }));
-    }
-
     applyToDevice = () => {
         console.log(`Recipe ${this.state.recipe_uuid} applied to device...`);
 
@@ -67,32 +58,14 @@ class RecipeDetails extends Component {
         })
             .then(response => response.json())
             .then(response => {
-                console.log(response)
-                // If is running
-                if (this.state.apply_confirmation_modal) {
-                    this.setState({
-                        apply_confirmation_modal: false
-                    });
-                }
+                console.log('apply_to_device response=', response)
             });
     };
 
     checkApply = () => {
-        api.getCurrentRecipeInfo(
-            this.props.cookies.get('user_token'),
-            this.state.selected_device_uuid
-        ).then(response => {
-
-            // If is running recipe
-            if (!response.expired) {
-                this.toggleApplyToDevice();
-                this.toggleApplyConfirmation();
-            } else {
-                this.applyToDevice();
-                this.toggleApplyToDevice();
-            }
-        });
-    }
+        this.applyToDevice();
+        this.toggleApplyToDevice();
+    };
 
     getRecipeDetails() {
         return fetch(process.env.REACT_APP_FLASK_URL + "/api/get_recipe_by_uuid/", {
@@ -109,7 +82,7 @@ class RecipeDetails extends Component {
         })
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson)
+                console.log('get_recipe_by_uuid response',responseJson)
                 if (responseJson["response_code"] === 200) {
                     this.setState({devices: responseJson["devices"]})
                     let recipe_json = responseJson["recipe"]
@@ -298,12 +271,6 @@ class RecipeDetails extends Component {
                         <Button color="secondary" onClick={this.toggleApplyToDevice}>Close</Button>
                     </ModalFooter>
                 </Modal>
-                <DeviceIsRunningModal
-                    isOpen={this.state.apply_confirmation_modal}
-                    toggle={this.toggleApplyConfirmation}
-                    onApplyToDevice={this.applyToDevice}
-                    className={this.props.className}
-                />
             </div>
 
         )

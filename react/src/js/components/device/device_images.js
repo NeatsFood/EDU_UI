@@ -95,10 +95,16 @@ export class DeviceImages extends React.PureComponent {
         return encodeURI(tweetUri);
     };
 
+    openTwitterWindow() {
+        window.open(this.getTwitterUri(this.state.displayedImage), '', 
+            'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
+        return false;
+    };
+
     render () {
         return (
             <div className="timelapse">
-                <div class="row">
+                <div className="row">
                     <div className="col-md-12">
                         <ImageTimelapse
                             imageClass="timelapse-img"
@@ -111,11 +117,10 @@ export class DeviceImages extends React.PureComponent {
                 <div className="row">
                     <div className="col-md-12">
                         {this.state.displayedImage ? (
-                            <a
-                                href={this.getTwitterUri(this.state.displayedImage)}
-                                onClick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><span
-                                className="fa-stack fa-1x"><i className="fa fa-twitter-square fa-2x"
-                                                              aria-hidden="true"></i></span> Tweet this image!</a>
+                            <a href="#" onClick={() => this.openTwitterWindow()}>
+                            <span className="fa-stack fa-1x">
+                                <i className="fa fa-twitter-square fa-2x" aria-hidden="true"></i>
+                            </span> Tweet this image!</a>
                         ) : (
                             ""
                         )}
