@@ -91,7 +91,7 @@ class recipes extends Component {
                             // if not shared, ownership determines the group
                             if (recipe.user_uuid === own_uuid) {
                                 user_recipes_map.set(recipe.recipe_uuid, recipe);
-                            } else {
+                            } else if (recipe.user_uuid === 'all') {
                                 all_recipes_map.set(recipe.recipe_uuid, recipe);
                             }
                         }
