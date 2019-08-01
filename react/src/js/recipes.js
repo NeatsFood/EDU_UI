@@ -12,12 +12,9 @@ class recipes extends Component {
         this.state = {
             all_recipes: new Map(),
             user_recipes: new Map(),
+            shared_recipes: new Map(),
             filter_recipe_button_state: 'all',
             show_confirm_delete_modal: false,
-            selected_recipe: {},
-            selected_recipe_json: {},
-            devices: [],
-            selected_device_uuid: '',
         };
 
         this.toggleConfirmDelete = this.toggleConfirmDelete.bind(this);
@@ -74,34 +71,37 @@ class recipes extends Component {
             .then((responseJson) => {
                 console.log(responseJson);
                 if (responseJson['response_code'] === 200) {
-                    this.setState({devices: responseJson['devices']})
 
                     const own_uuid = responseJson['user_uuid'];
-                    const all_recipes = responseJson['results'];
+                    const recipes = responseJson['results'];
 
                     let all_recipes_map = new Map();
                     let user_recipes_map = new Map();
+                    let shared_recipes_map = new Map();
 
                     // Put recipes into all or user based on the user_uuid
                     // field in the recipe.
-                    for (const recipe of all_recipes) {
-                        if (recipe.user_uuid === own_uuid) {
-                            user_recipes_map.set(recipe.recipe_uuid, recipe);
+                    for (const recipe of recipes) {
+                        // don't care who owns the shared recipes (it could
+                        // be this user)
+                        if (recipe.shared === 'true') {
+                            recipe.by_user = 'Shared by ' + recipe.username;
+                            shared_recipes_map.set(recipe.recipe_uuid, recipe);
                         } else {
-                            all_recipes_map.set(recipe.recipe_uuid, recipe);
+                            // if not shared, ownership determines the group
+                            if (recipe.user_uuid === own_uuid) {
+                                user_recipes_map.set(recipe.recipe_uuid, recipe);
+                            } else {
+                                all_recipes_map.set(recipe.recipe_uuid, recipe);
+                            }
                         }
                     }
 
                     this.setState({
                         all_recipes: all_recipes_map,
-                        user_recipes: user_recipes_map
+                        user_recipes: user_recipes_map,
+                        shared_recipes: shared_recipes_map
                     });
-
-                    const devices = responseJson['devices'];
-                    if (devices) {
-                        // default the selected device to the first/only dev.
-                        this.setState({selected_device_uuid: devices[0].device_uuid});
-                    }
                 }
             })
             .catch((error) => {
@@ -109,12 +109,29 @@ class recipes extends Component {
             });
     }
 
-    // Save a 'common' (all) recipe as a users, so they can modify it.
-    onSaveRecipe = (recipe_uuid) => {
+    // Save a common or shared recipe as a users, so they can modify it.
+    // If the shared arg is true, then this is a shared recipe.
+    onSaveRecipe = (recipe_uuid, shared) => {
+        let message = "saved";
         let recipe = this.state.all_recipes.get(recipe_uuid);
-        if(recipe === null) {
-            console.error('onSaveRecipe: recipe_uuid is not in all_recipes');
+
+        if(shared == 'true' && (recipe === null || recipe === undefined)) {
+            // if recipe not found, perhaps we are saving a user recipe?
+            recipe = this.state.user_recipes.get(recipe_uuid);
+            message = "shared";
+        }
+
+        if(recipe === null || recipe === undefined) {
+            // if recipe not found, perhaps we are saving a shared recipe?
+            recipe = this.state.shared_recipes.get(recipe_uuid);
+        }
+
+        if(recipe === null || recipe === undefined) {
+            console.error('onSaveRecipe: recipe_uuid not found.');
             return;
+        }
+        if(shared === null) {
+            shared = 'false';
         }
         // Remove the recipe UUID so it will be saved under a new one, owned
         // by the user.
@@ -129,7 +146,8 @@ class recipes extends Component {
             },
             body: JSON.stringify({
                 'user_token': this.props.cookies.get('user_token'),
-                'recipe': JSON.stringify(recipe.recipe_json) 
+                'recipe': JSON.stringify(recipe.recipe_json),
+                'shared': shared
             })
         })
         .then((response) => response.json())
@@ -140,10 +158,18 @@ class recipes extends Component {
             recipe.recipe_json.uuid = responseJson["recipe_uuid"]; 
             console.log(`Recipe: ${recipe.recipe_uuid} saved.`);
 
-            // add to user recipes map
-            const user_recipes_map = new Map(this.state.user_recipes);
-            user_recipes_map.set(recipe.recipe_uuid, recipe);
-            this.setState({user_recipes: user_recipes_map});
+            // add to shared or user recipes map
+            if(shared == 'true') {
+                const shared_recipes_map = new Map(this.state.shared_recipes);
+                shared_recipes_map.set(recipe.recipe_uuid, recipe);
+                this.setState({shared_recipes: shared_recipes_map});
+            } else {
+                const user_recipes_map = new Map(this.state.user_recipes);
+                user_recipes_map.set(recipe.recipe_uuid, recipe);
+                this.setState({user_recipes: user_recipes_map});
+            }
+
+            alert("Successfully " + message + " recipe.");
         }).catch(response => {
             console.error(response.message);
         });
@@ -198,8 +224,11 @@ class recipes extends Component {
         let recipes = [];
         if (this.state.all_recipes.size) {
             switch (this.state.filter_recipe_button_state) {
-                case 'users_recipe': // recipes user has saved
+                case 'user': // recipes user has saved
                     recipes = [...this.state.user_recipes.values()];
+                    break;
+                case 'shared': // recipes user has saved
+                    recipes = [...this.state.shared_recipes.values()];
                     break;
                 default: // all recipes
                     recipes = [...this.state.all_recipes.values()]
@@ -208,8 +237,9 @@ class recipes extends Component {
             listRecipes.push(recipes.map((recipe) =>
                 <RecipeCard
                     key={recipe.recipe_uuid}
+                    by_user={recipe.by_user}
                     recipe={recipe}
-                    users_recipe={this.state.filter_recipe_button_state === 'users_recipe'}
+                    users_recipe={this.state.filter_recipe_button_state === 'user'}
                     onSelectRecipe={this.goToRecipe}
                     onSaveRecipe={this.onSaveRecipe}
                     onDeleteRecipe={this.onDeleteRecipe}
@@ -223,9 +253,8 @@ class recipes extends Component {
                     <div className="buttons-row">
                         <ButtonGroup>
                             <Button
-                                outline
                                 onClick={() => this.newRecipe()}
-                                color="primary">
+                                color="secondary">
                                 Create a New Recipe
                             </Button>
                         </ButtonGroup>
@@ -241,8 +270,16 @@ class recipes extends Component {
                             </Button>
                             <Button
                                 outline
-                                onClick={() => this.onFilterRecipe('users_recipe')}
-                                active={this.state.filter_recipe_button_state === 'users_recipe'}
+                                onClick={() => this.onFilterRecipe('shared')}
+                                active={this.state.filter_recipe_button_state === 'shared'}
+                                color="primary" 
+                            >
+                                Shared Recipes
+                            </Button>
+                            <Button
+                                outline
+                                onClick={() => this.onFilterRecipe('user')}
+                                active={this.state.filter_recipe_button_state === 'user'}
                                 color="primary" 
                             >
                                 My Saved Recipes
@@ -250,7 +287,6 @@ class recipes extends Component {
                         </ButtonGroup>
                     </div>
                     <div className="recipe-cards">
-
                         {listRecipes}
                     </div>
 
