@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {BrowserRouter as Router} from "react-router-dom";
 import {withCookies} from "react-cookie";
 import {Button, ButtonGroup} from 'reactstrap';
-import {RecipeCard} from './components/recipe_card';
+import {RecipeCard} from './components/recipe/recipe_card';
 import {ConfirmationModal} from './components/confirmation_modal';
-import '../scss/recipes.scss';
+import NavBar from "./components/NavBar";
+import {Redirect} from "react-router-dom";
 
 class recipes extends Component {
     constructor(props) {
@@ -44,15 +44,17 @@ class recipes extends Component {
     };
 
     goToRecipe(value, e) {
-        window.location.href = "/recipe_details/" + (value).toString()
+        // window.location.href = "/recipe_details/" + (value).toString()
+        return this.props.history.push("/recipe_details/" + (value).toString());
     }
 
     newRecipe() {
-        window.location.href = "/edit_recipe/new"
+        // window.location.href = "/edit_recipe/new"
+        return this.props.history.push("/edit_recipe/new");
     }
 
     editRecipe(value, e) {
-        window.location.href = "/edit_recipe/" + (value).toString()
+        return this.props.history.push("/edit_recipe/" + (value).toString());
     }
 
     getAllRecipes() {
@@ -115,7 +117,7 @@ class recipes extends Component {
         let message = "saved";
         let recipe = this.state.all_recipes.get(recipe_uuid);
 
-        if(shared == 'true' && (recipe === null || recipe === undefined)) {
+        if(shared === 'true' && (recipe === null || recipe === undefined)) {
             // if recipe not found, perhaps we are saving a user recipe?
             recipe = this.state.user_recipes.get(recipe_uuid);
             message = "shared";
@@ -191,7 +193,7 @@ class recipes extends Component {
     onSubmitConfirm = (modal_state) => {
         this.deleteRecipe(modal_state['data_to_submit']);
         this.toggleConfirmDelete();
-    }
+    };
 
     // Called by the modal dialog's submit callback (above).
     deleteRecipe = (recipe_uuid) => {
@@ -210,7 +212,7 @@ class recipes extends Component {
             console.log(`Recipe: ${recipe_uuid} deleted.`);
             // delete from user recipes map
             const user_recipes_map = new Map(this.state.user_recipes);
-            user_recipes_map.delete(recipe_uuid)
+            user_recipes_map.delete(recipe_uuid);
             this.setState({
                 user_recipes: user_recipes_map
             });
@@ -248,17 +250,19 @@ class recipes extends Component {
             ));
         }
         return (
-            <Router>
-                <div className="recipe-container">
-                    <div className="buttons-row">
-                        <ButtonGroup>
-                            <Button
-                                onClick={() => this.newRecipe()}
-                                color="secondary">
-                                Create a New Recipe
-                            </Button>
-                        </ButtonGroup>
-                        <div> &nbsp; &nbsp; </div>
+            <div className="container-fluid p-0 m-0">
+                <NavBar/>
+                <div className="row p-2 align-content-center">
+                    <div className="col">
+                            <ButtonGroup>
+                                <Button
+                                    onClick={() => this.newRecipe()}
+                                    color="secondary">
+                                    Create a New Recipe
+                                </Button>
+                            </ButtonGroup>
+                    </div>
+                    <div className="col">
                         <ButtonGroup>
                             <Button
                                 outline
@@ -272,7 +276,7 @@ class recipes extends Component {
                                 outline
                                 onClick={() => this.onFilterRecipe('shared')}
                                 active={this.state.filter_recipe_button_state === 'shared'}
-                                color="primary" 
+                                color="primary"
                             >
                                 Shared Recipes
                             </Button>
@@ -280,31 +284,34 @@ class recipes extends Component {
                                 outline
                                 onClick={() => this.onFilterRecipe('user')}
                                 active={this.state.filter_recipe_button_state === 'user'}
-                                color="primary" 
+                                color="primary"
                             >
                                 My Saved Recipes
                             </Button>
                         </ButtonGroup>
                     </div>
-                    <div className="recipe-cards">
-                        {listRecipes}
-                    </div>
-
-                    <ConfirmationModal
-                      isOpen={this.state.show_confirm_delete_modal}
-                      toggle={this.toggleConfirmDelete}
-                      onSubmit={this.onSubmitConfirm}
-                      data_to_submit={this.state.recipe_uuid_to_delete}
-                      dialog_title='Confirm Deletion'
-                      dialog_message={'Are you sure you want to DELETE this recipe ?'}
-                      form_submission_button_text="YES! I'm sure! Delete it."
-                      cancel_button_text='Cancel'
-                      error_message={this.state.error_message}
-                    />
-
                 </div>
-            </Router>
+                <div className="row p-2">
+                    <div className="col m-3">
+                        <div className="card-columns">
+                            {listRecipes}
+                        </div>
+                    </div>
+                </div>
 
+                <ConfirmationModal
+                  isOpen={this.state.show_confirm_delete_modal}
+                  toggle={this.toggleConfirmDelete}
+                  onSubmit={this.onSubmitConfirm}
+                  data_to_submit={this.state.recipe_uuid_to_delete}
+                  dialog_title='Confirm Deletion'
+                  dialog_message={'Are you sure you want to DELETE this recipe ?'}
+                  form_submission_button_text="YES! I'm sure! Delete it."
+                  cancel_button_text='Cancel'
+                  error_message={this.state.error_message}
+                />
+
+            </div>
         );
     }
 }

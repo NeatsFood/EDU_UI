@@ -1,29 +1,19 @@
 import React, {Component} from 'react';
-import {BrowserRouter as Router} from "react-router-dom";
+
 import '../scss/home.scss';
-import {
-    Button,
-    Form,
-    DropdownItem,
-    Input,
-    DropdownMenu,
-    Dropdown,
-    DropdownToggle,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    ButtonGroup
-} from 'reactstrap';
+import { Button } from 'reactstrap';
 import {withCookies} from "react-cookie";
-import placeholder from "../images/no-image.png";
-import notification from '../images/notification.png';
-import twitter_icon from "../images/twitter.png";
-import {ImageTimelapse} from './components/image_timelapse';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBell } from '@fortawesome/free-regular-svg-icons'
 import {DevicesDropdown} from './components/devices_dropdown';
 import {AddDeviceModal} from './components/add_device_modal';
+
+// TODO: Replace this with the Bootstrap4 Progress Bar
 import {Line} from 'rc-progress';
+
 import {DeviceImages} from "./components/device/device_images";
+import NavBar from "./components/NavBar";
 
 const querystring = require('querystring');
 
@@ -104,7 +94,7 @@ class Home extends Component {
 
 
     getUserDevices() {
-        console.log(process.env.REACT_APP_FLASK_URL, "getUserDevices")
+        // console.log(process.env.REACT_APP_FLASK_URL, "getUserDevices")
         return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_user_devices/', {
             method: 'POST',
             headers: {
@@ -218,7 +208,7 @@ class Home extends Component {
     };
 
     onSubmitDevice = (modal_state) => {
-        console.log(modal_state);
+        // console.log(modal_state);
         return fetch(process.env.REACT_APP_FLASK_URL + '/api/register/', {
             method: 'POST',
             headers: {
@@ -283,7 +273,7 @@ class Home extends Component {
         })
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson, "acknowledgeNotification");
+                // console.log(responseJson, "acknowledgeNotification");
                 if (responseJson["response_code"] === 200) {
                     // update the notifications list in the state
                     // and the UI will re-render the list of notifications
@@ -295,13 +285,19 @@ class Home extends Component {
             });
     }
 
+    goToTakeMeasurments = () => {
+        let gotohorticulture = "/horticulture_success/" + this.state.selected_device_uuid;
+        this.props.history.push(gotohorticulture);
+        return false;
+    };
+
     render() {
 
-        let gotohorticulture = "/horticulture_success/" + this.state.selected_device_uuid;
 
-        let notification_bell_image = <p></p>
+
+        let notification_bell_image = "";
         if(this.state.notifications.length > 0) {
-            notification_bell_image = <img src={notification} alt=''/>
+            notification_bell_image = <FontAwesomeIcon icon={faBell} />
         }
         let notification_buttons = this.state.notifications.map((n) => {
             if(undefined === n || undefined === n.message) {
@@ -313,7 +309,7 @@ class Home extends Component {
             }
             return (
                 <div className="row" key={n["ID"]}>
-                    <div className="col-md-10">
+                    <div className="col-md-9">
                         {message}
                     </div>
                     <div className="col-md-2">
@@ -327,103 +323,99 @@ class Home extends Component {
         });
 
         return (
-            <Router>
-                <div className="home-container">
-                    <DevicesDropdown
-                        devices={[...this.state.user_devices.values()]}
-                        selectedDevice={this.state.selected_device}
-                        onSelectDevice={this.onSelectDevice}
-                        onAddDevice={this.toggleDeviceModal}
-                    />
-                    <div className="card notifications">
-                        <div className="card-body">
-                            <div className="card-title">
-                                <h3>Notifications</h3>
-                                {notification_bell_image}
+            <div className="container-fluid p-0 m-0">
+                <NavBar/>
+                <div className="row m-2 p-2">
+                    <div className="col">
+                        <DevicesDropdown
+                            devices={[...this.state.user_devices.values()]}
+                            selectedDevice={this.state.selected_device}
+                            onSelectDevice={this.onSelectDevice}
+                            onAddDevice={this.toggleDeviceModal}
+                        />
+                    </div>
+                </div>
+                <div className='row m-2'>
+                    <div className='col-4'>
+                        <div className="card notifications">
+                            <div className="card-body">
+                                <div className="card-title">
+                                    <h3>Notifications {notification_bell_image}</h3>
+                                </div>
+                                <p>
+                                    Your plant is {this.state.age_in_days}
+                                    &nbsp;old. Congratulations!
+                                </p>
+                                <hr/>
+
+                                {notification_buttons}
+
+                                <hr/>
+                                <p><Button size="small" onClick={this.goToTakeMeasurments}>Take horticulture measurements</Button> </p>
                             </div>
-                            <p>
-                                Your plant is {this.state.age_in_days}
-                                &nbsp;old. Congratulations!
-                            </p>
-                            <hr/>
-
-                            {notification_buttons} 
-
-                            <hr/>
-                            <p><a href={gotohorticulture}>Take</a> horticulture measurements </p>
                         </div>
                     </div>
 
-                    <DeviceImages
-                        deviceUUID={this.state.selected_device_uuid}
-                        user_token={this.state.user_token}
-                        enableTwitter
-                    />
-
-                    <div className="status">
-
-                        <div className="row">
-                            <div className="col-md-4">Wifi Status</div>
-                            <div className="col-md-8"> {this.state.wifi_status} </div>
-                        </div>
-
-                        <div className="row">
-
-                            <div className="col-md-6">
-                                <div className="row">
-                                    <div className="col-md-8">Device Status</div>
-                                    <div className="col-md-4">
-                                   <span className="checkmark">
-                                     <div className="checkmark_circle"></div>
-
-                                    </span>
-                                        <span className="checkmark-text">OK</span>
-                                    </div>
-
+                    <div className='col-7'>
+                        <div className="container">
+                            <div className="row mb-2">
+                                <div className="col">
+                                    <DeviceImages
+                                        deviceUUID={this.state.selected_device_uuid}
+                                        user_token={this.state.user_token}
+                                        enableTwitter
+                                    />
                                 </div>
                             </div>
 
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-4">
-                                Progress
+                            <div className="row mb-2">
+                                <div className="col-md-3">Wifi Status</div>
+                                <div className="col-md-7"> {this.state.wifi_status} </div>
                             </div>
-                            <div className="col-md-8 float-right">
-                                <div className="row">
+
+                            <div className="row mb-2">
+                                <div className="col-md-3">Device Status</div>
+                                <div className="col-md-4">
+                                   <span className="checkmark">
+                                     <div className="checkmark_circle"></div>
+                                   </span>
+                                    <span className="checkmark-text">OK</span>
+                                </div>
+                            </div>
+
+                            <div className="row mb-2">
+                                <div className="col-md-3">
+                                    Progress
+                                </div>
+                                <div className="col-md-1">
+                                    {this.state.age_in_days}
+                                </div>
+                                <div className="col-md-6">
                                     <Line percent={this.state.progress} strokeWidth="4" trailWidth="4"
                                           strokeColor="#378A49"
                                           strokeLinecap="round"/>
                                 </div>
-                                <div className="row">
-                                    <span style={{'marginLeft': '15px'}}> {this.state.age_in_days}</span>
+                            </div>
+
+                            <div className="row mb-2">
+                                <div className="col-md-3">Temperature</div>
+                                <div className="col-md-8">
+                                    {this.state.current_temp}
                                 </div>
-
                             </div>
                         </div>
-
-                        <div className="row">
-
-                            <div className="col-md-6">Temperature</div>
-                            <div className="col-md-6">
-
-                                {this.state.current_temp}
-                            </div>
-
-                        </div>
-
                     </div>
-
-                    <AddDeviceModal
-                        isOpen={this.state.add_device_modal}
-                        toggle={this.toggleDeviceModal}
-                        onSubmit={this.onSubmitDevice}
-                        onRegNoChange={this.changeRegNo}
-                        error_message={this.state.add_device_error_message}
-                        device_reg_no={this.state.device_reg_no}
-                    />
                 </div>
-            </Router>
+
+                <AddDeviceModal
+                    isOpen={this.state.add_device_modal}
+                    toggle={this.toggleDeviceModal}
+                    onSubmit={this.onSubmitDevice}
+                    onRegNoChange={this.changeRegNo}
+                    error_message={this.state.add_device_error_message}
+                    device_reg_no={this.state.device_reg_no}
+                />
+            </div>
         );
     }
 }

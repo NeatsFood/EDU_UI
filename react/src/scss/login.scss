@@ -9,14 +9,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  display: flex;
   justify-content: center;
   align-items: center;
 }
 
+
 .login-page {
 
-  .form {
+  .openag-form {
     background: #FFFFFF;
     max-width: 360px;
     padding: 45px;
@@ -53,21 +53,4 @@
       background: #999999;
     }
   }
-
-  .message {
-    margin: 15px 0 0;
-    color: #b3b3b3;
-    font-size: 12px;
-  }
-
-  .message a {
-    color: #999999;
-    text-decoration: none;
-  }
-
-  .logo{
-    height:90px;
-    padding:15px;
-  }
-
 }

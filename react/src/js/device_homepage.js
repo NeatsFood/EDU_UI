@@ -1,20 +1,19 @@
 import React, {Component} from 'react';
-import {BrowserRouter as Router} from "react-router-dom";
 import '../scss/device_homepage.scss';
 import {withCookies} from "react-cookie";
-import Plot from 'react-plotly.js';
-import 'rc-time-picker/assets/index.css';
-import Console from 'react-console-component';
-import 'react-console-component/main.css';
-import FileSaver from 'file-saver';
+// import Plot from 'react-plotly.js';
+//import 'rc-time-picker/assets/index.css';
+//import Console from 'react-console-component';
+// import 'react-console-component/main.css';
 
 import {DevicesDropdown} from './components/devices_dropdown';
 import {AddDeviceModal} from './components/add_device_modal';
 
 import {TimeseriesChart} from "./components/timeseries_chart";
 
-import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css';
+//import 'rc-slider/assets/index.css';
+//import 'rc-tooltip/assets/bootstrap.css';
+import NavBar from "./components/NavBar";
 
 class DeviceHomepage extends Component {
     constructor(props) {
@@ -37,9 +36,9 @@ class DeviceHomepage extends Component {
             add_device_error_message: '',
         };
 
-        this.child = {
-            console: Console
-        };
+        //this.child = {
+        //    console: Console
+        //};
         this.getUserDevices = this.getUserDevices.bind(this);
         this.getCurrentStats = this.getCurrentStats.bind(this);
     }
@@ -51,7 +50,7 @@ class DeviceHomepage extends Component {
                 add_device_error_message: ''
             }
         });
-    }
+    };
 
     submitMeasurements = () => {
         return fetch(process.env.REACT_APP_FLASK_URL + '/api/submit_horticulture_measurements/', {
@@ -74,8 +73,8 @@ class DeviceHomepage extends Component {
             .then((responseJson) => {
                 //console.log(responseJson)
                 if (responseJson["response_code"] === 200) {
-                    this.setState({plant_height: ""})
-                    this.setState({leaves_count: ""})
+                    this.setState({plant_height: ""});
+                    this.setState({leaves_count: ""});
                 } else {
                     console.log("Something went wrong")
                 }
@@ -213,7 +212,7 @@ class DeviceHomepage extends Component {
             return true;
         }
         return false;
-    }
+    };
 
     saveSelectedDevice = () => {
         const selected_device_uuid = this.state.selected_device_uuid;
@@ -222,7 +221,7 @@ class DeviceHomepage extends Component {
         } else {
             this.props.cookies.remove('selected_device_uuid', {path: '/'});
         }
-    }
+    };
 
     getHorticultureDailyLogs(device_uuid) {
         return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_horticulture_daily_logs/', {
@@ -243,8 +242,8 @@ class DeviceHomepage extends Component {
                 //console.log(responseJson)
                 if (responseJson["response_code"] === 200) {
 
-                    let plant_height_resultsData = responseJson["plant_height_results"]
-                    if(undefined == plant_height_resultsData) {
+                    let plant_height_resultsData = responseJson["plant_height_results"];
+                    if(undefined === plant_height_resultsData) {
                         return;
                     }
 
@@ -252,14 +251,14 @@ class DeviceHomepage extends Component {
                         d.value = parseFloat(d.value);
                     });
 
-                    let plant_height_results_data_x = []
-                    let plant_height_results_data_y = []
+                    let plant_height_results_data_x = [];
+                    let plant_height_results_data_y = [];
                     plant_height_resultsData.forEach(function (d) {
                         plant_height_results_data_x.push(d.time);
                         plant_height_results_data_y.push(d.value);
                     });
-                    this.setState({'plant_height_results_data_x': plant_height_results_data_x})
-                    this.setState({'plant_height_results_data_y': plant_height_results_data_y})
+                    this.setState({'plant_height_results_data_x': plant_height_results_data_x});
+                    this.setState({'plant_height_results_data_y': plant_height_results_data_y});
                     this.setState({
                         'plant_height_results_data': [{
                             type: "scatter",
@@ -288,22 +287,22 @@ class DeviceHomepage extends Component {
                             }
                         }
                     });
-                    let leaf_count_resultsData = responseJson["leaf_count_results"]
+                    let leaf_count_resultsData = responseJson["leaf_count_results"];
 
                     leaf_count_resultsData.forEach(function (d) {
                         d.value = parseFloat(d.value);
                     });
 
                     let
-                        leaf_count_results_data_x = []
+                        leaf_count_results_data_x = [];
                     let
-                        leaf_count_results_data_y = []
+                        leaf_count_results_data_y = [];
                     leaf_count_resultsData.forEach(function (d) {
                         leaf_count_results_data_x.push(d.time);
                         leaf_count_results_data_y.push(d.value);
                     });
-                    this.setState({'leaf_count_results_data_x': leaf_count_results_data_x})
-                    this.setState({'leaf_count_results_data_y': leaf_count_results_data_y})
+                    this.setState({'leaf_count_results_data_x': leaf_count_results_data_x});
+                    this.setState({'leaf_count_results_data_y': leaf_count_results_data_y});
                     this.setState({
                         'leaf_count_results_data': [{
                             type: "scatter",
@@ -361,46 +360,49 @@ class DeviceHomepage extends Component {
 
     render() {
         return (
-          <Router>
-            <div className="device-homepage-container">
-                <DevicesDropdown
-                    devices={[...this.state.user_devices.values()]}
-                    selectedDevice={this.state.selected_device}
-                    onSelectDevice={this.onSelectDevice}
-                    onAddDevice={this.toggleDeviceModal}
-                />
-                <TimeseriesChart device_uuid={this.state.selected_device_uuid} user_token={this.props.cookies.get('user_token')} />
+            <div className="container-fluid p-0 m-0">
+                <NavBar/>
+                <div className="row m-2 p-2">
+                    <div className="col">
+                        <DevicesDropdown
+                            devices={[...this.state.user_devices.values()]}
+                            selectedDevice={this.state.selected_device}
+                            onSelectDevice={this.onSelectDevice}
+                            onAddDevice={this.toggleDeviceModal}
+                        />
+                    </div>
+                </div>
+                <div className='row m-2'>
+                    <div className='col'>
+                        <TimeseriesChart device_uuid={this.state.selected_device_uuid} user_token={this.props.cookies.get('user_token')} />
+                    </div>
+                </div>
+                <div className="row graphs-row">
+                    <div className="col-md-6">
+                        <div className="card value-card">
+                            <div className="card-block">
+                                <h4 className="card-title "> Plant Height </h4>
+                                <div className="row plot-row" style={{display: 'block'}}>
+                                    <strong className="no-cursor">
 
-                    <div className="row graphs-row">
-                        <div className="col-md-4">
-                            <div className="card value-card">
-                                <div className="card-block">
-                                    <h4 className="card-title "> Plant Height </h4>
-                                    <div className="row plot-row" style={{display: 'block'}}>
-                                        <strong className="no-cursor"> <Plot data={this.state.plant_height_results_data}
-                                                                             layout={this.state.plant_height_results_layout}
-                                                                             onInitialized={(figure) => this.setState(figure)}
-                                                                             onUpdate={(figure) => this.setState(figure)}/>
-                                        </strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card value-card">
-                                <div className="card-block">
-                                    <h4 className="card-title "> Number of Leaves </h4>
-                                    <div className="row plot-row" style={{display: 'block'}}>
-                                        <strong className="no-cursor"> <Plot data={this.state.leaf_count_results_data}
-                                                                             layout={this.state.leaf_count_results_layout}
-                                                                             onInitialized={(figure) => this.setState(figure)}
-                                                                             onUpdate={(figure) => this.setState(figure)}/>
-                                        </strong>
-                                    </div>
+                                    </strong>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div className="col-md-6">
+                        <div className="card value-card">
+                            <div className="card-block">
+                                <h4 className="card-title "> Number of Leaves </h4>
+                                <div className="row plot-row" style={{display: 'block'}}>
+                                    <strong className="no-cursor">
+
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <AddDeviceModal
                     isOpen={this.state.add_device_modal}
@@ -409,7 +411,6 @@ class DeviceHomepage extends Component {
                     error_message={this.state.add_device_error_message}
                 />
             </div>
-          </Router>
         );
     }
 }

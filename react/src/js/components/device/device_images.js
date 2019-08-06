@@ -1,7 +1,7 @@
 import React from 'react';
 import {ImageTimelapse} from "../image_timelapse";
-//import placeholder from "../../../images/no-image.png";
-
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTwitterSquare} from "@fortawesome/free-brands-svg-icons";
 
 /**
  * DeviceImages
@@ -95,19 +95,13 @@ export class DeviceImages extends React.PureComponent {
         return encodeURI(tweetUri);
     };
 
-    openTwitterWindow() {
-        window.open(this.getTwitterUri(this.state.displayedImage), '', 
-            'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');
-        return false;
-    };
-
     render () {
         return (
             <div className="timelapse">
-                <div className="row">
+                <div class="row">
                     <div className="col-md-12">
                         <ImageTimelapse
-                            imageClass="timelapse-img"
+                            imageClass="img-fluid"
                             inputClass="range-slider__range"
                             images={this.state.device_images}
                             imageNameCallback={this.imageNameCallback}
@@ -117,10 +111,10 @@ export class DeviceImages extends React.PureComponent {
                 <div className="row">
                     <div className="col-md-12">
                         {this.state.displayedImage ? (
-                            <a href="#" onClick={() => this.openTwitterWindow()}>
-                            <span className="fa-stack fa-1x">
-                                <i className="fa fa-twitter-square fa-2x" aria-hidden="true"></i>
-                            </span> Tweet this image!</a>
+                            <a
+                                href={"#"}
+                                onClick={() => {window.open(this.getTwitterUri(this.state.displayedImage), '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600'); return false}} ><span
+                                className="fa-stack fa-1x"><FontAwesomeIcon icon={faTwitterSquare} size="2x" /></span> Tweet this image!</a>
                         ) : (
                             ""
                         )}

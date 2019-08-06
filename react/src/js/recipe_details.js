@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {withCookies} from "react-cookie";
-import 'rc-time-picker/assets/index.css';
+// import 'rc-time-picker/assets/index.css';
 import {Button, Input, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
-import "../scss/recipe_detail.scss";
-import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css';
+// import "../scss/recipe_detail.scss";
+// import 'rc-slider/assets/index.css';
+// import 'rc-tooltip/assets/bootstrap.css';
 import basil from '../images/basil.jpg'
-import * as api from './utils/api';
-import Collapsible from "react-collapsible";
+import NavBar from "./components/NavBar";
 
 class RecipeDetails extends Component {
     constructor(props) {
@@ -171,8 +170,8 @@ class RecipeDetails extends Component {
 
     render() {
         return (
-
-            <div className="recipe-detail-container">
+            <div className="container-fluid p-0 m-0">
+                <NavBar/>
                 <div className="row home-row">
                     <div className="col-md-3">
                         <div className="row card-row image-row">
