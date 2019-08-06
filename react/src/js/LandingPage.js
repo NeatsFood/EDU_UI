@@ -18,7 +18,7 @@ function LandingPage() {
             try {
                 const token = await getTokenSilently();
                 // console.log("got token");
-                const response = await fetch("http://localhost:5000/oauth_login/", {
+                const response = await fetch(process.env.REACT_APP_FLASK_URL + "/oauth_login/", {
                     method: 'post',
                     headers: {
                         Authorization: `Bearer ${token}`
