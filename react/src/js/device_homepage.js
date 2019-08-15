@@ -53,6 +53,8 @@ class DeviceHomepage extends Component {
     };
 
     submitMeasurements = () => {
+        console.log('Submitting horticulture measurements');
+        console.log('plant_height', this.state.plant_height)
         return fetch(process.env.REACT_APP_FLASK_URL + '/api/submit_horticulture_measurements/', {
             method: 'POST',
             headers: {
