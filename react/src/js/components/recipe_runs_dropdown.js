@@ -1,57 +1,59 @@
 import React from 'react';
 import {
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
 } from 'reactstrap';
 
 /**
  * Recipe Runs Dropdown
  *
  * props
- * - recipe_runs (array): recipe_run objects to display.
- * - selectedRecipeRun (string): Name of the currently selected recipe_run.
- * - onSelectRecipeRun (function): callback for when a recipe_run is selected from
- * the dropdown. Called with the recipe_run uuid.
+ * - recipeRuns (array): recipeRun objects to display.
+ * - selectedRecipeRunIndex (integer): The currently selected recipe run index.
+ * - onSelectRecipeRun (function): callback for when a recipe run is selected from
+ * the dropdown. Called with the recipe run index.
  * clicked.
  */
 export class RecipeRunsDropdown extends React.PureComponent {
 
-    state = {
-        isOpen: false
-    };
+  state = {
+    isOpen: false
+  };
 
-    toggle = () => {
-        this.setState(prevState => {
-            return { isOpen: !prevState.isOpen };
-        });
-    };
+  toggle = () => {
+    this.setState(prevState => {
+      return { isOpen: !prevState.isOpen };
+    });
+  };
 
-    onSelectRecipeRun = (e) => {
-        this.props.onSelectRecipeRun(e.target.value);
-    };
+  onSelectRecipeRun = (event) => {
+    const selectedRecipeRunIndex = event.target.value
+    this.props.onSelectRecipeRun(selectedRecipeRunIndex);
+  };
 
-    render() {
-        return (
-            <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
-                <DropdownToggle caret>
-                    {this.props.selectedRecipeRun}
-                </DropdownToggle>
-                <DropdownMenu>
-                    <DropdownItem header>Recipe Runs</DropdownItem>
-                    {this.props.recipe_runs.map(recipe_run =>
-                        <DropdownItem
-                            key={recipe_run.recipe_run_uuid}
-                            value={recipe_run.recipe_run_uuid}
-                            onClick={this.onSelectRecipeRun}>
-                            {/* {recipe_run.recipe_run_name} ({recipe_run.recipe_run_reg_no}) */}
-                            Put recipe run time span here
-                        </DropdownItem>
-                    )}
-                </DropdownMenu>
-            </Dropdown>
-        );
-    }
+  render() {
+    const { recipeRuns, selectedRecipeRunIndex } = this.props;
+    const selectedRecipeRun = recipeRuns[selectedRecipeRunIndex];
+
+    return (
+      <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
+        <DropdownToggle caret>
+          {selectedRecipeRun.name}
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem header>Recipe Runs</DropdownItem>
+          {this.props.recipeRuns.map((recipeRun, index) =>
+            <DropdownItem
+              value={index}
+              onClick={this.onSelectRecipeRun}>
+              {recipeRun.name}
+            </DropdownItem>
+          )}
+        </DropdownMenu>
+      </Dropdown>
+    );
+  }
 
 }

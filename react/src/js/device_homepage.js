@@ -35,11 +35,9 @@ class DeviceHomepage extends Component {
       selected_device: 'Loading',
       add_device_modal: false,
       add_device_error_message: '',
+      recipeRuns: [{ name: "All Previous Data" }],
+      selectedRecipeRunIndex: 0,
     };
-
-    //this.child = {
-    //    console: Console
-    //};
     this.getUserDevices = this.getUserDevices.bind(this);
     this.getCurrentStats = this.getCurrentStats.bind(this);
   }
@@ -210,12 +208,16 @@ class DeviceHomepage extends Component {
   getRecipeRuns() {
     const { selected_device_uuid } = this.state;
     console.log('Getting recipe runs for device: ', selected_device_uuid);
-    
+
+    // Initialize recipe run state
+    let recipeRuns = [{ name: 'All Previous Data', startDate: 0 }];
+    let selectedRecipeRunIndex = 0;
+
     // Verify a device has been selected
     if (selected_device_uuid === '') {
-      console.log('No device selected')
-      this.setState({selected_recipe_run: '' })
-      return
+      console.log('No device selected');
+      this.setState({ recipeRuns, selectedRecipeRunIndex });
+      return;
     }
 
     // Request recipe runs from data api
@@ -228,34 +230,43 @@ class DeviceHomepage extends Component {
       },
       body: JSON.stringify({
         'user_token': this.props.cookies.get('user_token'),
-        'device_uuid': this.props.cookies.get('user_token')
+        'device_uuid': this.state.selected_device_uuid,
       })
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('recipe_runs:', responseJson)
-        // if (responseJson["response_code"] === 200) {
-        //   const devices = responseJson["results"]["devices"];
-        //   let devices_map = new Map();
-        //   for (const device of devices) {
-        //     devices_map.set(device['device_uuid'], device);
-        //   }
+        const { response_code, runs } = responseJson;
 
-        //   this.setState({
-        //     user_devices: devices_map
-        //   }, () => {
-        //     if (!this.restoreSelectedDevice()) {
-        //       // default to the first/only dev.
-        //       this.onSelectDevice(devices[0].device_uuid)
-        //     }
-        //   });
-        //   // console.log("Response", responseJson["results"])
-        // } else {
-        //   this.setState({
-        //     selected_device: 'No Devices',
-        //     selected_device_uuid: ''
-        //   });
-        // }
+        // Verify valid response
+        if (response_code !== 200) {
+          console.log('Unable to get recipe runs');
+          console.log('responseJson:', responseJson);
+          this.setState({ recipeRuns, selectedRecipeRunIndex });
+          return;
+        }
+
+        // Parse recipe runs
+        for (const run of runs) {
+          const { recipe_name, start, end } = run;
+          run.startDate = new Date(Date.parse(start));
+          const startDay = run.startDate.getUTCDate();
+          const startMonth = run.startDate.getUTCMonth() + 1;
+          run.name = `${recipe_name} (${startMonth}/${startDay}-`;
+
+          // Check for currently running recipes
+          if (end !== null) {
+            const endDate = new Date(Date.parse(end));
+            const endDay = endDate.getUTCDate();
+            const endMonth = endDate.getUTCMonth() + 1;
+            run.name += `${endMonth}/${endDay})`
+          } else {
+            run.name += 'Current)';
+          }
+          recipeRuns.push(run);
+        }
+
+        // Update recipe runs state
+        this.setState({ recipeRuns, selectedRecipeRunIndex });
       })
   }
 
@@ -297,7 +308,6 @@ class DeviceHomepage extends Component {
 
       .then((response) => response.json())
       .then((responseJson) => {
-        //console.log(responseJson)
         if (responseJson["response_code"] === 200) {
 
           let plant_height_resultsData = responseJson["plant_height_results"];
@@ -416,6 +426,14 @@ class DeviceHomepage extends Component {
     }
   };
 
+  onSelectRecipeRun = (recipeRunIndex) => {
+    console.log('Selected recipe run index:', recipeRunIndex);
+    if (recipeRunIndex !== this.state.selectedRecipeRunIndex) {
+      this.setState({
+        selectedRecipeRunIndex: recipeRunIndex,
+      });
+    }
+  };
 
   render() {
     return (
@@ -429,11 +447,11 @@ class DeviceHomepage extends Component {
             onAddDevice={this.toggleDeviceModal}
           />
           <div style={{ paddingLeft: 20 }}>
-            {/* <RecipeRunsDropdown
-              recipe_runs={[...this.state.user_devices.values()]}
-              selectedRecipeRun={this.state.selected_recipe_run}
+            <RecipeRunsDropdown
+              recipeRuns={[...this.state.recipeRuns]}
+              selectedRecipeRunIndex={this.state.selectedRecipeRunIndex}
               onSelectRecipeRun={this.onSelectRecipeRun}
-            /> */}
+            />
           </div>
         </div>
         <div className='row m-2'>
