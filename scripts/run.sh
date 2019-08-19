@@ -26,7 +26,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 cd $DIR # Go to the project top level dir.
 
 
-if [[ $LOCAL ]]; then
+if [[ "$LOCAL" == 1 ]]; then
   # For local testing, with a local flask Data_API service running
   echo "***Using Local Data API***"
   export REACT_APP_FLASK_URL=http://localhost:5000
