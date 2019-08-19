@@ -93,17 +93,30 @@ export class TimeseriesChart extends React.PureComponent {
   getData2 = (device_uuid, user_token) => {
     console.log('Getting sensor and horticulture data')
 
+    // Get parameters
+    const { selectedRecipeRun, selectedRecipeRunIndex } = this.props;
+
     // TODO: Validate parameters
     if (!device_uuid) {
       console.log('Invalid device uuid')
       return;
     }
 
-    // Initialize request parameters
+    // Get default date range
     const date = new Date();
-    const end_ts = date.toISOString().split('.')[0] + "Z"
-    date.setDate(date.getDate() - 14)
-    const start_ts = date.toISOString().split('.')[0] + "Z"
+    let end_ts = date.toISOString().split('.')[0] + "Z"
+    date.setDate(date.getDate() - 28)
+    let start_ts = date.toISOString().split('.')[0] + "Z"
+
+    // Check for specified recipe run
+    if (selectedRecipeRunIndex > 0) {
+      const { startDate, endDate } = selectedRecipeRun;
+      start_ts = startDate.toISOString().split('.')[0] + "Z";
+      console.log('endDate', endDate);
+      if (endDate !== null) {
+        end_ts = endDate.toISOString().split('.')[0] + "Z";
+      }
+    }
 
     // Request data from api
     let sensorData = {};
@@ -241,14 +254,16 @@ export class TimeseriesChart extends React.PureComponent {
   };
 
   componentWillUpdate(nextProps, nextState, nextContext) {
-    if (nextProps.device_uuid !== this.props.device_uuid) {
+    if ((this.props.device_uuid !== nextProps.device_uuid)
+      || (this.props.selectedRecipeRunIndex !== nextProps.selectedRecipeRunIndex)) {
       this.setState({ ready: false });
     }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    // if the device_uuid dropdown has changed, well want to pull new data.
-    if (this.props.device_uuid !== prevProps.device_uuid) {
+    // if the device uuid or recipe runs dropdown has changed, well want to pull new data.
+    if ((this.props.device_uuid !== prevProps.device_uuid)
+      || (this.props.selectedRecipeRunIndex !== prevProps.selectedRecipeRunIndex)) {
       this.getData2(this.props.device_uuid, this.props.user_token);
     }
   }

@@ -255,12 +255,13 @@ class DeviceHomepage extends Component {
 
           // Check for currently running recipes
           if (end !== null) {
-            const endDate = new Date(Date.parse(end));
-            const endDay = endDate.getUTCDate();
-            const endMonth = endDate.getUTCMonth() + 1;
+            run.endDate = new Date(Date.parse(end));
+            const endDay = run.endDate.getUTCDate();
+            const endMonth = run.endDate.getUTCMonth() + 1;
             run.name += `${endMonth}/${endDay})`
           } else {
             run.name += 'Current)';
+            run.endDate = null;
           }
           recipeRuns.push(run);
         }
@@ -436,6 +437,9 @@ class DeviceHomepage extends Component {
   };
 
   render() {
+    const user_token = this.props.cookies.get('user_token');
+    const { selected_device_uuid, recipeRuns, selectedRecipeRunIndex } = this.state;
+    const selectedRecipeRun = recipeRuns[selectedRecipeRunIndex];
     return (
       <div className="container-fluid p-0 m-0">
         <NavBar />
@@ -448,15 +452,20 @@ class DeviceHomepage extends Component {
           />
           <div style={{ paddingLeft: 20 }}>
             <RecipeRunsDropdown
-              recipeRuns={[...this.state.recipeRuns]}
-              selectedRecipeRunIndex={this.state.selectedRecipeRunIndex}
+              recipeRuns={[...recipeRuns]}
+              selectedRecipeRunIndex={selectedRecipeRunIndex}
               onSelectRecipeRun={this.onSelectRecipeRun}
             />
           </div>
         </div>
         <div className='row m-2'>
           <div className='col'>
-            <TimeseriesChart device_uuid={this.state.selected_device_uuid} user_token={this.props.cookies.get('user_token')} />
+            <TimeseriesChart
+              device_uuid={selected_device_uuid}
+              user_token={user_token}
+              selectedRecipeRun={selectedRecipeRun}
+              selectedRecipeRunIndex={selectedRecipeRunIndex}
+            />
           </div>
         </div>
         <div className="row graphs-row">
