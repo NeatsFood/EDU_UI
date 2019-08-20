@@ -43,6 +43,7 @@ class DeviceHomepage extends Component {
         <NavBar />
         <div className="row m-2 p-2">
           <DevicesDropdown
+            cookies={this.props.cookies}
             userToken={userToken}
             onSelectDevice={this.onSelectDevice}
           />

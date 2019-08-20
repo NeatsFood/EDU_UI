@@ -13,6 +13,7 @@ const DEVICES_ENDPOINT = '/api/get_user_devices/';
  * DevicesDropdown
  *
  * props
+ * - cookies (object): Interface to access browser cookies.
  * - userToken (string): Users unique access token.
  * - onSelectDevice (function): Callback for when a device is selected from the dropdown.
  */
@@ -40,7 +41,7 @@ export class DevicesDropdown extends React.PureComponent {
     console.log('Fetching devices');
 
     // Get parameters
-    const { userToken } = this.props;
+    const { userToken, cookies } = this.props;
 
     // Fetch devices from api
     return fetch(REACT_APP_FLASK_URL + DEVICES_ENDPOINT, {
@@ -67,8 +68,7 @@ export class DevicesDropdown extends React.PureComponent {
       if (response_code !== 200 || raw_devices.length === 0) {
         const device = { name: 'No Devices', uuid: null, registration_number: null }
         devices.push(device);
-        this.setState({ device, devices });
-        this.props.onSelectDevice(device);
+        this.setState({ device, devices }, () => this.props.onSelectDevice(device));
         return;
       }
 
@@ -82,60 +82,32 @@ export class DevicesDropdown extends React.PureComponent {
         });
       }
 
-      // Update state
-      const device = devices[0];
-      this.setState({ device, devices });
-      this.props.onSelectDevice(device);
+      // Check for saved device
+      const savedDeviceUuid = cookies.get('selected_device_uuid', { path: '/' });
+      console.log('savedDeviceUuid', savedDeviceUuid);
+      let device = devices.find(device => device.uuid === savedDeviceUuid);
+      if (!device) {
+        device = devices[0];
+        // cookies.set('selected_device_uuid', device.uuid, { path: '/' });
+      }
 
-      // TODO: Update devices in state and cookies
-      // this.setState({
-      //   devices: devices_map
-      // }, () => {
-      //   if (!this.restoreSelectedDevice()) {
-      //     this.onSelectDevice(devices[0].device_uuid)
-      //   }
-      // });
+      // Update state and cookies
+      this.setState({ device, devices }, () => this.props.onSelectDevice(device));
     })
   }
-
-  saveSelectedDevice = () => {
-    const selected_device_uuid = this.state.selected_device_uuid;
-    if (selected_device_uuid) {
-      this.props.cookies.set('selected_device_uuid', selected_device_uuid, { path: '/' });
-    } else {
-      this.props.cookies.remove('selected_device_uuid', { path: '/' });
-    }
-  };
-
-  restoreSelectedDevice = () => {
-    const saved_device_uuid = this.props.cookies.get('selected_device_uuid', { path: '/' });
-    if (!saved_device_uuid) return;
-
-    const device = this.state.devices.get(saved_device_uuid);
-    if (device) {
-      this.onSelectDevice(saved_device_uuid);
-      return true;
-    }
-    return false;
-  };
 
   onSelectDevice = (e) => {
     const deviceUuid = e.target.value;
     const { devices } = this.state;
     const device = devices.find(device => device.uuid === deviceUuid);
     console.log('Selected device:', device);
-    this.setState({ device });
-    this.props.onSelectDevice(device);
-    // this.setState({ device }, () => this.props.onSelectDevice(device));
+    this.setState({ device }, () => this.props.onSelectDevice(device));
+    this.props.cookies.set('selected_device_uuid', device.uuid, { path: '/' });
   };
 
   render() {
     // Get parameters
     const { device, devices } = this.state;
-    // console.log('Rendering devices dropdown');
-    // console.log('devices:', devices);
-    // console.log('device', device);
-    // console.log('device.name', device.name);
 
     // Render components
     return (
