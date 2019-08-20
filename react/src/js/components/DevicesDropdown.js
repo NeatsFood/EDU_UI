@@ -6,8 +6,8 @@ import {
   DropdownItem
 } from 'reactstrap';
 
-const DEVICES_ENDPOINT = '/api/get_user_devices/';
 const { REACT_APP_FLASK_URL } = process.env;
+const DEVICES_ENDPOINT = '/api/get_user_devices/';
 
 /**
  * DevicesDropdown
@@ -22,7 +22,7 @@ export class DevicesDropdown extends React.PureComponent {
     this.state = {
       isOpen: false,
       devices: [],
-      device: { name: 'Loading' }
+      device: { name: 'Loading', uuid: null }
     };
   }
 
@@ -63,12 +63,12 @@ export class DevicesDropdown extends React.PureComponent {
       // Initialize devices
       const devices = [];
 
-      // Verify response code
+      // Validate response
       if (response_code !== 200 || raw_devices.length === 0) {
-        console.error('Unable to fetch devices, invalid response code:', response_code);
         const device = { name: 'No Devices', uuid: null, registration_number: null }
         devices.push(device);
         this.setState({ device, devices });
+        this.props.onSelectDevice(device);
         return;
       }
 
@@ -83,7 +83,9 @@ export class DevicesDropdown extends React.PureComponent {
       }
 
       // Update state
-      this.setState({ devices, device: devices[0] });
+      const device = devices[0];
+      this.setState({ device, devices });
+      this.props.onSelectDevice(device);
 
       // TODO: Update devices in state and cookies
       // this.setState({
@@ -139,7 +141,7 @@ export class DevicesDropdown extends React.PureComponent {
     return (
       <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
         <DropdownToggle caret>
-          Test: {device.name}
+          {device.name}
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem header>Devices</DropdownItem>

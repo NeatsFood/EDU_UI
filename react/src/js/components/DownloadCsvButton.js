@@ -6,10 +6,10 @@ import { Button } from 'reactstrap';
  * Download CSV Button
  *
  * props
- * - selectedRecipeRunIndex (integer): The currently selected recipe run index.
- * - onSelectRecipeRun (function): callback for when a recipe run is selected from
- * the dropdown. Called with the recipe run index.
- * clicked.
+ * - userToken (string): Users unique access token.
+ * - device (object): Device name, uuid, and registration number. 
+ * - dataset (object): Dataset name, type, startDate, endDate.
+ * - onSelectDataset (function): Callback for when a dataset is selected from the dropdown.
  */
 export class DownloadCsvButton extends React.Component {
   csvLink = React.createRef()
@@ -17,21 +17,18 @@ export class DownloadCsvButton extends React.Component {
 
   fetchData = () => {
     // Get parameters
-    const { userToken, deviceUuid, selectedRecipeRun, selectedRecipeRunIndex } = this.props;
+    const { userToken, device, dataset } = this.props;
 
-    // Get default date range
-    const date = new Date();
-    let endTimestamp = date.toISOString().split('.')[0] + "Z"
-    date.setDate(date.getDate() - 30)
-    let startTimestamp = date.toISOString().split('.')[0] + "Z"
+    // Convert datetime objects to timestamp strings
+    const startTimestamp = dataset.startDate.toISOString().split('.')[0] + "Z";
 
-    // Check for specified recipe run
-    if (selectedRecipeRunIndex > 0) {
-      const { startDate, endDate } = selectedRecipeRun;
-      startTimestamp = startDate.toISOString().split('.')[0] + "Z";
-      if (endDate !== null) {
-        endTimestamp = endDate.toISOString().split('.')[0] + "Z";
-      }
+    // Check for currently running recipes
+    let endTimestamp;
+    if (dataset.endDate === null) {
+      const date = new Date();
+      endTimestamp = date.toISOString().split('.')[0] + "Z";
+    } else {
+      endTimestamp = dataset.endDate.toISOString().split('.')[0] + "Z";
     }
 
     // Request csv data from api
@@ -45,13 +42,13 @@ export class DownloadCsvButton extends React.Component {
         },
         body: JSON.stringify({
           'user_token': userToken,
-          'device_uuid': deviceUuid,
+          'device_uuid': device.uuid,
           'start_ts': startTimestamp,
           'end_ts': endTimestamp,
         })
       })
-      .then((response) => response.json())
-      .then((responseJson) => {
+      .then(async (response) => {
+        const responseJson = await response.json();
         const { CSV } = responseJson;
         this.setState({ data: CSV }, () => {
           this.csvLink.current.link.click() // Trigger csv download

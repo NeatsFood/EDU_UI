@@ -37,9 +37,7 @@ export class TimeseriesChart extends React.PureComponent {
   constructor(props) {
     super(props);
     const initialRange = new TimeRange([75 * 60 * 1000, 125 * 60 * 1000]);
-    this.device_uuid = props.device_uuid;
-    this.user_token = props.user_token;
-
+    
     // Storage for all the data channels
     const channels = {
       tempData: {
@@ -80,42 +78,43 @@ export class TimeseriesChart extends React.PureComponent {
   }
 
   componentDidMount() {
+    const { device, dataset } = this.props
+    console.log(`Timeseries chart mounted, device: ${device.name}, dataset: ${dataset.name}`);
     this.timerID = setInterval(
-      () => this.getData(this.props.device_uuid, this.props.user_token),
+      () => this.fetchData(device, dataset),
       1000 * 60 * 5  // update every 5 minutes
     );
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { device, dataset } = nextProps;
+    console.log(`Timeseries chart will receive props, device: ${device.name}, dataset: ${dataset.name}`);
+    if (device.name !== 'Loading' && dataset.name !== 'Loading') {
+        if (device !== this.props.device || dataset !== this.props.dataset) {
+          this.fetchData(device, dataset);
+        }
+      }
   }
 
   componentWillUnmount() {
     clearInterval(this.timerID);
   }
 
-  getData = (device_uuid, user_token) => {
-    console.log('Getting sensor and horticulture data')
-
+  fetchData = (device, dataset) => {
+    console.log('Fetching time series data');
     // Get parameters
-    const { selectedRecipeRun, selectedRecipeRunIndex } = this.props;
+    const { userToken } = this.props;
 
-    // TODO: Validate parameters
-    if (!device_uuid) {
-      console.log('Invalid device uuid')
-      return;
-    }
+    // Convert datetime objects to timestamp strings
+    const startTimestamp = dataset.startDate.toISOString().split('.')[0] + "Z";
 
-    // Get default date range
-    const date = new Date();
-    let end_ts = date.toISOString().split('.')[0] + "Z"
-    date.setDate(date.getDate() - 30)
-    let start_ts = date.toISOString().split('.')[0] + "Z"
-
-    // Check for specified recipe run
-    if (selectedRecipeRunIndex > 0) {
-      const { startDate, endDate } = selectedRecipeRun;
-      start_ts = startDate.toISOString().split('.')[0] + "Z";
-      console.log('endDate', endDate);
-      if (endDate !== null) {
-        end_ts = endDate.toISOString().split('.')[0] + "Z";
-      }
+    // Check for currently running recipes
+    let endTimestamp;
+    if (dataset.endDate === null) {
+      const date = new Date();
+      endTimestamp = date.toISOString().split('.')[0] + "Z";
+    } else {
+      endTimestamp = dataset.endDate.toISOString().split('.')[0] + "Z";
     }
 
     // Request data from api
@@ -129,22 +128,26 @@ export class TimeseriesChart extends React.PureComponent {
           'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
-          'user_token': user_token,
-          'device_uuid': device_uuid,
-          'start_ts': start_ts,
-          'end_ts': end_ts,
+          'user_token': userToken,
+          'device_uuid': device.uuid,
+          'start_ts': startTimestamp,
+          'end_ts': endTimestamp,
         })
       })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('responseJson:', responseJson);
+      .then(async (response) => {
+        // Parse response json
+        const responseJson = await response.json();
+
+        // TODO: Make this general case
         const { temp, RH, co2, leaf_count, plant_height } = responseJson;
-        console.log('leaf_count', leaf_count);
         sensorData["tempData"] = temp;
         sensorData["RHData"] = RH;
         sensorData["co2Data"] = co2;
         sensorData["leafCount"] = leaf_count;
         sensorData["plantHeight"] = plant_height;
+
+        // TODO: Parse data here
+
       })
       .then(() => {
         console.log("About to parse data");
@@ -152,121 +155,6 @@ export class TimeseriesChart extends React.PureComponent {
       })
       .catch(error => console.error('Unable to get data', error))
   };
-
-
-  getDataDeprecated = (device_uuid, user_token) => {
-    console.log('Getting data from old method')
-    if (device_uuid) {
-      // First get the Temp and Humidity data
-      var sensorData = {};
-      return fetch(process.env.REACT_APP_FLASK_URL +
-        '/api/get_temp_details/', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          },
-          body: JSON.stringify({
-            'user_token': user_token,
-            'selected_device_uuid': device_uuid
-          })
-        })
-        .then((response) => response.json())
-        .then((responseJson) => {
-
-          //console.log(responseJson)
-          if (responseJson["response_code"] === 200) {
-
-            let tempData = responseJson["results"]["temp"];
-            let RHData = responseJson["results"]["RH"];
-            let topTempData = responseJson["results"]["top_h2o_temp"];
-            let middleTempData = responseJson["results"]["middle_h2o_temp"];
-            let bottomTempData = responseJson["results"]["bottom_h2o_temp"];
-
-            sensorData["tempData"] = tempData;
-            sensorData["RHData"] = RHData;
-            sensorData["topTempData"] = topTempData;
-            sensorData["middleTempData"] = middleTempData;
-            sensorData["bottomTempData"] = bottomTempData;
-            console.log('tempData', tempData);
-          }
-        })
-        .then(() => {
-
-          // Get CO2 Data
-          return fetch(process.env.REACT_APP_FLASK_URL +
-            '/api/get_co2_details/', {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-              },
-              body: JSON.stringify({
-                'user_token': user_token,
-                'selected_device_uuid': device_uuid
-              })
-            })
-
-            .then((response) => response.json())
-            .then((responseJson) => {
-              //console.log("CO2 data");
-              //console.log(responseJson)
-              if (responseJson["response_code"] === 200) {
-
-                let co2Data = responseJson["results"];
-
-                sensorData["co2Data"] = co2Data;
-              }
-
-            });
-        })
-        // .then(() => {
-        //     // get the HorticultureDailyLogs
-        //     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_horticulture_daily_logs/', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Accept': 'application/json',
-        //             'Content-Type': 'application/json',
-        //             'Access-Control-Allow-Origin': '*'
-        //         },
-        //         body: JSON.stringify({
-        //             'user_token': user_token,
-        //             'device_uuid': device_uuid
-        //         })
-        //     })
-        //         .then((response) => response.json())
-        //         .then((responseJson) => {
-        //             //console.log(responseJson)
-        //             if (responseJson["response_code"] == 200) {
-        //                 sensorData["plantHeight"] = responseJson["plant_height_results"];
-        //                 sensorData["leafCount"] = responseJson["leaf_count_results"];
-        //             }
-        //         });
-        // })
-        .then(() => {
-          //console.log("About to parse data");
-          return this.parseData(this.state.displayChannels, this.state.channels, sensorData)
-        });
-
-    }
-  };
-
-  componentWillUpdate(nextProps, nextState, nextContext) {
-    if ((this.props.device_uuid !== nextProps.device_uuid)
-      || (this.props.selectedRecipeRunIndex !== nextProps.selectedRecipeRunIndex)) {
-      this.setState({ ready: false });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // if the device uuid or recipe runs dropdown has changed, well want to pull new data.
-    if ((this.props.device_uuid !== prevProps.device_uuid)
-      || (this.props.selectedRecipeRunIndex !== prevProps.selectedRecipeRunIndex)) {
-      this.getData(this.props.device_uuid, this.props.user_token);
-    }
-  }
 
   handleTrackerChanged = t => {
     this.setState({ tracker: t });
@@ -653,3 +541,104 @@ export class TimeseriesChart extends React.PureComponent {
     )
   }
 }
+
+
+
+// fetchDataDeprecated = (device_uuid, user_token) => {
+//   console.log('Getting data from old method')
+//   if (device_uuid) {
+//     // First get the Temp and Humidity data
+//     var sensorData = {};
+//     return fetch(process.env.REACT_APP_FLASK_URL +
+//       '/api/get_temp_details/', {
+//         method: 'POST',
+//         headers: {
+//           'Accept': 'application/json',
+//           'Content-Type': 'application/json',
+//           'Access-Control-Allow-Origin': '*'
+//         },
+//         body: JSON.stringify({
+//           'user_token': user_token,
+//           'selected_device_uuid': device_uuid
+//         })
+//       })
+//       .then((response) => response.json())
+//       .then((responseJson) => {
+
+//         //console.log(responseJson)
+//         if (responseJson["response_code"] === 200) {
+
+//           let tempData = responseJson["results"]["temp"];
+//           let RHData = responseJson["results"]["RH"];
+//           let topTempData = responseJson["results"]["top_h2o_temp"];
+//           let middleTempData = responseJson["results"]["middle_h2o_temp"];
+//           let bottomTempData = responseJson["results"]["bottom_h2o_temp"];
+
+//           sensorData["tempData"] = tempData;
+//           sensorData["RHData"] = RHData;
+//           sensorData["topTempData"] = topTempData;
+//           sensorData["middleTempData"] = middleTempData;
+//           sensorData["bottomTempData"] = bottomTempData;
+//           console.log('tempData', tempData);
+//         }
+//       })
+//       .then(() => {
+
+//         // Get CO2 Data
+//         return fetch(process.env.REACT_APP_FLASK_URL +
+//           '/api/get_co2_details/', {
+//             method: 'POST',
+//             headers: {
+//               'Accept': 'application/json',
+//               'Content-Type': 'application/json',
+//               'Access-Control-Allow-Origin': '*'
+//             },
+//             body: JSON.stringify({
+//               'user_token': user_token,
+//               'selected_device_uuid': device_uuid
+//             })
+//           })
+
+//           .then((response) => response.json())
+//           .then((responseJson) => {
+//             //console.log("CO2 data");
+//             //console.log(responseJson)
+//             if (responseJson["response_code"] === 200) {
+
+//               let co2Data = responseJson["results"];
+
+//               sensorData["co2Data"] = co2Data;
+//             }
+
+//           });
+//       })
+//       // .then(() => {
+//       //     // get the HorticultureDailyLogs
+//       //     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_horticulture_daily_logs/', {
+//       //         method: 'POST',
+//       //         headers: {
+//       //             'Accept': 'application/json',
+//       //             'Content-Type': 'application/json',
+//       //             'Access-Control-Allow-Origin': '*'
+//       //         },
+//       //         body: JSON.stringify({
+//       //             'user_token': user_token,
+//       //             'device_uuid': device_uuid
+//       //         })
+//       //     })
+//       //         .then((response) => response.json())
+//       //         .then((responseJson) => {
+//       //             //console.log(responseJson)
+//       //             if (responseJson["response_code"] == 200) {
+//       //                 sensorData["plantHeight"] = responseJson["plant_height_results"];
+//       //                 sensorData["leafCount"] = responseJson["leaf_count_results"];
+//       //             }
+//       //         });
+//       // })
+//       .then(() => {
+//         //console.log("About to parse data");
+//         return this.parseData(this.state.displayChannels, this.state.channels, sensorData)
+//       });
+
+//   }
+// };

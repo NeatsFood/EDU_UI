@@ -6,6 +6,8 @@ import {
   DropdownItem
 } from 'reactstrap';
 
+const TIME_WINDOWS = [{ name: 'Past 30 Days', type: 'time-window', durationDays: 30 }]
+
 /**
  * Recipe Runs Dropdown
  *
@@ -19,13 +21,19 @@ export class DatasetsDropdown extends React.PureComponent {
     super(props);
     this.state = {
       isOpen: false,
+      dataset: TIME_WINDOWS[0],
+      datasets: [TIME_WINDOWS],
     };
+    this.fetchDatasets = this.fetchDatasets.bind(this);
   }
 
-  componentDidMount() {
-    this.fetchDatasets();
+  componentWillReceiveProps(nextProps) {
+    const { device } = nextProps;
+    if (device !== this.props.device) {
+      console.log('Received new device:', device);
+      this.fetchDatasets(device);
+    }
   }
-
 
   toggle = () => {
     this.setState(prevState => {
@@ -34,26 +42,40 @@ export class DatasetsDropdown extends React.PureComponent {
   };
 
   onSelectDataset = (event) => {
-    const selectedRecipeRunIndex = event.target.value
-    this.props.onSelectRecipeRun(selectedRecipeRunIndex);
+    const index = event.target.value;
+    const { datasets } = this.state;
+    const dataset = datasets[index];
+    this.setState({ dataset }, () => this.props.onSelectDataset(dataset));
   };
 
-  fetchDatasets() {
-    const { selected_device_uuid } = this.props;
-    console.log('Fetching datasets for device: ', selected_device_uuid);
+  fetchDatasets(device) {
+    console.log('Fetching datasets for device.uuid: ', device.uuid);
 
-    // Initialize recipe run state
-    let recipeRuns = [{ name: 'Previous 30 Days', startDate: 0 }];
-    let selectedRecipeRunIndex = 0;
+    // Initialize time-window datasets
+    let datasets = [];
+    for (const timeWindow of TIME_WINDOWS) {
+      const { name, type, durationDays } = timeWindow;
+      const endDate = new Date();
+      const date = new Date();
+      date.setDate(date.getDate() - 30)
+      const startDate = new Date(date);
+      const dataset = { name, type, durationDays, startDate, endDate }
+      datasets.push(dataset);
+    }
 
     // Verify a device has been selected
-    if (selected_device_uuid === '') {
+    if (device.uuid === null) {
       console.log('No device selected');
-      this.setState({ recipeRuns, selectedRecipeRunIndex });
+      console.log('datasets', datasets);
+      const dataset = datasets[0];
+      this.setState({ dataset, datasets }, () => this.props.onSelectDataset(dataset));
       return;
     }
 
-    // Request recipe runs from data api
+    // Get request parameters
+    const { userToken } = this.props;
+
+    // Fetch recipe runs from api
     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_runs/', {
       method: 'POST',
       headers: {
@@ -62,35 +84,40 @@ export class DatasetsDropdown extends React.PureComponent {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token'),
-        'device_uuid': this.state.selected_device_uuid,
+        'user_token': userToken,
+        'device_uuid': device.uuid,
       })
     })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('responseJson:', responseJson);
-        const { response_code, runs } = responseJson;
-        console.log('runs:', runs);
+      .then(async (response) => {
 
-        // Verify valid response
-        if (response_code !== 200) {
-          console.log('Unable to get recipe runs');
-          console.log('responseJson:', responseJson);
-          this.setState({ recipeRuns, selectedRecipeRunIndex });
+        // Get json response
+        const responseJson = await response.json();
+        
+        // Get response parameters
+        const { response_code } = responseJson;
+        const runs = responseJson["runs"] || [];
+
+        // Validate response
+        if (response_code !== 200 || runs.length === 0) {
+          console.log('Did not fetch any new recipe runs');
+          console.log('datasets', datasets);
+          const dataset = datasets[0];
+          this.setState({ dataset, datasets }, () => this.props.onSelectDataset(dataset));
           return;
         }
 
         // Parse recipe runs
         for (const run of runs) {
-          console.log('Parsing run:', run);
+
+          // Get parameters
           const { recipe_name, start, end } = run;
 
-          // Verify valid recipe name
+          // Validate recipe name
           if (recipe_name === null || recipe_name === undefined) {
             continue;
           }
 
-          // Verify valid recipe start
+          // Validate recipe start
           if (start === null || start === undefined) {
             continue;
           }
@@ -114,30 +141,35 @@ export class DatasetsDropdown extends React.PureComponent {
           }
 
           // Update recipe runs list
-          recipeRuns.push({ name, startDate, endDate });
+          const type = 'recipe';
+          datasets.push({ name, type, startDate, endDate });
         }
 
-        // Update recipe runs state
-        this.setState({ recipeRuns, selectedRecipeRunIndex });
+        // Update datasets in state
+        console.log('datasets:', datasets)
+        const dataset = datasets[0];
+        this.setState({ dataset, datasets }, () => this.props.onSelectDataset(dataset));
       })
   }
 
   render() {
-    const { recipeRuns, selectedRecipeRunIndex } = this.props;
-    const selectedRecipeRun = recipeRuns[selectedRecipeRunIndex];
+    // Get parameters
+    const { dataset, datasets } = this.state;
 
+    // Render dropdown
     return (
       <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
         <DropdownToggle caret>
-          {selectedRecipeRun.name}
+          {dataset.name}
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem header>Datasets</DropdownItem>
-          {this.props.recipeRuns.map((recipeRun, index) =>
+          {datasets.map((dataset, index) =>
             <DropdownItem
+              key={index}
               value={index}
               onClick={this.onSelectDataset}>
-              {recipeRun.name}
+              {dataset.name}
             </DropdownItem>
           )}
         </DropdownMenu>

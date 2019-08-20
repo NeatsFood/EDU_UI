@@ -2,25 +2,19 @@ import React, { Component } from 'react';
 import '../scss/device_homepage.scss';
 import { withCookies } from "react-cookie";
 
+import NavBar from "./components/NavBar";
 import { DevicesDropdown } from './components/DevicesDropdown';
 import { DatasetsDropdown } from './components/DatasetsDropdown';
 import { DownloadCsvButton } from './components/DownloadCsvButton';
-import { TimeseriesChart } from "./components/timeseries_chart";
-import NavBar from "./components/NavBar";
+import { TimeseriesChart } from "./components/TimeseriesChart";
 
 class DeviceHomepage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      device: { name: 'Loading' }
+      device: { name: 'Loading', uuid: null },
+      dataset: { name: 'Loading' },
     };
-  }
-
-  componentDidMount() {
-    // this.fetchDevices()
-    // .then(() => {
-    //   this.fetchRecipeRuns();
-    // });
   }
 
   onSelectDevice = (device) => {
@@ -28,7 +22,6 @@ class DeviceHomepage extends Component {
     if (device !== this.state.device) {
       this.setState({ device });
     }
-    // TODO: Double check we don't need to re-fetch datasets
   };
 
   onSelectDataset = (dataset) => {
@@ -41,7 +34,8 @@ class DeviceHomepage extends Component {
   render() {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
-    const { device } = this.state;
+    const { device, dataset} = this.state;
+    console.log(`Rendering device homepage, device: ${device.name}, dataset: ${dataset.name}`);
 
     // Render components
     return (
@@ -59,22 +53,22 @@ class DeviceHomepage extends Component {
               onSelectDataset={this.onSelectDataset}
             />
           </div>
-          {/* <div style={{ paddingLeft: 20 }}>
+          <div style={{ paddingLeft: 20 }}>
             <DownloadCsvButton 
               userToken={userToken}
               device={device}
               dataset={dataset}
             />
-          </div> */}
+          </div>
         </div>
         <div className='row m-2'>
-          {/* <div className='col'>
+          <div className='col'>
             <TimeseriesChart
               userToken={userToken}
               device={device}
               dataset={dataset}
             />
-          </div> */}
+          </div>
         </div>
       </div>
     );
