@@ -6,7 +6,7 @@ import {withCookies} from "react-cookie";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
-import {DevicesDropdown} from './components/devices_dropdown';
+import {DevicesDropdown} from './components/DevicesDropdownDeprecated';
 import {AddDeviceModal} from './components/add_device_modal';
 
 // TODO: Replace this with the Bootstrap4 Progress Bar
