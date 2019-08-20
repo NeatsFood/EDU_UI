@@ -235,7 +235,9 @@ class DeviceHomepage extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
+        console.log('responseJson:', responseJson);
         const { response_code, runs } = responseJson;
+        console.log('runs:', runs);
 
         // Verify valid response
         if (response_code !== 200) {
@@ -247,23 +249,39 @@ class DeviceHomepage extends Component {
 
         // Parse recipe runs
         for (const run of runs) {
+          console.log('Parsing run:', run);
           const { recipe_name, start, end } = run;
-          run.startDate = new Date(Date.parse(start));
-          const startDay = run.startDate.getUTCDate();
-          const startMonth = run.startDate.getUTCMonth() + 1;
-          run.name = `${recipe_name} (${startMonth}/${startDay}-`;
+
+          // Verify valid recipe name
+          if (recipe_name === null || recipe_name === undefined) {
+            continue;
+          }
+
+          // Verify valid recipe start
+          if (start === null || start === undefined) {
+            continue;
+          }
+
+          // Initialize recipe run parameters
+          const startDate = new Date(Date.parse(start));
+          const startDay = startDate.getUTCDate();
+          const startMonth = startDate.getUTCMonth() + 1;
+          let name = `${recipe_name} (${startMonth}/${startDay}-`;
 
           // Check for currently running recipes
-          if (end !== null) {
-            run.endDate = new Date(Date.parse(end));
-            const endDay = run.endDate.getUTCDate();
-            const endMonth = run.endDate.getUTCMonth() + 1;
-            run.name += `${endMonth}/${endDay})`
+          let endDate;
+          if (end !== null && end !== undefined) {
+            endDate = new Date(Date.parse(end));
+            const endDay = endDate.getUTCDate();
+            const endMonth = endDate.getUTCMonth() + 1;
+            name += `${endMonth}/${endDay})`
           } else {
-            run.name += 'Current)';
-            run.endDate = null;
+            name += 'Current)';
+            endDate = null;
           }
-          recipeRuns.push(run);
+
+          // Update recipe runs list
+          recipeRuns.push({ name, startDate, endDate });
         }
 
         // Update recipe runs state
@@ -423,6 +441,7 @@ class DeviceHomepage extends Component {
         this.saveSelectedDevice();
         this.getCurrentStats(device_uuid);
         this.getHorticultureDailyLogs(device_uuid);
+        this.getRecipeRuns();
       });
     }
   };
