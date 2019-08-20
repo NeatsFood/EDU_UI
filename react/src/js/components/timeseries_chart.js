@@ -81,7 +81,7 @@ export class TimeseriesChart extends React.PureComponent {
 
   componentDidMount() {
     this.timerID = setInterval(
-      () => this.getData2(this.props.device_uuid, this.props.user_token),
+      () => this.getData(this.props.device_uuid, this.props.user_token),
       1000 * 60 * 5  // update every 5 minutes
     );
   }
@@ -90,7 +90,7 @@ export class TimeseriesChart extends React.PureComponent {
     clearInterval(this.timerID);
   }
 
-  getData2 = (device_uuid, user_token) => {
+  getData = (device_uuid, user_token) => {
     console.log('Getting sensor and horticulture data')
 
     // Get parameters
@@ -105,7 +105,7 @@ export class TimeseriesChart extends React.PureComponent {
     // Get default date range
     const date = new Date();
     let end_ts = date.toISOString().split('.')[0] + "Z"
-    date.setDate(date.getDate() - 28)
+    date.setDate(date.getDate() - 30)
     let start_ts = date.toISOString().split('.')[0] + "Z"
 
     // Check for specified recipe run
@@ -154,7 +154,7 @@ export class TimeseriesChart extends React.PureComponent {
   };
 
 
-  getData = (device_uuid, user_token) => {
+  getDataDeprecated = (device_uuid, user_token) => {
     console.log('Getting data from old method')
     if (device_uuid) {
       // First get the Temp and Humidity data
@@ -264,7 +264,7 @@ export class TimeseriesChart extends React.PureComponent {
     // if the device uuid or recipe runs dropdown has changed, well want to pull new data.
     if ((this.props.device_uuid !== prevProps.device_uuid)
       || (this.props.selectedRecipeRunIndex !== prevProps.selectedRecipeRunIndex)) {
-      this.getData2(this.props.device_uuid, this.props.user_token);
+      this.getData(this.props.device_uuid, this.props.user_token);
     }
   }
 

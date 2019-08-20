@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../scss/device_homepage.scss';
 import { withCookies } from "react-cookie";
+import { CSVLink, CSVDownload } from "react-csv";
 // import Plot from 'react-plotly.js';
 //import 'rc-time-picker/assets/index.css';
 //import Console from 'react-console-component';
@@ -8,6 +9,7 @@ import { withCookies } from "react-cookie";
 
 import { DevicesDropdown } from './components/devices_dropdown';
 import { RecipeRunsDropdown } from './components/recipe_runs_dropdown';
+import { DownloadCsvButton } from './components/download_csv_button';
 import { AddDeviceModal } from './components/add_device_modal';
 
 import { TimeseriesChart } from "./components/timeseries_chart";
@@ -35,8 +37,9 @@ class DeviceHomepage extends Component {
       selected_device: 'Loading',
       add_device_modal: false,
       add_device_error_message: '',
-      recipeRuns: [{ name: "All Previous Data" }],
+      recipeRuns: [{ name: "Previous 30 Days" }],
       selectedRecipeRunIndex: 0,
+      csvData: [],
     };
     this.getUserDevices = this.getUserDevices.bind(this);
     this.getCurrentStats = this.getCurrentStats.bind(this);
@@ -210,7 +213,7 @@ class DeviceHomepage extends Component {
     console.log('Getting recipe runs for device: ', selected_device_uuid);
 
     // Initialize recipe run state
-    let recipeRuns = [{ name: 'All Previous Data', startDate: 0 }];
+    let recipeRuns = [{ name: 'Previous 30 Days', startDate: 0 }];
     let selectedRecipeRunIndex = 0;
 
     // Verify a device has been selected
@@ -447,18 +450,80 @@ class DeviceHomepage extends Component {
   };
 
   onSelectRecipeRun = (recipeRunIndex) => {
-    console.log('Selected recipe run index:', recipeRunIndex);
     if (recipeRunIndex !== this.state.selectedRecipeRunIndex) {
+      const { recipeRuns } = this.state;
       this.setState({
         selectedRecipeRunIndex: recipeRunIndex,
+        selectedRecipeRun: recipeRuns[recipeRunIndex],
       });
     }
   };
+
+  getCsvData = () => {
+    console.log('Getting csv data')
+
+    // Get parameters
+    const user_token = this.props.cookies.get('user_token');
+    const { selected_device_uuid, selectedRecipeRun, selectedRecipeRunIndex } = this.state;
+
+    // Get default date range
+    const date = new Date();
+    let end_ts = date.toISOString().split('.')[0] + "Z"
+    date.setDate(date.getDate() - 30)
+    let start_ts = date.toISOString().split('.')[0] + "Z"
+
+    // Check for specified recipe run
+    if (selectedRecipeRunIndex > 0) {
+      const { startDate, endDate } = selectedRecipeRun;
+      start_ts = startDate.toISOString().split('.')[0] + "Z";
+      console.log('endDate', endDate);
+      if (endDate !== null) {
+        end_ts = endDate.toISOString().split('.')[0] + "Z";
+      }
+    }
+
+    // Request csv data from data api
+    return fetch(process.env.REACT_APP_FLASK_URL +
+      '/api/get_all_values_as_csv/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          'user_token': user_token,
+          'device_uuid': selected_device_uuid,
+          'start_ts': start_ts,
+          'end_ts': end_ts,
+        })
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log('responseJson:', responseJson);
+        const { CSV } = responseJson;
+        // console.log('CSV', CSV);
+        // const csvData = [
+        //   ["firstname", "lastname", "email"],
+        //   ["Ahmed", "Tomi", "ah@smthing.co.com"],
+        //   ["Raed", "Labes", "rl@smthing.co.com"],
+        //   ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+        // ];
+        // const csvData = responseJson
+        this.setState({ csvData: CSV })
+
+      })
+      .catch(error => console.error('Unable to get csv data', error))
+  };
+
+  
+
 
   render() {
     const user_token = this.props.cookies.get('user_token');
     const { selected_device_uuid, recipeRuns, selectedRecipeRunIndex } = this.state;
     const selectedRecipeRun = recipeRuns[selectedRecipeRunIndex];
+
     return (
       <div className="container-fluid p-0 m-0">
         <NavBar />
@@ -476,12 +541,34 @@ class DeviceHomepage extends Component {
               onSelectRecipeRun={this.onSelectRecipeRun}
             />
           </div>
+          {/* <div style={{ paddingLeft: 20 }}>
+            <Button size="small" onClick={this.downloadCsv}>Download CSV</Button>
+          </div> */}
+          <div style={{ paddingLeft: 20 }}>
+            {/* <CSVLink
+              data={this.state.csvData}
+              onClick={() => {
+                this.getCsvData();
+              }}
+              filename={"my-file.csv"}
+              className="btn btn-secondary"
+              target="_blank"
+            >
+              Download CSV
+            </CSVLink> */}
+            <DownloadCsvButton 
+              user_token={user_token}
+              device_uuid={selected_device_uuid}
+              selectedRecipeRun={selectedRecipeRun}
+              selectedRecipeRunIndex={selectedRecipeRunIndex}
+            />
+          </div>
         </div>
         <div className='row m-2'>
           <div className='col'>
             <TimeseriesChart
-              device_uuid={selected_device_uuid}
               user_token={user_token}
+              device_uuid={selected_device_uuid}
               selectedRecipeRun={selectedRecipeRun}
               selectedRecipeRunIndex={selectedRecipeRunIndex}
             />

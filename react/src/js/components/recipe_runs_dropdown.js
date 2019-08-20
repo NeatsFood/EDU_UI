@@ -43,7 +43,7 @@ export class RecipeRunsDropdown extends React.PureComponent {
           {selectedRecipeRun.name}
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem header>Recipe Runs</DropdownItem>
+          <DropdownItem header>Data Set</DropdownItem>
           {this.props.recipeRuns.map((recipeRun, index) =>
             <DropdownItem
               value={index}
