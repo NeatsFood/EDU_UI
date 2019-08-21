@@ -1,20 +1,32 @@
 import React, { Component } from 'react';
 import '../scss/device_homepage.scss';
-import { withCookies } from "react-cookie";
+import { withCookies } from 'react-cookie';
 
-import NavBar from "./components/NavBar";
+import NavBar from './components/NavBar';
 import { DevicesDropdown } from './components/DevicesDropdown';
 import { DatasetsDropdown } from './components/DatasetsDropdown';
 import { DownloadCsvButton } from './components/DownloadCsvButton';
-import { TimeseriesChart } from "./components/TimeseriesChart";
+import { TimeseriesChart } from './components/TimeseriesChart';
+import { AddDeviceModal } from './components/AddDeviceModal';
+
 
 class DeviceHomepage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       device: { name: 'Loading', uuid: null },
-      dataset: { name: 'Loading' },
+      dataset: { name: 'Loading', startDate: null, endDate: null },
+      showAddDeviceModal: false,
     };
+
+    // Create reference to devices dropdown so we can access fetch
+    // devices function. Currently using this method b/c anticipating 
+    // moving add device button out of the dropdown in the near future.
+    this.devicesDropdown = React.createRef();
+  }
+
+  fetchDevices = () => {
+    this.devicesDropdown.current.fetchDevices();
   }
 
   onSelectDevice = (device) => {
@@ -31,10 +43,18 @@ class DeviceHomepage extends Component {
     }
   };
 
+  toggleDeviceModal = () => {
+    this.setState(prevState => {
+      return {
+        showAddDeviceModal: !prevState.showAddDeviceModal,
+      }
+    });
+  }
+
   render() {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
-    const { device, dataset} = this.state;
+    const { device, dataset } = this.state;
     console.log(`Rendering device homepage, device: ${device.name}, dataset: ${dataset.name}`);
 
     // Render components
@@ -43,9 +63,11 @@ class DeviceHomepage extends Component {
         <NavBar />
         <div className="row m-2 p-2">
           <DevicesDropdown
+            ref={this.devicesDropdown}
             cookies={this.props.cookies}
             userToken={userToken}
             onSelectDevice={this.onSelectDevice}
+            onAddDevice={this.toggleDeviceModal}
           />
           <div style={{ paddingLeft: 20 }}>
             <DatasetsDropdown
@@ -55,7 +77,7 @@ class DeviceHomepage extends Component {
             />
           </div>
           <div style={{ paddingLeft: 20 }}>
-            <DownloadCsvButton 
+            <DownloadCsvButton
               userToken={userToken}
               device={device}
               dataset={dataset}
@@ -71,6 +93,12 @@ class DeviceHomepage extends Component {
             />
           </div>
         </div>
+        <AddDeviceModal
+          cookies={this.props.cookies}
+          isOpen={this.state.showAddDeviceModal}
+          toggle={this.toggleDeviceModal}
+          fetchDevices={this.fetchDevices}
+        />
       </div>
     );
   }
@@ -112,46 +140,7 @@ export default withCookies(DeviceHomepage);
 //     });
 // };
 
-// onSubmitDevice = (modal_state) => {
-//   console.log(JSON.stringify({
-//     'user_token': this.props.cookies.get('user_token'),
-//     'device_name': modal_state.device_name,
-//     'device_reg_no': modal_state.device_reg_no,
-//     'device_notes': modal_state.device_notes,
-//     'device_type': modal_state.device_type
-//   }));
-//   return fetch(process.env.REACT_APP_FLASK_URL + '/api/register/', {
-//     method: 'POST',
-//     headers: {
-//       'Accept': 'application/json',
-//       'Content-Type': 'application/json',
-//       'Access-Control-Allow-Origin': '*'
-//     },
-//     body: JSON.stringify({
-//       'user_uuid': this.state.user_uuid,
-//       'user_token': this.props.cookies.get('user_token'),
-//       'device_name': modal_state.device_name,
-//       'device_reg_no': modal_state.device_reg_no,
-//       'device_notes': modal_state.device_notes,
-//       'device_type': modal_state.device_type
-//     })
-//   })
-//     .then((response) => response.json())
-//     .then((responseJson) => {
-//       //console.log(responseJson)
-//       if (responseJson["response_code"] === 200) {
-//         this.toggleDeviceModal();
-//         this.fetchDevices()
-//       } else {
-//         this.setState({
-//           add_device_error_message: responseJson["message"]
-//         });
-//       }
-//     })
-//     .catch((error) => {
-//       console.error(error);
-//     });
-// };
+
 
 
 // getCurrentStats(device_uuid) {
@@ -305,7 +294,7 @@ export default withCookies(DeviceHomepage);
 // toggleDeviceModal = () => {
 //   this.setState(prevState => {
 //     return {
-//       add_device_modal: !prevState.add_device_modal,
+//       showAddDeviceModal: !prevState.showAddDeviceModal,
 //       add_device_error_message: ''
 //     }
 //   });
@@ -327,7 +316,7 @@ export default withCookies(DeviceHomepage);
 //     leaf_count_results_layout: { title: '', width: 1, height: 1 },
 //     devices: new Map(),
 //     device: 'Loading',
-//     add_device_modal: false,
+//     showAddDeviceModal: false,
 //     add_device_error_message: '',
 //     recipeRuns: [{ name: "Previous 30 Days" }],
 //     selectedRecipeRunIndex: 0,

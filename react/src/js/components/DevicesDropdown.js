@@ -60,7 +60,7 @@ export class DevicesDropdown extends React.PureComponent {
       // Get response parameters
       const { response_code, results } = responseJson;
       const raw_devices = results["devices"] || [];
-
+      
       // Initialize devices
       const devices = [];
 
@@ -113,7 +113,8 @@ export class DevicesDropdown extends React.PureComponent {
     return (
       <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
         <DropdownToggle caret>
-          {device.name}
+          {device.name} {device.registration_number !== undefined
+            ? `(${device.registration_number})` : ''}
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem header>Devices</DropdownItem>
