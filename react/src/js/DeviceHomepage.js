@@ -9,7 +9,6 @@ import { DownloadCsvButton } from './components/DownloadCsvButton';
 import { TimeseriesChart } from './components/TimeseriesChart';
 import { AddDeviceModal } from './components/AddDeviceModal';
 
-
 class DeviceHomepage extends Component {
   constructor(props) {
     super(props);

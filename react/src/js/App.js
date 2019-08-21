@@ -6,7 +6,7 @@ import RequireOAuth from './auth/RequireOAuth';
 
 import landingPage from "./LandingPage";
 import Home from './home';
-import DeviceHomepage from './device_homepage';
+import DeviceHomepage from './DeviceHomepage';
 import profile from './profile';
 import recipes from "./recipes";
 import RecipeDetails from "./recipe_details";

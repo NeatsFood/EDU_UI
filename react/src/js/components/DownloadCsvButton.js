@@ -32,6 +32,8 @@ export class DownloadCsvButton extends React.Component {
     }
 
     // Request csv data from api
+    // TODO: This should not be a new request, we already have this data
+    // in the chart...it's just in another format
     fetch(process.env.REACT_APP_FLASK_URL +
       '/api/get_all_values_as_csv/', {
         method: 'POST',
