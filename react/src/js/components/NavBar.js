@@ -14,7 +14,12 @@ import '../../scss/header.scss'
 
 const NavBar = () => {
     const {logout} = useAuth0();
-    // TODO: Use this to redirect back to '/' so we can log in properly with our old user_tokens...
+
+    const logoutWithRedirect = () =>
+        logout({
+            returnTo: window.location.origin
+        });
+
     return (
         <div className="header row p-1">
             <div className="col-2">
@@ -51,7 +56,7 @@ const NavBar = () => {
             </div>
             <div className="col-2">
                 <NavLink to="/">
-                    <div className="load-1" onClick={() => logout()}>
+                    <div className="load-1" onClick={() => logoutWithRedirect()}>
                         <img className="home-icon" src={logoutIcon} alt=''/>
                         <div className="label">Logout</div>
                     </div>
