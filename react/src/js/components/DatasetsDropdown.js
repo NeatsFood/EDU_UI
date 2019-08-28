@@ -107,6 +107,7 @@ export class DatasetsDropdown extends React.PureComponent {
         }
 
         // Parse recipe runs
+        let prevStartDate = null;
         for (const run of runs) {
 
           // Get parameters
@@ -136,9 +137,27 @@ export class DatasetsDropdown extends React.PureComponent {
             const endMonth = endDate.getUTCMonth() + 1;
             name += `${endMonth}/${endDay})`
           } else {
-            name += 'Current)';
-            endDate = null;
+            console.log('Got potential current recipe, name:', name);
+
+            // Check for false current recipes, only the most recent 'current' recipe can 
+            // be correct, the older 'current' recipes must come from a data infrastructure 
+            // or data reporting bug where a recipe end event message is never stored.
+            // To shield the user from this bug, just assume the older 'current' recipes
+            // ended when the next recipe started.
+
+            if (prevStartDate === null) { // The latest 'current' recipe (i.e. the correct one)
+              name += 'Current)';
+              endDate = null;
+            } else {
+              endDate = prevStartDate;
+              const endDay = endDate.getUTCDate();
+              const endMonth = endDate.getUTCMonth() + 1;
+              name += `${endMonth}/${endDay})`
+            }
           }
+
+          // Keep track of previous recipe start date in case of falsly reported 'current' recipe bug
+          prevStartDate = startDate;
 
           // Update recipe runs list
           const type = 'recipe';
