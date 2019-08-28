@@ -256,7 +256,7 @@ class recipes extends Component {
       <div className="container-fluid p-0 m-0">
         <NavBar />
         <div className="row p-2 align-content-center">
-          <div className="col">
+          {/* <div className="col">
             <ButtonGroup>
               <Button
                 onClick={() => this.newRecipe()}
@@ -264,8 +264,8 @@ class recipes extends Component {
                 Create a New Recipe
                                 </Button>
             </ButtonGroup>
-          </div>
-          <div className="col">
+          </div> */}
+          {/* <div className="col">
             <ButtonGroup>
               <Button
                 outline
@@ -292,7 +292,7 @@ class recipes extends Component {
                 My Saved Recipes
                             </Button>
             </ButtonGroup>
-          </div>
+          </div> */}
         </div>
         <div className="row p-2">
           <div className="col m-3">

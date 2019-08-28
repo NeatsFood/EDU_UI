@@ -50,8 +50,9 @@ export class RecipeCard extends React.Component {
       share_but = <Button size="sm" value={this.props.recipe.recipe_uuid}
         onClick={this.onShareRecipe}>Share</Button>;
     } else { // for all common recipes
-      save_but = <Button size="sm" value={this.props.recipe.recipe_uuid}
-        onClick={this.onSaveRecipe}>Save</Button>;
+      // TODO: Uncomment this when re-instating shared / saved recipes
+      // save_but = <Button size="sm" value={this.props.recipe.recipe_uuid}
+      //   onClick={this.onSaveRecipe}>Save</Button>;
     }
     return (
       <Card>
@@ -65,15 +66,27 @@ export class RecipeCard extends React.Component {
           <h6 className="text-muted">
             {this.props.recipe.recipe_json.description.brief}
           </h6>
+
+          <div className='text-right'>
+            {edit_but}{' '}
+            <Button size="sm" value={this.props.recipe.recipe_uuid}
+              onClick={this.onSelectRecipe}>View</Button>{' '}
+            {delete_but}{' '}
+            {save_but}{' '}
+            {share_but}
+          </div>
+
         </CardBody>
-        <CardFooter>
-          {edit_but}{' '}
-          <Button size="sm" value={this.props.recipe.recipe_uuid}
-            onClick={this.onSelectRecipe}>View</Button>{' '}
-          {delete_but}{' '}
-          {save_but}{' '}
-          {share_but}
-        </CardFooter>
+        {/* <CardFooter>
+          <div className='text-right'>
+            {edit_but}{' '}
+            <Button size="sm" value={this.props.recipe.recipe_uuid}
+              onClick={this.onSelectRecipe}>View</Button>{' '}
+            {delete_but}{' '}
+            {save_but}{' '}
+            {share_but}
+          </div>
+        </CardFooter> */}
       </Card>
     )
   }
