@@ -77,16 +77,6 @@ export class RecipeCard extends React.Component {
           </div>
 
         </CardBody>
-        {/* <CardFooter>
-          <div className='text-right'>
-            {edit_but}{' '}
-            <Button size="sm" value={this.props.recipe.recipe_uuid}
-              onClick={this.onSelectRecipe}>View</Button>{' '}
-            {delete_but}{' '}
-            {save_but}{' '}
-            {share_but}
-          </div>
-        </CardFooter> */}
       </Card>
     )
   }

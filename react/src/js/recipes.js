@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
-import { Button, ButtonGroup } from 'reactstrap';
+// import { Button, ButtonGroup } from 'reactstrap';
 import { RecipeCard } from './components/recipe/recipe_card';
 import { ConfirmationModal } from './components/confirmation_modal';
 import NavBar from "./components/NavBar";
@@ -79,6 +79,8 @@ class recipes extends Component {
           const own_uuid = responseJson['user_uuid'];
           const recipes = responseJson['results'];
 
+          // recipes.sort((a, b) => (a.name > b.name) ? 1 : -1)
+
           let all_recipes_map = new Map();
           let user_recipes_map = new Map();
           let shared_recipes_map = new Map();
@@ -101,6 +103,8 @@ class recipes extends Component {
               }
             }
           }
+          console.log('recipes', recipes);
+          console.log('all_recipes_map', all_recipes_map)
 
           this.setState({
             all_recipes: all_recipes_map,
@@ -164,7 +168,7 @@ class recipes extends Component {
         console.log(`Recipe: ${recipe.recipe_uuid} saved.`);
 
         // add to shared or user recipes map
-        if (shared == 'true') {
+        if (shared === 'true') {
           const shared_recipes_map = new Map(this.state.shared_recipes);
           shared_recipes_map.set(recipe.recipe_uuid, recipe);
           this.setState({ shared_recipes: shared_recipes_map });
@@ -239,6 +243,21 @@ class recipes extends Component {
           recipes = [...this.state.all_recipes.values()]
       }
 
+      // for (const recipe of recipes) {
+      //   console.log('recipe name', recipe.name);
+      //   listRecipes.push(
+      //     <RecipeCard
+      //       key={recipe.recipe_uuid}
+      //       by_user={recipe.by_user}
+      //       recipe={recipe}
+      //       users_recipe={this.state.filter_recipe_button_state === 'user'}
+      //       onSelectRecipe={this.goToRecipe}
+      //       onSaveRecipe={this.onSaveRecipe}
+      //       onDeleteRecipe={this.onDeleteRecipe}
+      //       onEditRecipe={this.editRecipe}
+      //     />
+      //   )
+      // }
       listRecipes.push(recipes.map((recipe) =>
         <RecipeCard
           key={recipe.recipe_uuid}
@@ -262,7 +281,7 @@ class recipes extends Component {
                 onClick={() => this.newRecipe()}
                 color="secondary">
                 Create a New Recipe
-                                </Button>
+              </Button>
             </ButtonGroup>
           </div> */}
           {/* <div className="col">
@@ -274,7 +293,7 @@ class recipes extends Component {
                 color="primary"
               >
                 Common Recipes
-                            </Button>
+              </Button>
               <Button
                 outline
                 onClick={() => this.onFilterRecipe('shared')}
@@ -282,7 +301,7 @@ class recipes extends Component {
                 color="primary"
               >
                 Shared Recipes
-                            </Button>
+              </Button>
               <Button
                 outline
                 onClick={() => this.onFilterRecipe('user')}
@@ -290,7 +309,7 @@ class recipes extends Component {
                 color="primary"
               >
                 My Saved Recipes
-                            </Button>
+              </Button>
             </ButtonGroup>
           </div> */}
         </div>

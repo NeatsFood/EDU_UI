@@ -9,7 +9,7 @@ import Home from './home';
 import DeviceHomepage from './DeviceHomepage';
 import profile from './profile';
 import recipes from "./recipes";
-import RecipeDetails from "./recipe_details";
+import RecipeDetails from "./RecipeDetails";
 import EditRecipe from "./edit_recipe";
 import HorticultureSuccess from "./horticulture_success";
 
