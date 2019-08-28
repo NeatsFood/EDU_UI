@@ -37,7 +37,7 @@ export class TimeseriesChart extends React.PureComponent {
   constructor(props) {
     super(props);
     const initialRange = new TimeRange([75 * 60 * 1000, 125 * 60 * 1000]);
-    
+
     // Storage for all the data channels
     const channels = {
       tempData: {
@@ -90,10 +90,10 @@ export class TimeseriesChart extends React.PureComponent {
     const { device, dataset } = nextProps;
     console.log(`Timeseries chart will receive props, device: ${device.name}, dataset: ${dataset.name}`);
     if (device.name !== 'Loading' && dataset.name !== 'Loading') {
-        if (device !== this.props.device || dataset !== this.props.dataset) {
-          this.fetchData(device, dataset);
-        }
+      if (device !== this.props.device || dataset !== this.props.dataset) {
+        this.fetchData(device, dataset);
       }
+    }
   }
 
   componentWillUnmount() {
@@ -328,12 +328,16 @@ export class TimeseriesChart extends React.PureComponent {
   };
 
   renderChannelsChart = () => {
-    const { displayChannels, channels, timerange } = this.state;
-
+    const { channels, timerange } = this.state;
+    const displayChannels = this.state.displayChannels || [];
     const rows = [];
     displayChannels.forEach((channelName) => {
+      const channel = channels[channelName] || null;
+      let series = null;
+      if (channel !== null) {
+        series = channel.series;
+      }
 
-      let series = channels[channelName].series;
       //const label = channels[channelName].label;
       //const max = channels[channelName].max;
       //const min = channels[channelName].min;
@@ -349,10 +353,13 @@ export class TimeseriesChart extends React.PureComponent {
         if (this.state.tracker) {
           const fmt = format(channels[channelName].format);
           let shortSeries = series.crop(timerange);
-          const i = shortSeries.bisect(new Date(this.state.tracker));
-          const vv = shortSeries.at(i).get(channelName);
-          if (vv) {
-            value = fmt(vv);
+          const i = shortSeries.bisect(new Date(this.state.tracker)) || null;
+          if (i !== null) {
+            const seriesAt = shortSeries.at(i);
+            const vv = seriesAt.get(channelName);
+            if (vv) {
+              value = fmt(vv);
+            }
           }
           /*
           const approx =
