@@ -46,14 +46,14 @@ const NavBar = () => {
                     </div>
                 </NavLink>
             </div>
-            <div className="col-2">
+            {/* <div className="col-2">
                 <NavLink to="/profile" activeClassName='load-1-active'>
                     <div className="load-1">
                         <img className="home-icon" src={profileIcon} alt=''/>
                         <div className="label">Profile</div>
                     </div>
                 </NavLink>
-            </div>
+            </div> */}
             <div className="col-2">
                 <NavLink to="/">
                     <div className="load-1" onClick={() => logoutWithRedirect()}>
