@@ -78,10 +78,12 @@ export class TimeseriesChart extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { device, dataset } = this.props
-    console.log(`Timeseries chart mounted, device: ${device.name}, dataset: ${dataset.name}`);
+    console.log('Timeseries chart mounted');
     this.timerID = setInterval(
-      () => this.fetchData(device, dataset),
+      () => {
+        const { device, dataset } = this.props;
+        this.fetchData(device, dataset);
+      },
       1000 * 60 * 5  // update every 5 minutes
     );
   }
@@ -102,19 +104,22 @@ export class TimeseriesChart extends React.PureComponent {
 
   fetchData = (device, dataset) => {
     console.log('Fetching time series data');
+
     // Get parameters
     const { userToken } = this.props;
+    const { startDate, endDate } = dataset;
+    console.log(`startDate: ${startDate}, endDate: ${endDate}`);
 
     // Convert datetime objects to timestamp strings
-    const startTimestamp = dataset.startDate.toISOString().split('.')[0] + "Z";
+    const startTimestamp = startDate.toISOString().split('.')[0] + "Z";
 
     // Check for currently running recipes
     let endTimestamp;
-    if (dataset.endDate === null) {
+    if (endDate === null) {
       const date = new Date();
       endTimestamp = date.toISOString().split('.')[0] + "Z";
     } else {
-      endTimestamp = dataset.endDate.toISOString().split('.')[0] + "Z";
+      endTimestamp = endDate.toISOString().split('.')[0] + "Z";
     }
 
     // Request data from api
