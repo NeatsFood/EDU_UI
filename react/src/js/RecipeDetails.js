@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
-import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import basil from '../images/basil.jpg'
+import { Card, Media, Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import NavBar from "./components/NavBar";
 
 class RecipeDetails extends Component {
@@ -88,6 +87,8 @@ class RecipeDetails extends Component {
         const { response_code, devices } = responseJson;
         let { recipe } = responseJson;
         recipe = JSON.parse(recipe);
+        const imageUrl = recipe["image_url"] || "https://cdn.shopify.com/s/files/1/0156/0137/products/refill_0012_basil.jpg?v=1520501227";
+        this.setState({ imageUrl });
 
         // Validate response
         if (response_code === 200) {
@@ -175,76 +176,34 @@ class RecipeDetails extends Component {
   }
 
   render() {
+    // Get parameters
+    const {
+      name, description, cultivation_methods, authors, imageUrl, total_run_time,
+    } = this.state;
+
+    // Renger component
     return (
-      <div className="container-fluid p-0 m-0">
+      <div>
         <NavBar />
-        <div className="row home-row">
-          <div className="col-md-3">
-            <div className="row card-row image-row">
-              <img src={basil} className="image-recipe" height="300" alt='' />
-            </div>
-          </div>
-
-          <div className="col-md-9 add-padding">
-            <div className="row card-row">
-              <div className="col-md-12">
-                <div className="row padded-left-row">
-                  <div className="col-md-12 ">
-                    <h3>{this.state.name}</h3>
-                  </div>
-                </div>
-
-                <div className="row padded-row">
-                  <div className="col-md-12">
-                    <div className="row">
-                      <div className="col-md-12">
-
-                        <div className="row">
-                          <div className="col-md-3 text-right"><b>Description</b></div>
-                          <div className="col-md-9">{this.state.description}</div>
-                        </div>
-
-                        <div className="row">
-                          <div className="col-md-3 text-right"><b>Authors</b></div>
-                          <div className="col-md-9">{this.state.authors}</div>
-                        </div>
-
-                        <div className="row">
-                          <div className="col-md-3 text-right"><b>Cultivars</b></div>
-                          <div className="col-md-9">{this.state.cultivars}</div>
-                        </div>
-
-                        <div className="row">
-                          <div className="col-md-3 text-right"><b>Cultivation Methods</b></div>
-                          <div className="col-md-9">{this.state.cultivation_methods}</div>
-                        </div>
-
-                        <div className="row">
-                          <div className="col-md-3 text-right"><b>Modified</b></div>
-                          <div className="col-md-9">{this.state.modified}</div>
-                        </div>
-
-                        <div className="row">
-                          <div className="col-md-3 text-right"><b>Run Time</b></div>
-                          <div className="col-md-9">{this.state.total_run_time}</div>
-                        </div>
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="row home-row">
-          <div className="col-md-9 add-padding  color-button">
-            <button className="apply-button btn btn-secondary" onClick={this.toggleApplyToDevice}>
-              Run this recipe on your Food Computer
-            </button>
-          </div>
-        </div>
+        <Card style={{ margin: 20 }}>
+          <Media>
+            <Media left href="#">
+              <Media object src={imageUrl} style={{ maxHeight: 400, maxWidth: 400 }} />
+            </Media>
+            <Media body style={{ margin: 20 }}>
+              <Media heading>{name}</Media>
+              <p>{description}</p>
+              <p>
+                {/* <strong>Duration:</strong> {total_run_time} <br /> */}
+                <strong>Method:</strong> {cultivation_methods} <br />
+                <strong>Author:</strong> {authors} <br />
+              </p>
+              <button className="apply-button btn btn-secondary" onClick={this.toggleApplyToDevice}>
+                Run this recipe on your Food Computer
+              </button>
+            </Media>
+          </Media>
+        </Card>
         <Modal
           isOpen={this.state.apply_to_device_modal}
           toggle={this.toggleApplyToDevice}
@@ -254,7 +213,7 @@ class RecipeDetails extends Component {
             toggle={this.toggleApplyToDevice}
           >
             Select a device to apply this recipe to
-                    </ModalHeader>
+          </ModalHeader>
           <ModalBody>
             <Input
               type="select"
@@ -277,7 +236,6 @@ class RecipeDetails extends Component {
           </ModalFooter>
         </Modal>
       </div>
-
     )
   }
 }

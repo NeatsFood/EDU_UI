@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withCookies} from "react-cookie";
-import '../scss/horticulture_success.scss';
+// import '../scss/horticulture_success.scss';
 import {Button, Input} from 'reactstrap';
 import darkgreen from "../images/dark_green.png";
 import lushgreen from "../images/lush_green.png";
@@ -13,6 +13,7 @@ import brown_root from "../images/brown.png";
 import brownish_root from "../images/brownish_root.png";
 import white_root from "../images/white_root.png";
 import classNames from 'classnames';
+import NavBar from "./components/NavBar";
 
 class HorticultureSuccess extends Component {
     constructor(props) {
@@ -151,7 +152,8 @@ class HorticultureSuccess extends Component {
     render() {
         return (
 
-            <div className="horticulture-container">
+            <div className="container-fluid p-0 m-0">
+                <NavBar/>
 
                 {this.state.successfully_submitted ? <div className="row measurements-row">
                     <div className="row">
@@ -167,12 +169,9 @@ class HorticultureSuccess extends Component {
                 </div> : <div>
                     <div className="row measurements-row">
                         <div className="col-md-12">
-                            <div className="row">
-                                <a href="/device_homepage" className="goback-text"> Back to device homepage</a>
-                            </div>
-                            <div className="row">
+
                                 <h3> Horticulture Measurements </h3>
-                            </div>
+
                         </div>
                     </div>
                     <div className="row measurements-row">
@@ -316,7 +315,7 @@ class HorticultureSuccess extends Component {
                                                               onClick={this.selectRootColor.bind(this, "WHITE")}/></div>
                                     <div className="row">White</div>
                                 </div>
-                                l
+
                                 <div className="col-md-2">
                                     <div className="row"><img className={classNames({
                                         'leaf-wither': true,
@@ -442,7 +441,6 @@ class HorticultureSuccess extends Component {
                         </div>
                     </div>
                 </div>}
-
             </div>
         )
     }

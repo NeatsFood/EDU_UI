@@ -1,8 +1,9 @@
 import React from "react";
 import {withCookies} from "react-cookie";
-import {Table, Button} from "reactstrap";
+import {Table, Button, Form, Input} from "reactstrap";
 import Select from 'react-select';
 import '../scss/edit_recipe.scss';
+import NavBar from "./components/NavBar";
 
 const new_recipe = {
     "format": "openag-phased-environment-v1",
@@ -53,7 +54,7 @@ class EditRecipe extends React.Component {
             selected_env_output: [],
             selected_cycle_env: [],
             phases: [],
-        }
+        };
         this.env_key = 0;
         this.phase_key = 0;
 
@@ -108,7 +109,7 @@ class EditRecipe extends React.Component {
                                      'email': null,
                                      'uuid': null});
         }
-        this.setState({recipe_obj: recipe_obj})
+        this.setState({recipe_obj: recipe_obj});
         event.preventDefault();
     }
 
@@ -122,7 +123,7 @@ class EditRecipe extends React.Component {
 
         let recipe_obj = this.state.recipe_obj;
         recipe_obj.description.brief = brief;
-        this.setState({recipe_obj: recipe_obj})
+        this.setState({recipe_obj: recipe_obj});
         event.preventDefault();
     }
 
@@ -136,7 +137,7 @@ class EditRecipe extends React.Component {
 
         let recipe_obj = this.state.recipe_obj;
         recipe_obj.description.verbose = verb;
-        this.setState({recipe_obj: recipe_obj})
+        this.setState({recipe_obj: recipe_obj});
         event.preventDefault();
     }
 
@@ -156,7 +157,7 @@ class EditRecipe extends React.Component {
             recipe_obj.cultivars.push({'name': cults_arr[i].trim(),
                                        'uuid': null});
         }
-        this.setState({recipe_obj: recipe_obj})
+        this.setState({recipe_obj: recipe_obj});
         event.preventDefault();
     }
 
@@ -176,7 +177,7 @@ class EditRecipe extends React.Component {
             recipe_obj.cultivation_methods.push({'name': meth_arr[i].trim(),
                                                  'uuid': null});
         }
-        this.setState({recipe_obj: recipe_obj})
+        this.setState({recipe_obj: recipe_obj});
         event.preventDefault();
     }
 
@@ -271,7 +272,7 @@ class EditRecipe extends React.Component {
             console.error('get_recipe_by_uuid:', error);
             this.setState({error_message: "Logic error"});
         });
-    }
+    };
 
     //-------------------------------------------------------------------------
     // Keys used to name react components so render() can track them.
@@ -1044,103 +1045,102 @@ class EditRecipe extends React.Component {
         }
 
         return (
-        <div className="edit-recipe-container">
-
-            <div className="button-row" key={this.getNextEnvKey()}>
+            <div className="container-fluid p-0 m-0">
+                <NavBar/>
+            <div className="row button-row" key={this.getNextEnvKey()}>
               <div className="col-md-1"></div>
               <div className="col-md-4">
                 {dupe_but}
               </div>
             </div>
 
-            <div className="button-row">
-              <div className="col-md-1"></div>
-              <div className="col-md-11">
-                <h3>{page_name}</h3>
+            <div className="row button-row">
+              <div className="col-md-4"><h3>{page_name}</h3></div>
+              <div className="col-md-8">
+
                 {this.state.error_message &&
                   <p style={{color: 'red'}}>{this.state.error_message}</p>
                 }
               </div>
             </div>
 
-            <form>
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Recipe Name:</b><br/>
-                  <input className="input-row" type="text" 
-                    placeholder="Recipe name."
-                    value={this.state.name}
-                    onChange={this.handleChangeRecipeName.bind(this)}/>
+            <Form className={"m-2"}>
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Recipe Name:</b></div>
+                <div className="col-md-10">
+                    <Input id={"recipeName"} name="recipeName" type={"text"} placeholder={"Recipe Name"} value={this.state.name} onChange={this.handleChangeRecipeName.bind(this)}/>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Authors:</b><br/>
-                  <input className="input-row" type="text" 
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Authors:</b></div>
+                <div className="col-md-10">
+                  <Input id={"authors"} name={"authors"} type="text"
                     placeholder="Authors names, comma separated."
                     value={this.state.authors}
                     onChange={this.handleChangeAuthors.bind(this)}/>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Modified:</b><br/>
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Modified:</b></div>
+                <div className="col-md-10">
                   {this.state.modified}
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>UUID:</b><br/>
+              <div className="row pb-1">
+                <div className="col-md-2"><b>UUID:</b></div>
+                <div className="col-md-10">
                   {this.state.recipe_obj.uuid}
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Brief Description:</b><br/>
-                  <input className="input-row" type="text" 
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Brief Description:</b></div>
+                <div className="col-md-10">
+                  <Input id={"briefDesc"} name={"breifDesc"} type="text"
                     placeholder="Short description of this recipe."
                     value={this.state.brief_desc}
                     onChange={this.handleChangeBrief.bind(this)}/>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Verbose Description:</b><br/>
-                  <textarea className="input-row" 
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Verbose Description:</b></div>
+                <div className="col-md-10">
+                  <Input id={"verboseDesc"} name={"verboseDesc"} type={"textarea"}
                     placeholder="Complete description of this recipe."
                     value={this.state.verbose_desc}
                     onChange={this.handleChangeVerbose.bind(this)}/>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Cultivars:</b><br/>
-                  <textarea className="input-row" 
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Cultivars:</b></div>
+                <div className="col-md-10">
+                  <Input id={"cultivars"} name={"cultivars"} type={"textarea"}
                     placeholder="Plant types you will grow, comma separated."
                     value={this.state.cultivars}
                     onChange={this.handleChangeCultivars.bind(this)}/>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Cultivation Methods:</b><br/>
-                  <textarea className="input-row" 
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Cultivation Methods:</b></div>
+                <div className="col-md-10">
+                  <Input id={"cultivationMethods"} name={"cultivationMethods"} type={"textarea"}
                     placeholder="Grow methods, comma separated."
                     value={this.state.cultivation_methods}
                     onChange={this.handleChangeCultivationMethods.bind(this)}/>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Environments:</b><br/>
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Environments:</b></div>
+              </div>
+            <div className="row pb-1">
+                <div className="col-md-12">
                   <Button className="submit-button-row" 
                    color="success"
                    onClick={this.handleAddEnv.bind(this)}>Add Environment</Button>
@@ -1161,9 +1161,11 @@ class EditRecipe extends React.Component {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="col-md-1"></div>
-                <div className="col-md-11"><b>Phases:</b><br/>
+              <div className="row pb-1">
+                <div className="col-md-2"><b>Phases:</b></div>
+              </div>
+            <div className="row pb-1">
+                <div className="col-md-12">
                   <Button className="submit-button-row" 
                    color="success"
                    onClick={this.handleAddPhase.bind(this)}>Add Phase</Button>
@@ -1184,7 +1186,7 @@ class EditRecipe extends React.Component {
                 </div>
               </div>
 
-              <div className="form-row">
+              <div className="row">
                 <div className="col-md-1"></div>
                 <div className="col-md-11"> 
                   {this.state.error_message &&
@@ -1195,7 +1197,7 @@ class EditRecipe extends React.Component {
                 </div>
               </div>
 
-            </form>
+            </Form>
         
         </div>
         );
