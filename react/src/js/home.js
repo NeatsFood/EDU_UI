@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardHeader, CardTitle, CardBody, CardText, CardFooter, Button } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
 
-// TODO: Replace this with the Bootstrap4 Progress Bar
-import { Line } from 'rc-progress';
-
-import NavBar from "./components/NavBar";
+import NavBar from './components/NavBar';
 import { DevicesDropdown } from './components/DevicesDropdown';
 import { AddDeviceModal } from './components/AddDeviceModal';
-import { DeviceImages } from "./components/device/device_images";
+import { DeviceImages } from './components/device/device_images';
+import { TakeMeasurementsModal } from './components/TakeMeasurementsModal';
 
 import '../scss/home.scss';
 
@@ -36,6 +34,7 @@ class Home extends Component {
       notifications: [],
       device: { name: 'Loading', uuid: null },
       showAddDeviceModal: false,
+      showTakeMeasurementsModal: false,
     };
 
     // Create reference to devices dropdown so we can access fetch devices function
@@ -60,10 +59,18 @@ class Home extends Component {
     }
   };
 
-  toggleDeviceModal = () => {
+  toggleAddDeviceModal = () => {
     this.setState(prevState => {
       return {
         showAddDeviceModal: !prevState.showAddDeviceModal,
+      }
+    });
+  }
+
+  toggleTakeMeasurementsModal = () => {
+    this.setState(prevState => {
+      return {
+        showTakeMeasurementsModal: !prevState.showTakeMeasurementsModal,
       }
     });
   }
@@ -168,12 +175,6 @@ class Home extends Component {
       });
   }
 
-  goToTakeMeasurments = () => {
-    let gotohorticulture = "/horticulture_success/" + this.state.selected_device_uuid;
-    this.props.history.push(gotohorticulture);
-    return false;
-  };
-
   render() {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
@@ -217,7 +218,7 @@ class Home extends Component {
             cookies={this.props.cookies}
             userToken={userToken}
             onSelectDevice={this.onSelectDevice}
-            onAddDevice={this.toggleDeviceModal}
+            onAddDevice={this.toggleAddDeviceModal}
           />
 
         </div>
@@ -226,13 +227,10 @@ class Home extends Component {
             <Col md="6">
               <Card style={{ marginBottom: 20, borderRadius: 0 }}>
                 <CardHeader>
-                  <Row style={{ backgroundColor: 'pink' }}>
-                    
-                  </Row>
                   <Button
                     size="sm"
                     className="float-right"
-                    onClick={() => this.setState({ showAddDeviceModal: true })}
+                    onClick={this.toggleTakeMeasurementsModal}
                   >
                     Add Device
                   </Button>
@@ -246,7 +244,12 @@ class Home extends Component {
                   </ul>
                 </CardBody>
                 <CardFooter>
-                  <Button style={{ width: '100%' }} onClick={this.goToTakeMeasurments}>Take Measurements</Button>
+                  <Button
+                    style={{ width: '100%' }}
+                    onClick={() => this.setState({ showTakeMeasurementsModal: true })}
+                  >
+                    Take Measurements
+                  </Button>
                 </CardFooter>
               </Card>
             </Col>
@@ -265,8 +268,14 @@ class Home extends Component {
         <AddDeviceModal
           cookies={this.props.cookies}
           isOpen={this.state.showAddDeviceModal}
-          toggle={this.toggleDeviceModal}
+          toggle={this.toggleAddDeviceModal}
           fetchDevices={this.fetchDevices}
+        />
+        <TakeMeasurementsModal
+          deviceUuid={device.uuid}
+          cookies={this.props.cookies}
+          isOpen={this.state.showTakeMeasurementsModal}
+          toggle={this.toggleTakeMeasurementsModal}
         />
       </div >
     );
