@@ -14,6 +14,7 @@ class recipes extends Component {
       shared_recipes: new Map(),
       filter_recipe_button_state: 'all',
       show_confirm_delete_modal: false,
+      ready: false,
     };
 
     this.toggleConfirmDelete = this.toggleConfirmDelete.bind(this);
@@ -103,13 +104,14 @@ class recipes extends Component {
               }
             }
           }
-          console.log('recipes', recipes);
-          console.log('all_recipes_map', all_recipes_map)
+
+          console.log('Got all recipes');
 
           this.setState({
             all_recipes: all_recipes_map,
             user_recipes: user_recipes_map,
-            shared_recipes: shared_recipes_map
+            shared_recipes: shared_recipes_map,
+            ready: true,
           });
         }
       })
@@ -271,6 +273,22 @@ class recipes extends Component {
         />
       ));
     }
+
+    const { ready } = this.state;
+
+    if (!ready) {
+      return (
+        <div className="container-fluid p-0 m-0">
+          <NavBar />
+          <div className={"row graphs-row mt-5 mb-5"}>
+            <div className="col-md-2 offset-5 text-center">
+              Loading Recipes...
+          </div>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="container-fluid p-0 m-0">
         <NavBar />

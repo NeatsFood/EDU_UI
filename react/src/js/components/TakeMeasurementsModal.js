@@ -39,8 +39,6 @@ export class TakeMeasurementsModal extends React.PureComponent {
   };
 
   onSubmit = (event) => {
-    console.log('Submitting measurements');
-
     // Prevent default
     event.preventDefault();
 
@@ -48,9 +46,6 @@ export class TakeMeasurementsModal extends React.PureComponent {
     const userToken = this.props.cookies.get('user_token');
     const { deviceUuid } = this.props;
     const { plantHeight, leafCount } = this.state;
-    console.log('Submitting measurements');
-    console.log('plantHeight', plantHeight);
-    console.log('leafCount', leafCount);
 
     // Send registration request to api
     return fetch(process.env.REACT_APP_FLASK_URL + '/api/daily_horticulture_measurements/', {
@@ -68,6 +63,7 @@ export class TakeMeasurementsModal extends React.PureComponent {
       })
     })
       .then(async (response) => {
+    
         // Parse response json
         const responseJson = await response.json();
 
@@ -122,7 +118,8 @@ export class TakeMeasurementsModal extends React.PureComponent {
               <Label for="leafCount">Leaf Count</Label>
               <Input
                 type="text"
-                name="leafCount" id="leafCount"
+                name="leafCount"
+                id="leafCount"
                 placeholder="E.g. 20"
                 value={leafCount}
                 onChange={this.onChange}
