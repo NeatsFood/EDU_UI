@@ -111,7 +111,7 @@ export class AddDeviceModal extends React.PureComponent {
                 type="text"
                 name="deviceName"
                 id="deviceName"
-                placeholder="E.g Caleb's FC" value={deviceName}
+                placeholder="E.g. Huey" value={deviceName}
                 onChange={this.onChange}
                 required
               />
@@ -121,6 +121,7 @@ export class AddDeviceModal extends React.PureComponent {
               <Input
                 type="text"
                 name="deviceNumber" id="deviceNumber"
+                placeholder="E.g. ABC123"
                 value={deviceNumber}
                 onChange={this.onChange}
                 required

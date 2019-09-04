@@ -1,41 +1,26 @@
 import React, { Component } from 'react';
-
-import '../scss/home.scss';
-import { Button } from 'reactstrap';
+import { Container, Row, Col, Card, CardHeader, CardTitle, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
-import { DevicesDropdown } from './components/DevicesDropdownDeprecated';
-import { AddDeviceModal } from './components/add_device_modal';
 
 // TODO: Replace this with the Bootstrap4 Progress Bar
 import { Line } from 'rc-progress';
 
-import { DeviceImages } from "./components/device/device_images";
 import NavBar from "./components/NavBar";
+import { DevicesDropdown } from './components/DevicesDropdown';
+import { AddDeviceModal } from './components/AddDeviceModal';
+import { DeviceImages } from "./components/device/device_images";
 
-const querystring = require('querystring');
+import '../scss/home.scss';
+
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.set_modal = false;
-    let all_params = querystring.parse(this.props.location.search);
-
-
-    if ("?uu" in all_params) {
-      this.params = all_params['?uu'].split("?vcode=");
-      this.user_uuid = this.params[0];
-      if (this.params.length > 1) {
-        this.vcode = this.params[1];
-        if (this.vcode !== "") {
-          this.set_modal = true;
-        }
-      }
-    }
-
     this.state = {
+      currentTemperature: 'Unknown',
       user_token: props.cookies.get('user_token') || '',
       add_device_error_message: '',
       user_uuid: this.user_uuid,
@@ -49,21 +34,41 @@ class Home extends Component {
       age_in_days: 10,
       api_username: '',
       notifications: [],
+      device: { name: 'Loading', uuid: null },
+      showAddDeviceModal: false,
     };
 
-    // This binding is necessary to make `this` work in the callback
+    // Create reference to devices dropdown so we can access fetch devices function
+    this.devicesDropdown = React.createRef();
 
-    this.getUserDevices = this.getUserDevices.bind(this);
-    this.getDeviceNotifications = this.getDeviceNotifications.bind(this);
-    this.acknowledgeNotification = this.acknowledgeNotification.bind(this);
+    // This binding is necessary to make `this` work in the callback
+    // this.getUserDevices = this.getUserDevices.bind(this);
+    // this.getDeviceNotifications = this.getDeviceNotifications.bind(this);
+    // this.acknowledgeNotification = this.acknowledgeNotification.bind(this);
   }
 
-  componentDidMount() {
-    //console.log("Mounting Home component")
-    this.getUserDevices()
+  fetchDevices = () => {
+    this.devicesDropdown.current.fetchDevices();
+  }
+
+  onSelectDevice = (device) => {
+    console.log('Selected device:', device);
+    if (device !== this.state.device) {
+      this.setState({ device });
+      this.getDeviceStatus(device.uuid);
+      this.getDeviceNotifications(device.uuid);
+    }
   };
 
-  getCurrentDeviceStatus(device_uuid) {
+  toggleDeviceModal = () => {
+    this.setState(prevState => {
+      return {
+        showAddDeviceModal: !prevState.showAddDeviceModal,
+      }
+    });
+  }
+
+  getDeviceStatus(device_uuid) {
     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_current_device_status/', {
       method: 'POST',
       headers: {
@@ -76,70 +81,30 @@ class Home extends Component {
         'device_uuid': device_uuid
       })
     })
-      .then(response => response.json())
-      .then(responseJson => {
+      .then(async response => {
 
-        //console.log(responseJson,"getCurrentDeviceStatus");
-        let results = responseJson["results"];
-        this.setState({ wifi_status: results["wifi_status"] });
-        this.setState({ current_temp: results["current_temp"] });
-        this.setState({ current_recipe_runtime: results["runtime"] });
-        this.setState({ age_in_days: results["age_in_days"] });
-        this.setState({ progress: parseInt(results["runtime"]) * 100 / 42.0 })
+        // Get response json
+        const responseJson = await response.json();
+        console.log('Got device status:', responseJson);
+
+        // Get parameters
+        const results = responseJson['results'] || {};
+        const currentTemperature = results['current_temp'] || 'Unknown';
+        const wifiStatus = results['wifi_status'] || 'Unknown';
+
+        // Update state
+        this.setState({ currentTemperature, wifiStatus });
+        // this.setState({ current_recipe_runtime: results["runtime"] });
+        // this.setState({ age_in_days: results["age_in_days"] });
+        // this.setState({ progress: parseInt(results["runtime"]) * 100 / 42.0 })
       })
       .catch(error => {
-        console.error(error);
+        console.error('Unable to get device status', error);
       })
   };
-
-
-  getUserDevices() {
-    // console.log(process.env.REACT_APP_FLASK_URL, "getUserDevices")
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_user_devices/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token')
-      })
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson["response_code"] === 200) {
-          const devices = responseJson["results"]["devices"];
-          this.setState({ "user_uuid": responseJson["results"]["user_uuid"] });
-          let devices_map = new Map();
-          for (const device of devices) {
-            devices_map.set(device['device_uuid'], device);
-          }
-
-          this.setState({
-            user_devices: devices_map
-          }, () => {
-            if (!this.restoreSelectedDevice()) {
-              // default to the first/only dev.
-              this.onSelectDevice(devices[0].device_uuid)
-            }
-          });
-          console.log("Response", responseJson["results"],
-            'getUserDevices');
-        } else {
-          this.setState({
-            selected_device: 'No Devices',
-            selected_device_uuid: ''
-          });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
 
   getDeviceNotifications(device_uuid) {
+    console.log('Getting device notifications for: ', device_uuid);
     return fetch(process.env.REACT_APP_FLASK_URL +
       '/api/get_device_notifications/', {
         method: 'POST',
@@ -153,8 +118,13 @@ class Home extends Component {
           'device_uuid': device_uuid
         })
       })
-      .then((response) => response.json())
-      .then((responseJson) => {
+      .then(async response => {
+
+        // Get response json
+        const responseJson = await response.json();
+        console.log('Got device notifications:', responseJson);
+
+        // Get parameters
         if (responseJson["response_code"] === 200) {
           let notifications = responseJson["results"]["notifications"]
           this.setState({
@@ -170,90 +140,6 @@ class Home extends Component {
       .catch((error) => {
         console.error(error);
       });
-  };
-
-  restoreSelectedDevice = () => {
-    const saved_device_uuid = this.props.cookies.get('selected_device_uuid', { path: '/' });
-    if (!saved_device_uuid) return;
-
-    const device = this.state.user_devices.get(saved_device_uuid);
-    if (device) {
-      this.onSelectDevice(saved_device_uuid);
-      return true;
-    }
-    return false;
-  };
-
-  saveSelectedDevice = () => {
-    const selected_device_uuid = this.state.selected_device_uuid;
-    console.log("selected device_uuid=", selected_device_uuid);
-    if (selected_device_uuid) {
-      this.props.cookies.set('selected_device_uuid', selected_device_uuid, { path: '/' });
-    } else {
-      this.props.cookies.remove('selected_device_uuid', { path: '/' });
-    }
-  };
-
-  toggleDeviceModal = () => {
-    this.setState(prevState => {
-      return {
-        add_device_modal: !prevState.add_device_modal,
-        add_device_error_message: ''
-      }
-    });
-  };
-
-  changeRegNo = (reg_no) => {
-    this.setState({ device_reg_no: reg_no })
-  };
-
-  onSubmitDevice = (modal_state) => {
-    // console.log(modal_state);
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/register/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token'),
-        'device_name': modal_state.device_name,
-        'device_reg_no': modal_state.device_reg_no,
-        'device_notes': modal_state.device_notes,
-        'device_type': modal_state.device_type
-      })
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        /*console.log(responseJson)*/
-        if (responseJson["response_code"] === 200) {
-          this.toggleDeviceModal();
-          this.getUserDevices()
-        } else {
-          this.setState({
-            add_device_error_message: responseJson["message"]
-          })
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  onSelectDevice = (device_uuid) => {
-    if (device_uuid !== this.state.selected_device_uuid) {
-      const device = this.state.user_devices.get(device_uuid);
-      const name = `${device.device_name} (${device.device_reg_no})`;
-      this.setState({
-        selected_device: name,
-        selected_device_uuid: device.device_uuid
-      }, () => {
-        this.saveSelectedDevice();
-        this.getCurrentDeviceStatus(device_uuid);
-        this.getDeviceNotifications(device_uuid);
-      });
-    }
   };
 
   acknowledgeNotification(ID) {
@@ -273,11 +159,8 @@ class Home extends Component {
       })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson, "acknowledgeNotification");
         if (responseJson["response_code"] === 200) {
-          // update the notifications list in the state
-          // and the UI will re-render the list of notifications
-          this.getDeviceNotifications(this.state.selected_device_uuid);
+          this.getDeviceNotifications(this.state.device.uuid);
         }
       })
       .catch((error) => {
@@ -292,9 +175,11 @@ class Home extends Component {
   };
 
   render() {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+    const { device, currentTemperature, wifiStatus } = this.state;
 
-
-
+    // Do strange notification things
     let notification_bell_image = "";
     if (this.state.notifications.length > 0) {
       notification_bell_image = <FontAwesomeIcon icon={faBell} />
@@ -322,100 +207,68 @@ class Home extends Component {
       )
     });
 
+    // Render component
     return (
-      <div className="container-fluid p-0 m-0">
+      <div>
         <NavBar />
-        <div className="row m-2 p-2">
-          <div className="col">
-            <DevicesDropdown
-              devices={[...this.state.user_devices.values()]}
-              selectedDevice={this.state.selected_device}
-              onSelectDevice={this.onSelectDevice}
-              onAddDevice={this.toggleDeviceModal}
-            />
-          </div>
+        <div style={{ width: '100%', border: 0 }}>
+          <DevicesDropdown
+            ref={this.devicesDropdown}
+            cookies={this.props.cookies}
+            userToken={userToken}
+            onSelectDevice={this.onSelectDevice}
+            onAddDevice={this.toggleDeviceModal}
+          />
+
         </div>
-        <div className='row m-2'>
-          <div className='col-4'>
-            <div className="card notifications">
-              <div className="card-body">
-                <div className="card-title">
-                  <h3>Notifications {notification_bell_image}</h3>
-                </div>
-                <p>
-                  Your plant is {this.state.age_in_days}
-                  &nbsp;old. Congratulations!
-                                </p>
-                <hr />
+        <div style={{ margin: 20, padding: 0 }}>
+          <Row>
+            <Col md="6">
+              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+                <CardHeader>
+                  <Row style={{ backgroundColor: 'pink' }}>
+                    
+                  </Row>
+                  <Button
+                    size="sm"
+                    className="float-right"
+                    onClick={() => this.setState({ showAddDeviceModal: true })}
+                  >
+                    Add Device
+                  </Button>
+                  <CardText style={{ fontSize: 22 }}>Dashboard</CardText>
+                </CardHeader>
+                <CardBody>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><b>Current Recipe:</b> Unknown</li>
+                    <li class="list-group-item"><b>Current Temperature:</b> {currentTemperature}</li>
+                    <li class="list-group-item"><b>Wifi Status:</b> {wifiStatus}</li>
+                  </ul>
+                </CardBody>
+                <CardFooter>
+                  <Button style={{ width: '100%' }} onClick={this.goToTakeMeasurments}>Take Measurements</Button>
+                </CardFooter>
+              </Card>
+            </Col>
 
-                {notification_buttons}
-
-                <hr />
-                <p><Button size="small" onClick={this.goToTakeMeasurments}>Take horticulture measurements</Button> </p>
-              </div>
-            </div>
-          </div>
-
-          <div className='col-7'>
-            <div className="container">
-              <div className="row mb-2">
-                <div className="col">
-                  <DeviceImages
-                    deviceUUID={this.state.selected_device_uuid}
-                    user_token={this.state.user_token}
-                    enableTwitter
-                  />
-                </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">Wifi Status</div>
-                <div className="col-md-7"> {this.state.wifi_status} </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">Device Status</div>
-                <div className="col-md-4">
-                  <span className="checkmark">
-                    <div className="checkmark_circle"></div>
-                  </span>
-                  <span className="checkmark-text">OK</span>
-                </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">
-                  Progress
-                                </div>
-                <div className="col-md-1">
-                  {this.state.age_in_days}
-                </div>
-                <div className="col-md-6">
-                  <Line percent={this.state.progress} strokeWidth="4" trailWidth="4"
-                    strokeColor="#378A49"
-                    strokeLinecap="round" />
-                </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">Temperature</div>
-                <div className="col-md-8">
-                  {this.state.current_temp}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+            <Col md="6">
+              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+                <DeviceImages
+                  deviceUUID={device.uuid}
+                  user_token={userToken}
+                  enableTwitter
+                />
+              </Card>
+            </Col>
+          </Row>
+        </div >
         <AddDeviceModal
-          isOpen={this.state.add_device_modal}
+          cookies={this.props.cookies}
+          isOpen={this.state.showAddDeviceModal}
           toggle={this.toggleDeviceModal}
-          onSubmit={this.onSubmitDevice}
-          onRegNoChange={this.changeRegNo}
-          error_message={this.state.add_device_error_message}
-          device_reg_no={this.state.device_reg_no}
+          fetchDevices={this.fetchDevices}
         />
-      </div>
+      </div >
     );
   }
 }
