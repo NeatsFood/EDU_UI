@@ -4,10 +4,10 @@ import { withCookies } from 'react-cookie';
 
 import NavBar from './components/NavBar';
 import { DevicesDropdown } from './components/DevicesDropdown';
+import { AddDeviceModal } from './components/AddDeviceModal';
 import { DatasetsDropdown } from './components/DatasetsDropdown';
 import { DownloadCsvButton } from './components/DownloadCsvButton';
 import { TimeseriesChart } from './components/TimeseriesChart';
-import { AddDeviceModal } from './components/AddDeviceModal';
 
 class DeviceHomepage extends Component {
   constructor(props) {

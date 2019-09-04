@@ -111,12 +111,12 @@ export class DevicesDropdown extends React.PureComponent {
 
     // Render components
     return (
-      <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
-        <DropdownToggle caret>
+      <Dropdown isOpen={this.state.isOpen} toggle={this.toggle}>
+        <DropdownToggle style={{ width: '100%' }} caret>
           {device.name} {device.registration_number !== undefined
             ? `(${device.registration_number})` : ''}
         </DropdownToggle>
-        <DropdownMenu>
+        <DropdownMenu style={{ width: '100%' }}>
           <DropdownItem header>Devices</DropdownItem>
           {devices.map(device =>
             <DropdownItem

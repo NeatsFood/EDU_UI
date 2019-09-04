@@ -34,7 +34,7 @@ const NavBar = () => {
                 <NavLink to="/recipes" activeClassName='load-1-active'>
                     <div className="load-1" >
                         <img className="home-icon" src={toolsIcon} alt=''/>
-                        <div className="label">Climate Recipes</div>
+                        <div className="label">Recipes</div>
                     </div>
                 </NavLink>
             </div>
@@ -42,7 +42,7 @@ const NavBar = () => {
                 <NavLink to="/device_homepage" activeClassName='load-1-active'>
                     <div className="load-1">
                         <img className="home-icon" src={dashboardIcon} alt=''/>
-                        <div className="label">MyPFC</div>
+                        <div className="label">Data</div>
                     </div>
                 </NavLink>
             </div>
