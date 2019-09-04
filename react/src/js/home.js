@@ -40,10 +40,10 @@ class Home extends Component {
     // Create reference to devices dropdown so we can access fetch devices function
     this.devicesDropdown = React.createRef();
 
-    // This binding is necessary to make `this` work in the callback
-    // this.getUserDevices = this.getUserDevices.bind(this);
-    // this.getDeviceNotifications = this.getDeviceNotifications.bind(this);
-    // this.acknowledgeNotification = this.acknowledgeNotification.bind(this);
+    // Bind functions
+    this.fetchDevices = this.fetchDevices.bind(this);
+    this.getDeviceNotifications = this.getDeviceNotifications.bind(this);
+    this.acknowledgeNotification = this.acknowledgeNotification.bind(this);
   }
 
   fetchDevices = () => {
@@ -219,6 +219,7 @@ class Home extends Component {
             userToken={userToken}
             onSelectDevice={this.onSelectDevice}
             onAddDevice={this.toggleAddDeviceModal}
+            borderRadius={0}
           />
 
         </div>
@@ -230,7 +231,7 @@ class Home extends Component {
                   <Button
                     size="sm"
                     className="float-right"
-                    onClick={this.toggleTakeMeasurementsModal}
+                    onClick={this.toggleAddDeviceModal}
                   >
                     Add Device
                   </Button>
@@ -240,13 +241,14 @@ class Home extends Component {
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item"><b>Current Recipe:</b> Unknown</li>
                     <li class="list-group-item"><b>Current Temperature:</b> {currentTemperature}</li>
+                    <li class="list-group-item"><b>Current Humidity:</b> Unknown</li>
                     <li class="list-group-item"><b>Wifi Status:</b> {wifiStatus}</li>
                   </ul>
                 </CardBody>
                 <CardFooter>
                   <Button
                     style={{ width: '100%' }}
-                    onClick={() => this.setState({ showTakeMeasurementsModal: true })}
+                    onClick={this.toggleTakeMeasurementsModal}
                   >
                     Take Measurements
                   </Button>

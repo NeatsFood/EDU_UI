@@ -108,11 +108,12 @@ export class DevicesDropdown extends React.PureComponent {
   render() {
     // Get parameters
     const { device, devices } = this.state;
+    const { borderRadius } = this.props;
 
     // Render components
     return (
       <Dropdown isOpen={this.state.isOpen} toggle={this.toggle}>
-        <DropdownToggle style={{ width: '100%', borderRadius: 0 }} caret>
+        <DropdownToggle style={{ width: '100%', borderRadius }} caret>
           <strong>Device:</strong> {device.name} {device.registration_number !== undefined
             ? `(${device.registration_number})` : ''}
         </DropdownToggle>
