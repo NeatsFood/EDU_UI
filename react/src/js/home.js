@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell } from '@fortawesome/free-regular-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faBell } from '@fortawesome/free-regular-svg-icons'
 
 import NavBar from './components/NavBar';
 import { DevicesDropdown } from './components/DevicesDropdown';
@@ -18,32 +18,15 @@ class Home extends Component {
     super(props);
     this.set_modal = false;
     this.state = {
-      currentTemperature: 'Unknown',
-      user_token: props.cookies.get('user_token') || '',
-      add_device_error_message: '',
-      user_uuid: this.user_uuid,
-      device_reg_no: this.vcode,
-      add_device_modal: this.set_modal,
-      user_devices: new Map(),
-      selected_device: 'Loading',
-      current_recipe_runtime: '',
-      current_temp: '',
-      progress: 10.0,
-      age_in_days: 10,
-      api_username: '',
-      notifications: [],
       device: { name: 'Loading', uuid: null },
       showAddDeviceModal: false,
       showTakeMeasurementsModal: false,
+      currentTemperature: 'Unknown',
     };
 
     // Create reference to devices dropdown so we can access fetch devices function
     this.devicesDropdown = React.createRef();
-
-    // Bind functions
     this.fetchDevices = this.fetchDevices.bind(this);
-    this.getDeviceNotifications = this.getDeviceNotifications.bind(this);
-    this.acknowledgeNotification = this.acknowledgeNotification.bind(this);
   }
 
   fetchDevices = () => {
@@ -55,7 +38,6 @@ class Home extends Component {
     if (device !== this.state.device) {
       this.setState({ device });
       this.getDeviceStatus(device.uuid);
-      this.getDeviceNotifications(device.uuid);
     }
   };
 
@@ -75,7 +57,11 @@ class Home extends Component {
     });
   }
 
-  getDeviceStatus(device_uuid) {
+  getDeviceStatus(deviceUuid) {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+
+    // Request device status from data api
     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_current_device_status/', {
       method: 'POST',
       headers: {
@@ -84,15 +70,14 @@ class Home extends Component {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token'),
-        'device_uuid': device_uuid
+        'user_token': userToken,
+        'device_uuid': deviceUuid,
       })
     })
       .then(async response => {
 
         // Get response json
         const responseJson = await response.json();
-        console.log('Got device status:', responseJson);
 
         // Get parameters
         const results = responseJson['results'] || {};
@@ -107,106 +92,14 @@ class Home extends Component {
       })
       .catch(error => {
         console.error('Unable to get device status', error);
+        this.setState({ currentTemperature: 'Unknown', wifiStatus: 'Unknown' });
       })
   };
-
-  getDeviceNotifications(device_uuid) {
-    console.log('Getting device notifications for: ', device_uuid);
-    return fetch(process.env.REACT_APP_FLASK_URL +
-      '/api/get_device_notifications/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-          'user_token': this.props.cookies.get('user_token'),
-          'device_uuid': device_uuid
-        })
-      })
-      .then(async response => {
-
-        // Get response json
-        const responseJson = await response.json();
-        console.log('Got device notifications:', responseJson);
-
-        // Get parameters
-        if (responseJson["response_code"] === 200) {
-          let notifications = responseJson["results"]["notifications"]
-          this.setState({
-            notifications: notifications
-          });
-          console.log(notifications, "getDeviceNotifications");
-        } else {
-          this.setState({
-            notifications: []
-          });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  acknowledgeNotification(ID) {
-    return fetch(process.env.REACT_APP_FLASK_URL +
-      '/api/ack_device_notification/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-          'user_token': this.props.cookies.get('user_token'),
-          'device_uuid': this.state.selected_device_uuid,
-          'ID': ID
-        })
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson["response_code"] === 200) {
-          this.getDeviceNotifications(this.state.device.uuid);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
 
   render() {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
     const { device, currentTemperature, wifiStatus } = this.state;
-
-    // Do strange notification things
-    let notification_bell_image = "";
-    if (this.state.notifications.length > 0) {
-      notification_bell_image = <FontAwesomeIcon icon={faBell} />
-    }
-    let notification_buttons = this.state.notifications.map((n) => {
-      if (undefined === n || undefined === n.message) {
-        return (<div key='12345'></div>)
-      }
-      let message = n["message"];
-      if (n["URL"] !== null && n["URL"] !== '') {
-        message = <a href={n["URL"]} target="_blank" rel="noopener noreferrer"> {n["message"]} </a>
-      }
-      return (
-        <div className="row" key={n["ID"]}>
-          <div className="col-md-9">
-            {message}
-          </div>
-          <div className="col-md-2">
-            <Button size="sm" color="primary"
-              style={{ 'padding': '0 10%' }}
-              onClick={() => this.acknowledgeNotification(n["ID"])}
-            > {n["type"]} </Button>
-          </div>
-        </div>
-      )
-    });
 
     // Render component
     return (
@@ -285,3 +178,112 @@ class Home extends Component {
 }
 
 export default withCookies(Home);
+
+// getDeviceNotifications(deviceUuid) {
+//   console.log('Getting device notifications for device:', deviceUuid);
+
+//   // Get parameters
+//   const userToken = this.props.cookies.get('user_token');
+
+//   // Get notifications from data api
+//   return fetch(process.env.REACT_APP_FLASK_URL +
+//     '/api/get_device_notifications/', {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json',
+//         'Access-Control-Allow-Origin': '*'
+//       },
+//       body: JSON.stringify({
+//         'user_token': userToken,
+//         'device_uuid': deviceUuid,
+//       })
+//     })
+//     .then(async (response) => {
+
+//       // Get response json
+//       const responseJson = await response.json();
+
+//       // Validate response
+//       const responseCode = responseJson["response_code"];
+//       if (responseCode !== 200) {
+//         console.log('Unable to get device notifications, invalid response code');
+//         this.setState({ notifications: [] });
+//         return;
+//       }
+
+//       // Get parameters
+//       const results = responseJson["results"] || {};
+//       const notifications = results["notifications"] || {};
+//       console.log('Got device notifications:', notifications);
+
+//       // Update state
+//       this.setState({ notifications });
+//     })
+//     .catch((error) => {
+//       console.error('Unable to get device notifications', error);
+//       this.setState({ notifications: [] });
+//     });
+// };
+
+// acknowledgeNotification(ID) {
+//   return fetch(process.env.REACT_APP_FLASK_URL +
+//     '/api/ack_device_notification/', {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json',
+//         'Access-Control-Allow-Origin': '*'
+//       },
+//       body: JSON.stringify({
+//         'user_token': this.props.cookies.get('user_token'),
+//         'device_uuid': this.state.selected_device_uuid,
+//         'ID': ID
+//       })
+//     })
+//     .then((response) => response.json())
+//     .then((responseJson) => {
+//       if (responseJson["response_code"] === 200) {
+//         this.getDeviceNotifications(this.state.device.uuid);
+//       }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//     });
+// }
+
+// // Do strange notification things
+// let notification_bell_image = "";
+// if (this.state.notifications.length > 0) {
+//   notification_bell_image = <FontAwesomeIcon icon={faBell} />
+// }
+// let notification_buttons = this.state.notifications.map((n) => {
+//   if (undefined === n || undefined === n.message) {
+//     return (<div key='12345'></div>)
+//   }
+//   let message = n["message"];
+//   if (n["URL"] !== null && n["URL"] !== '') {
+//     message = <a href={n["URL"]} target="_blank" rel="noopener noreferrer"> {n["message"]} </a>
+//   }
+//   return (
+//     <div className="row" key={n["ID"]}>
+//       <div className="col-md-9">
+//         {message}
+//       </div>
+//       <div className="col-md-2">
+//         <Button size="sm" color="primary"
+//           style={{ 'padding': '0 10%' }}
+//           onClick={() => this.acknowledgeNotification(n["ID"])}
+//         > {n["type"]} </Button>
+//       </div>
+//     </div>
+//   )
+// });
+
+// {/* <li class="list-group-item">
+// <b>Notifications:</b>
+// <ul class="list-group list-group-flush">
+//   <li class="list-group-item">Check your fluid level</li>
+//   <li class="list-group-item">Time to water your plant</li>
+// </ul>
+// </li> */}
