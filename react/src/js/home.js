@@ -272,15 +272,15 @@ class Home extends Component {
                       <b>Current Recipe:</b> {recipeName}
                     </li>
                     {recipeStartDate !== null ? (
-                      <li class="list-group-item"><b>Recipe Started:</b> {recipeStartDate}</li>
+                      <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Recipe Started:</b> {recipeStartDate}</li>
                     ) : ''}
-                    <li class="list-group-item"><b>Air Temperature:</b> {airTemperature}</li>
-                    <li class="list-group-item"><b>Air Humidity:</b> {airHumidity}</li>
-                    <li class="list-group-item"><b>Air CO2:</b> {airCo2}</li>
-                    <li class="list-group-item"><b>Water Temperature:</b> {waterTemperature}</li>
-                    <li class="list-group-item"><b>Water pH:</b> {waterPh}</li>
-                    <li class="list-group-item"><b>Water EC:</b> {waterEc}</li>
-                    <li class="list-group-item"><b>Wifi Status:</b> {wifiStatus}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }} ><b>Air Temperature:</b> {airTemperature}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air Humidity:</b> {airHumidity}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air CO2:</b> {airCo2}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water Temperature:</b> {waterTemperature}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water pH:</b> {waterPh}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water EC:</b> {waterEc}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Wifi Status:</b> {wifiStatus}</li>
                   </ul>
                 </CardBody>
                 <CardFooter>
