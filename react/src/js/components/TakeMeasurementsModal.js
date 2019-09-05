@@ -103,7 +103,7 @@ export class TakeMeasurementsModal extends React.PureComponent {
           <ModalBody>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             <FormGroup>
-              <Label for="plantHeight">Plant Height (cm)</Label>
+              <Label for="plantHeight">Average Plant Height (cm)</Label>
               <Input
                 type="text"
                 name="plantHeight"
@@ -115,7 +115,7 @@ export class TakeMeasurementsModal extends React.PureComponent {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="leafCount">Leaf Count</Label>
+              <Label for="leafCount">Average Leaf Count</Label>
               <Input
                 type="text"
                 name="leafCount"
