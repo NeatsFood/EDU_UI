@@ -18,10 +18,14 @@ class Home extends Component {
     super(props);
     this.set_modal = false;
     this.state = {
-      device: { name: 'Loading', uuid: null },
+      device: {
+        uuid: null,
+        name: 'Loading',
+      },
       currentRecipe: {
-        recipeName: 'Loading',
-        recipeStartDate: null,
+        uuid: null,
+        name: 'Loading',
+        startDateString: null,
       },
       currentEnvironment: {
         airTemperature: 'Loading',
@@ -69,6 +73,8 @@ class Home extends Component {
     });
   }
 
+  // TODO: Include current recipe and environment data
+  // TODO: Move this to common code repo js/services
   getDeviceStatus(deviceUuid) {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
@@ -98,9 +104,6 @@ class Home extends Component {
 
         // Update state
         this.setState({ currentTemperature, wifiStatus });
-        // this.setState({ current_recipe_runtime: results["runtime"] });
-        // this.setState({ age_in_days: results["age_in_days"] });
-        // this.setState({ progress: parseInt(results["runtime"]) * 100 / 42.0 })
       })
       .catch(error => {
         console.error('Unable to get device status', error);
@@ -110,6 +113,7 @@ class Home extends Component {
 
   // TODO: This should be included in data from device status endpoint
   // TODO: Make sure recipe uuid is included so we can view a currently running recipe
+  // TODO: Move this to common code repo js/services
   getCurrentRecipe(deviceUuid) {
     // Get request parameters
     const userToken = this.props.cookies.get('user_token');
@@ -150,24 +154,23 @@ class Home extends Component {
         const { recipe_name, start, end } = run;
 
         // Check to see if recipe is currently running
-        let recipeName = 'No Recipe';
-        let recipeStartDate = null;
+        let name = 'No Recipe';
+        let startDateString = null;
         if (end === null) {
-          recipeName = recipe_name;
+          name = recipe_name;
           const startDate = new Date(Date.parse(start));
-          const dateString = startDate.toDateString();
-          recipeStartDate = dateString;
+          startDateString = startDate.toDateString();;
         }
 
         // Update state
-        const currentRecipe = { recipeName, recipeStartDate };
+        const currentRecipe = { name, startDateString };
         this.setState({ currentRecipe });
       })
       .catch(error => {
         console.error('Unable to get current recipe', error);
         const currentRecipe = {
-          recipeName: 'Unknown',
-          recipeStartDate: null,
+          name: 'Unknown',
+          startDateString: null,
         };
         this.setState({ currentRecipe });
       })
@@ -232,7 +235,6 @@ class Home extends Component {
     const {
       device, currentRecipe, currentEnvironment, wifiStatus,
     } = this.state;
-    const { recipeName, recipeStartDate } = currentRecipe;
     const {
       airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
     } = currentEnvironment;
@@ -269,11 +271,20 @@ class Home extends Component {
                 <CardBody>
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item" style={{ justifyItems: "center" }}>
-                      <b>Current Recipe:</b> {recipeName}
+                      {currentRecipe.name === "No Recipe" && (
+                        <Button
+                          size="sm"
+                          className="float-right"
+                          onClick={() => this.props.history.push("/recipes")}
+                        >
+                          Run Recipe
+                        </Button>
+                      )}
+                      <b>Current Recipe:</b> {currentRecipe.name}
                     </li>
-                    {recipeStartDate !== null ? (
-                      <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Recipe Started:</b> {recipeStartDate}</li>
-                    ) : ''}
+                    {currentRecipe.startDateString !== null && (
+                      <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Recipe Started:</b> {currentRecipe.startDateString}</li>
+                    )}
                     <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }} ><b>Air Temperature:</b> {airTemperature}</li>
                     <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air Humidity:</b> {airHumidity}</li>
                     <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air CO2:</b> {airCo2}</li>

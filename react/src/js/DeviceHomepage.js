@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from 'react-cookie';
 
 import NavBar from './components/NavBar';

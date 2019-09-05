@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
-// import { Button, ButtonGroup } from 'reactstrap';
 import { RecipeCard } from './components/recipe/recipe_card';
 import { ConfirmationModal } from './components/confirmation_modal';
+
 import NavBar from "./components/NavBar";
+import { DevicesDropdown } from './components/DevicesDropdown';
+import { AddDeviceModal } from './components/AddDeviceModal';
 
 class recipes extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      device: {
+        name: 'Loading',
+        uuid: null,
+      },
       all_recipes: new Map(),
       user_recipes: new Map(),
       shared_recipes: new Map(),
       filter_recipe_button_state: 'all',
       show_confirm_delete_modal: false,
       ready: false,
+      showAddDeviceModal: false,
     };
 
     this.toggleConfirmDelete = this.toggleConfirmDelete.bind(this);
@@ -27,6 +34,20 @@ class recipes extends Component {
 
   componentDidMount() {
     this.getAllRecipes()
+  }
+
+  onSelectDevice = (device) => {
+    if (device !== this.state.device) {
+      this.setState({ device });
+    }
+  };
+
+  toggleAddDeviceModal = () => {
+    this.setState(prevState => {
+      return {
+        showAddDeviceModal: !prevState.showAddDeviceModal,
+      }
+    });
   }
 
   handleChange(event) {
@@ -231,6 +252,9 @@ class recipes extends Component {
   };
 
   render() {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+
     let listRecipes = [];
     let recipes = [];
     if (this.state.all_recipes.size) {
@@ -280,11 +304,25 @@ class recipes extends Component {
       return (
         <div className="container-fluid p-0 m-0">
           <NavBar />
+          <DevicesDropdown
+            ref={this.devicesDropdown}
+            cookies={this.props.cookies}
+            userToken={userToken}
+            onSelectDevice={this.onSelectDevice}
+            onAddDevice={this.toggleAddDeviceModal}
+            borderRadius={0}
+          />
           <div className={"row graphs-row mt-5 mb-5"}>
             <div className="col-md-2 offset-5 text-center">
               Loading Recipes...
+            </div>
           </div>
-          </div>
+          <AddDeviceModal
+            cookies={this.props.cookies}
+            isOpen={this.state.showAddDeviceModal}
+            toggle={this.toggleAddDeviceModal}
+            fetchDevices={this.fetchDevices}
+          />
         </div>
       )
     }
@@ -292,6 +330,14 @@ class recipes extends Component {
     return (
       <div className="container-fluid p-0 m-0">
         <NavBar />
+        <DevicesDropdown
+          ref={this.devicesDropdown}
+          cookies={this.props.cookies}
+          userToken={userToken}
+          onSelectDevice={this.onSelectDevice}
+          onAddDevice={this.toggleAddDeviceModal}
+          borderRadius={0}
+        />
         <div className="row p-2 align-content-center">
           {/* <div className="col">
             <ButtonGroup>
@@ -338,7 +384,12 @@ class recipes extends Component {
             </div>
           </div>
         </div>
-
+        <AddDeviceModal
+          cookies={this.props.cookies}
+          isOpen={this.state.showAddDeviceModal}
+          toggle={this.toggleAddDeviceModal}
+          fetchDevices={this.fetchDevices}
+        />
         <ConfirmationModal
           isOpen={this.state.show_confirm_delete_modal}
           toggle={this.toggleConfirmDelete}
