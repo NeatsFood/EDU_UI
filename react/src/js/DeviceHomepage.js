@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../scss/device_homepage.scss';
+import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from 'react-cookie';
 
 import NavBar from './components/NavBar';
@@ -8,6 +8,9 @@ import { AddDeviceModal } from './components/AddDeviceModal';
 import { DatasetsDropdown } from './components/DatasetsDropdown';
 import { DownloadCsvButton } from './components/DownloadCsvButton';
 import { TimeseriesChart } from './components/TimeseriesChart';
+
+import '../scss/device_homepage.scss';
+
 
 class DeviceHomepage extends Component {
   constructor(props) {
@@ -60,14 +63,15 @@ class DeviceHomepage extends Component {
     return (
       <div className="container-fluid p-0 m-0">
         <NavBar />
+        <DevicesDropdown
+          ref={this.devicesDropdown}
+          cookies={this.props.cookies}
+          userToken={userToken}
+          onSelectDevice={this.onSelectDevice}
+          onAddDevice={this.toggleAddDeviceModal}
+          borderRadius={0}
+        />
         <div className="row m-2 p-2">
-          <DevicesDropdown
-            ref={this.devicesDropdown}
-            cookies={this.props.cookies}
-            userToken={userToken}
-            onSelectDevice={this.onSelectDevice}
-            onAddDevice={this.toggleDeviceModal}
-          />
           <div style={{ paddingLeft: 20 }}>
             <DatasetsDropdown
               userToken={userToken}
