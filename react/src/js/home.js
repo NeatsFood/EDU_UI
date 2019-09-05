@@ -132,9 +132,9 @@ class Home extends Component {
                 </CardHeader>
                 <CardBody>
                   <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><b>Current Recipe:</b> Unknown</li>
+                    {/* <li class="list-group-item"><b>Current Recipe:</b> Unknown</li> */}
                     <li class="list-group-item"><b>Current Temperature:</b> {currentTemperature}</li>
-                    <li class="list-group-item"><b>Current Humidity:</b> Unknown</li>
+                    {/* <li class="list-group-item"><b>Current Humidity:</b> Unknown</li> */}
                     <li class="list-group-item"><b>Wifi Status:</b> {wifiStatus}</li>
                   </ul>
                 </CardBody>
