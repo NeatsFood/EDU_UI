@@ -19,9 +19,20 @@ class Home extends Component {
     this.set_modal = false;
     this.state = {
       device: { name: 'Loading', uuid: null },
+      currentRecipe: {
+        recipeName: 'Loading',
+        recipeStartDate: null,
+      },
+      currentEnvironment: {
+        airTemperature: 'Loading',
+        airHumidity: 'Loading',
+        airCo2: 'Loading',
+        waterTemperature: 'Loading',
+        waterPh: 'Loading',
+        waterEc: 'Loading',
+      },
       showAddDeviceModal: false,
       showTakeMeasurementsModal: false,
-      currentTemperature: 'Unknown',
     };
 
     // Create reference to devices dropdown so we can access fetch devices function
@@ -34,10 +45,11 @@ class Home extends Component {
   }
 
   onSelectDevice = (device) => {
-    console.log('Selected device:', device);
     if (device !== this.state.device) {
       this.setState({ device });
       this.getDeviceStatus(device.uuid);
+      this.getCurrentRecipe(device.uuid);
+      this.getCurrentEnvironment(device.uuid);
     }
   };
 
@@ -74,7 +86,7 @@ class Home extends Component {
         'device_uuid': deviceUuid,
       })
     })
-      .then(async response => {
+      .then(async (response) => {
 
         // Get response json
         const responseJson = await response.json();
@@ -96,10 +108,134 @@ class Home extends Component {
       })
   };
 
+  // TODO: This should be included in data from device status endpoint
+  // TODO: Make sure recipe uuid is included so we can view a currently running recipe
+  getCurrentRecipe(deviceUuid) {
+    // Get request parameters
+    const userToken = this.props.cookies.get('user_token');
+
+    // Fetch recipe runs from api
+    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_runs/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        'user_token': userToken,
+        'device_uuid': deviceUuid,
+      })
+    })
+      .then(async (response) => {
+
+        // Parse json response
+        const responseJson = await response.json();
+
+        // Get response parameters
+        const { response_code } = responseJson;
+        const runs = responseJson["runs"] || [];
+
+        // Validate response
+        if (response_code !== 200 || runs.length === 0) {
+          console.log('Did not fetch any new recipe runs');
+          this.setState({ currentRecipe: 'Unknown' })
+          return;
+        }
+
+        // Get latest recipe run
+        const run = runs[0];
+
+        // Get recipe parameters
+        const { recipe_name, start, end } = run;
+
+        // Check to see if recipe is currently running
+        let recipeName = 'No Recipe';
+        let recipeStartDate = null;
+        if (end === null) {
+          recipeName = recipe_name;
+          const startDate = new Date(Date.parse(start));
+          const dateString = startDate.toDateString();
+          recipeStartDate = dateString;
+        }
+
+        // Update state
+        const currentRecipe = { recipeName, recipeStartDate };
+        this.setState({ currentRecipe });
+      })
+      .catch(error => {
+        console.error('Unable to get current recipe', error);
+        const currentRecipe = {
+          recipeName: 'Unknown',
+          recipeStartDate: null,
+        };
+        this.setState({ currentRecipe });
+      })
+  }
+
+  // TODO: This should be included in data from device status endpoint
+  getCurrentEnvironment(deviceUuid) {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+
+    // Request device status from data api
+    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_current_stats/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        'user_token': userToken,
+        'selected_device_uuid': deviceUuid,
+      })
+    })
+      .then(async (response) => {
+
+        // Get response json
+        const responseJson = await response.json();
+
+        // Get parameters
+        const results = responseJson['results'] || {};
+
+        // Format results
+        const currentEnvironment = {
+          airTemperature: parseFloat(results['current_temp']).toFixed(0).toString() + " °C" || 'Unknown',
+          airHumidity: parseFloat(results['current_rh']).toFixed(0).toString() + " %RH" || 'Unknown',
+          airCo2: parseFloat(results['current_co2']).toFixed(0).toString() + " ppm" || 'Unknown',
+          waterTemperature: parseFloat(results['current_h20_temp']).toFixed(0).toString() + " °C" || 'Unknown',
+          waterPh: parseFloat(results['current_h20_ph']).toFixed(1).toString() + " pH" || 'Unknown',
+          waterEc: parseFloat(results['current_h20_ec']).toFixed(1).toString() + " mS/cm" || 'Unknown',
+        }
+
+        // Update state
+        this.setState({ currentEnvironment });
+      })
+      .catch(error => {
+        console.error('Unable to get current environment', error);
+        const currentEnvironment = {
+          airTemperature: 'Unknown',
+          airHumidity: 'Unknown',
+          airCo2: 'Unknown',
+          waterTemperature: 'Unknown',
+          waterPh: 'Unknown',
+          waterEc: 'Unknown',
+        }
+        this.setState({ currentEnvironment });
+      })
+  };
+
   render() {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
-    const { device, currentTemperature, wifiStatus } = this.state;
+    const {
+      device, currentRecipe, currentEnvironment, wifiStatus,
+    } = this.state;
+    const { recipeName, recipeStartDate } = currentRecipe;
+    const {
+      airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
+    } = currentEnvironment;
 
     // Render component
     return (
@@ -132,9 +268,18 @@ class Home extends Component {
                 </CardHeader>
                 <CardBody>
                   <ul class="list-group list-group-flush">
-                    {/* <li class="list-group-item"><b>Current Recipe:</b> Unknown</li> */}
-                    <li class="list-group-item"><b>Current Temperature:</b> {currentTemperature}</li>
-                    {/* <li class="list-group-item"><b>Current Humidity:</b> Unknown</li> */}
+                    <li class="list-group-item" style={{ justifyItems: "center" }}>
+                      <b>Current Recipe:</b> {recipeName}
+                    </li>
+                    {recipeStartDate !== null ? (
+                      <li class="list-group-item"><b>Recipe Started:</b> {recipeStartDate}</li>
+                    ) : ''}
+                    <li class="list-group-item"><b>Air Temperature:</b> {airTemperature}</li>
+                    <li class="list-group-item"><b>Air Humidity:</b> {airHumidity}</li>
+                    <li class="list-group-item"><b>Air CO2:</b> {airCo2}</li>
+                    <li class="list-group-item"><b>Water Temperature:</b> {waterTemperature}</li>
+                    <li class="list-group-item"><b>Water pH:</b> {waterPh}</li>
+                    <li class="list-group-item"><b>Water EC:</b> {waterEc}</li>
                     <li class="list-group-item"><b>Wifi Status:</b> {wifiStatus}</li>
                   </ul>
                 </CardBody>

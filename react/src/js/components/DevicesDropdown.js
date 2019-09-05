@@ -38,8 +38,6 @@ export class DevicesDropdown extends React.PureComponent {
   };
 
   fetchDevices() {
-    console.log('Fetching devices');
-
     // Get parameters
     const { userToken, cookies } = this.props;
 
@@ -84,7 +82,6 @@ export class DevicesDropdown extends React.PureComponent {
 
       // Check for saved device
       const savedDeviceUuid = cookies.get('selected_device_uuid', { path: '/' });
-      console.log('savedDeviceUuid', savedDeviceUuid);
       let device = devices.find(device => device.uuid === savedDeviceUuid);
       if (!device) {
         device = devices[0];
@@ -100,7 +97,6 @@ export class DevicesDropdown extends React.PureComponent {
     const deviceUuid = e.target.value;
     const { devices } = this.state;
     const device = devices.find(device => device.uuid === deviceUuid);
-    console.log('Selected device:', device);
     this.setState({ device }, () => this.props.onSelectDevice(device));
     this.props.cookies.set('selected_device_uuid', device.uuid, { path: '/' });
   };
