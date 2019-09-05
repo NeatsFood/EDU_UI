@@ -174,15 +174,14 @@ export class DatasetsDropdown extends React.PureComponent {
   render() {
     // Get parameters
     const { dataset, datasets } = this.state;
-    const { borderRadius } = this.props;
 
     // Render dropdown
     return (
       <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
-        <DropdownToggle caret style={{ width: '100%', borderRadius }}>
+        <DropdownToggle caret>
           <strong>Dataset: </strong>{dataset.name}
         </DropdownToggle>
-        <DropdownMenu style={{ width: '100%' }}>
+        <DropdownMenu>
           <DropdownItem header>Datasets</DropdownItem>
           {datasets.map((dataset, index) =>
             <DropdownItem
