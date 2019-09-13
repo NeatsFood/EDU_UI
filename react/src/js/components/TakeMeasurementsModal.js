@@ -24,9 +24,8 @@ const DEFAULT_STATE = {
  * - cookies (object): Interface to access browser cookies.
  * - isOpen (bool): Whether modal is open.
  * - toggle (function): Callback for opening and closing the modal.
- * - fetchDevices (function): Callback for fetching the device list.
  */
-export class AddDeviceModal extends React.PureComponent {
+export class TakeMeasurementsModal extends React.PureComponent {
 
   state = DEFAULT_STATE;
 
@@ -40,17 +39,16 @@ export class AddDeviceModal extends React.PureComponent {
   };
 
   onSubmit = (event) => {
-    console.log('Submitting new device');
-
     // Prevent default
     event.preventDefault();
 
     // Get parameters
-    const { deviceName, deviceNumber } = this.state;
     const userToken = this.props.cookies.get('user_token');
+    const { deviceUuid } = this.props;
+    const { plantHeight, leafCount } = this.state;
 
     // Send registration request to api
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/register/', {
+    return fetch(process.env.REACT_APP_FLASK_URL + '/api/daily_horticulture_measurements/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -59,37 +57,36 @@ export class AddDeviceModal extends React.PureComponent {
       },
       body: JSON.stringify({
         'user_token': userToken,
-        'device_name': deviceName,
-        'device_reg_no': deviceNumber,
-        'device_notes': '',
-        'device_type': 'EDU',
+        device_uuid: deviceUuid,
+        plant_height: plantHeight,
+        leaf_count: leafCount,
       })
     })
       .then(async (response) => {
+    
         // Parse response json
         const responseJson = await response.json();
 
         // Validate response
         if (responseJson["response_code"] !== 200) {
-          const errorMessage = responseJson["message"] || "Unable to register device, please try again later."
+          const errorMessage = responseJson["message"] || "Unable to submit measurements, please try again later."
           console.log('Invalid response:', errorMessage);
           this.setState({ errorMessage });
           return;
         }
 
-        // Successfully registered, hide modal then re-fetch devices
+        // Successfully submitted, hide modal
         this.toggle();
-        this.props.fetchDevices();
       }).catch((error) => {
         console.error('Unable to add new device', error);
-        const errorMessage = "Unable to register device, please try again later."
+        const errorMessage = "Unable to submit measurements, please try again later."
         this.setState({ errorMessage });
       });
   };
 
   render() {
     // Get parameters
-    const { deviceName, deviceNumber, errorMessage } = this.state;
+    const { plantHeight, leafCount, errorMessage } = this.state;
     const { isOpen } = this.props;
 
     // Render component
@@ -100,29 +97,31 @@ export class AddDeviceModal extends React.PureComponent {
         className={this.props.className}
       >
         <ModalHeader toggle={this.toggle}>
-          New Device Registration
+          Take Measurements
         </ModalHeader>
         <Form onSubmit={this.onSubmit}>
           <ModalBody>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             <FormGroup>
-              <Label for="deviceName">Device Name</Label>
+              <Label for="plantHeight">Average Plant Height (cm)</Label>
               <Input
                 type="text"
-                name="deviceName"
-                id="deviceName"
-                placeholder="E.g. Huey" value={deviceName}
+                name="plantHeight"
+                id="plantHeight"
+                placeholder="E.g. 5"
+                value={plantHeight}
                 onChange={this.onChange}
                 required
               />
             </FormGroup>
             <FormGroup>
-              <Label for="deviceNumber">Device Number</Label>
+              <Label for="leafCount">Average Leaf Count</Label>
               <Input
                 type="text"
-                name="deviceNumber" id="deviceNumber"
-                placeholder="E.g. ABC123"
-                value={deviceNumber}
+                name="leafCount"
+                id="leafCount"
+                placeholder="E.g. 20"
+                value={leafCount}
                 onChange={this.onChange}
                 required
               />
@@ -133,7 +132,7 @@ export class AddDeviceModal extends React.PureComponent {
               Cancel
             </Button>
             <Button color="primary" type="submit">
-              Register
+              Submit
             </Button>
           </ModalFooter>
         </Form>

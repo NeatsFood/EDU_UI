@@ -38,8 +38,6 @@ export class DevicesDropdown extends React.PureComponent {
   };
 
   fetchDevices() {
-    console.log('Fetching devices');
-
     // Get parameters
     const { userToken, cookies } = this.props;
 
@@ -84,7 +82,6 @@ export class DevicesDropdown extends React.PureComponent {
 
       // Check for saved device
       const savedDeviceUuid = cookies.get('selected_device_uuid', { path: '/' });
-      console.log('savedDeviceUuid', savedDeviceUuid);
       let device = devices.find(device => device.uuid === savedDeviceUuid);
       if (!device) {
         device = devices[0];
@@ -100,7 +97,6 @@ export class DevicesDropdown extends React.PureComponent {
     const deviceUuid = e.target.value;
     const { devices } = this.state;
     const device = devices.find(device => device.uuid === deviceUuid);
-    console.log('Selected device:', device);
     this.setState({ device }, () => this.props.onSelectDevice(device));
     this.props.cookies.set('selected_device_uuid', device.uuid, { path: '/' });
   };
@@ -108,15 +104,16 @@ export class DevicesDropdown extends React.PureComponent {
   render() {
     // Get parameters
     const { device, devices } = this.state;
+    const { borderRadius } = this.props;
 
     // Render components
     return (
-      <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
-        <DropdownToggle caret>
-          {device.name} {device.registration_number !== undefined
+      <Dropdown isOpen={this.state.isOpen} toggle={this.toggle}>
+        <DropdownToggle style={{ width: '100%', borderRadius }} caret>
+          <strong>Device:</strong> {device.name} {device.registration_number !== undefined
             ? `(${device.registration_number})` : ''}
         </DropdownToggle>
-        <DropdownMenu>
+        <DropdownMenu style={{ width: '100%' }}>
           <DropdownItem header>Devices</DropdownItem>
           {devices.map(device =>
             <DropdownItem

@@ -1,69 +1,85 @@
 import React, { Component } from 'react';
+import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
+import { withCookies } from "react-cookie";
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faBell } from '@fortawesome/free-regular-svg-icons'
+
+import NavBar from './components/NavBar';
+import { DevicesDropdown } from './components/DevicesDropdown';
+import { AddDeviceModal } from './components/AddDeviceModal';
+import { DeviceImages } from './components/device/device_images';
+import { TakeMeasurementsModal } from './components/TakeMeasurementsModal';
 
 import '../scss/home.scss';
-import { Button } from 'reactstrap';
-import { withCookies } from "react-cookie";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell } from '@fortawesome/free-regular-svg-icons'
-import { DevicesDropdown } from './components/DevicesDropdownDeprecated';
-import { AddDeviceModal } from './components/add_device_modal';
-
-// TODO: Replace this with the Bootstrap4 Progress Bar
-import { Line } from 'rc-progress';
-
-import { DeviceImages } from "./components/device/device_images";
-import NavBar from "./components/NavBar";
-
-const querystring = require('querystring');
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.set_modal = false;
-    let all_params = querystring.parse(this.props.location.search);
-
-
-    if ("?uu" in all_params) {
-      this.params = all_params['?uu'].split("?vcode=");
-      this.user_uuid = this.params[0];
-      if (this.params.length > 1) {
-        this.vcode = this.params[1];
-        if (this.vcode !== "") {
-          this.set_modal = true;
-        }
-      }
-    }
-
     this.state = {
-      user_token: props.cookies.get('user_token') || '',
-      add_device_error_message: '',
-      user_uuid: this.user_uuid,
-      device_reg_no: this.vcode,
-      add_device_modal: this.set_modal,
-      user_devices: new Map(),
-      selected_device: 'Loading',
-      current_recipe_runtime: '',
-      current_temp: '',
-      progress: 10.0,
-      age_in_days: 10,
-      api_username: '',
-      notifications: [],
+      device: {
+        uuid: null,
+        name: 'Loading',
+      },
+      currentRecipe: {
+        uuid: null,
+        name: 'Loading',
+        startDateString: null,
+      },
+      currentEnvironment: {
+        airTemperature: 'Loading',
+        airHumidity: 'Loading',
+        airCo2: 'Loading',
+        waterTemperature: 'Loading',
+        waterPh: 'Loading',
+        waterEc: 'Loading',
+      },
+      showAddDeviceModal: false,
+      showTakeMeasurementsModal: false,
     };
 
-    // This binding is necessary to make `this` work in the callback
-
-    this.getUserDevices = this.getUserDevices.bind(this);
-    this.getDeviceNotifications = this.getDeviceNotifications.bind(this);
-    this.acknowledgeNotification = this.acknowledgeNotification.bind(this);
+    // Create reference to devices dropdown so we can access fetch devices function
+    this.devicesDropdown = React.createRef();
+    this.fetchDevices = this.fetchDevices.bind(this);
   }
 
-  componentDidMount() {
-    //console.log("Mounting Home component")
-    this.getUserDevices()
+  fetchDevices = () => {
+    this.devicesDropdown.current.fetchDevices();
+  }
+
+  onSelectDevice = (device) => {
+    if (device !== this.state.device) {
+      this.setState({ device });
+      this.getDeviceStatus(device.uuid);
+      this.getCurrentRecipe(device.uuid);
+      this.getCurrentEnvironment(device.uuid);
+    }
   };
 
-  getCurrentDeviceStatus(device_uuid) {
+  toggleAddDeviceModal = () => {
+    this.setState(prevState => {
+      return {
+        showAddDeviceModal: !prevState.showAddDeviceModal,
+      }
+    });
+  }
+
+  toggleTakeMeasurementsModal = () => {
+    this.setState(prevState => {
+      return {
+        showTakeMeasurementsModal: !prevState.showTakeMeasurementsModal,
+      }
+    });
+  }
+
+  // TODO: Include current recipe and environment data
+  // TODO: Move this to common code repo js/services
+  getDeviceStatus(deviceUuid) {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+
+    // Request device status from data api
     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_current_device_status/', {
       method: 'POST',
       headers: {
@@ -72,30 +88,38 @@ class Home extends Component {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token'),
-        'device_uuid': device_uuid
+        'user_token': userToken,
+        'device_uuid': deviceUuid,
       })
     })
-      .then(response => response.json())
-      .then(responseJson => {
+      .then(async (response) => {
 
-        //console.log(responseJson,"getCurrentDeviceStatus");
-        let results = responseJson["results"];
-        this.setState({ wifi_status: results["wifi_status"] });
-        this.setState({ current_temp: results["current_temp"] });
-        this.setState({ current_recipe_runtime: results["runtime"] });
-        this.setState({ age_in_days: results["age_in_days"] });
-        this.setState({ progress: parseInt(results["runtime"]) * 100 / 42.0 })
+        // Get response json
+        const responseJson = await response.json();
+
+        // Get parameters
+        const results = responseJson['results'] || {};
+        const currentTemperature = results['current_temp'] || 'Unknown';
+        const wifiStatus = results['wifi_status'] || 'Unknown';
+
+        // Update state
+        this.setState({ currentTemperature, wifiStatus });
       })
       .catch(error => {
-        console.error(error);
+        console.error('Unable to get device status', error);
+        this.setState({ currentTemperature: 'Unknown', wifiStatus: 'Unknown' });
       })
   };
 
+  // TODO: This should be included in data from device status endpoint
+  // TODO: Make sure recipe uuid is included so we can view a currently running recipe
+  // TODO: Move this to common code repo js/services
+  getCurrentRecipe(deviceUuid) {
+    // Get request parameters
+    const userToken = this.props.cookies.get('user_token');
 
-  getUserDevices() {
-    // console.log(process.env.REACT_APP_FLASK_URL, "getUserDevices")
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_user_devices/', {
+    // Fetch recipe runs from api
+    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_runs/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -103,321 +127,319 @@ class Home extends Component {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token')
+        'user_token': userToken,
+        'device_uuid': deviceUuid,
       })
     })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson["response_code"] === 200) {
-          const devices = responseJson["results"]["devices"];
-          this.setState({ "user_uuid": responseJson["results"]["user_uuid"] });
-          let devices_map = new Map();
-          for (const device of devices) {
-            devices_map.set(device['device_uuid'], device);
-          }
+      .then(async (response) => {
 
-          this.setState({
-            user_devices: devices_map
-          }, () => {
-            if (!this.restoreSelectedDevice()) {
-              // default to the first/only dev.
-              this.onSelectDevice(devices[0].device_uuid)
-            }
-          });
-          console.log("Response", responseJson["results"],
-            'getUserDevices');
-        } else {
-          this.setState({
-            selected_device: 'No Devices',
-            selected_device_uuid: ''
-          });
+        // Parse json response
+        const responseJson = await response.json();
+
+        // Get response parameters
+        const { response_code } = responseJson;
+        const runs = responseJson["runs"] || [];
+
+        // Validate response
+        if (response_code !== 200 || runs.length === 0) {
+          console.log('Did not fetch any new recipe runs');
+          this.setState({ currentRecipe: 'Unknown' })
+          return;
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
 
+        // Get latest recipe run
+        const run = runs[0];
 
-  getDeviceNotifications(device_uuid) {
-    return fetch(process.env.REACT_APP_FLASK_URL +
-      '/api/get_device_notifications/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-          'user_token': this.props.cookies.get('user_token'),
-          'device_uuid': device_uuid
-        })
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson["response_code"] === 200) {
-          let notifications = responseJson["results"]["notifications"]
-          this.setState({
-            notifications: notifications
-          });
-          console.log(notifications, "getDeviceNotifications");
-        } else {
-          this.setState({
-            notifications: []
-          });
+        // Get recipe parameters
+        const { recipe_name, start, end } = run;
+
+        // Check to see if recipe is currently running
+        let name = 'No Recipe';
+        let startDateString = null;
+        if (end === null) {
+          name = recipe_name;
+          const startDate = new Date(Date.parse(start));
+          startDateString = startDate.toDateString();;
         }
+
+        // Update state
+        const currentRecipe = { name, startDateString };
+        this.setState({ currentRecipe });
       })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  restoreSelectedDevice = () => {
-    const saved_device_uuid = this.props.cookies.get('selected_device_uuid', { path: '/' });
-    if (!saved_device_uuid) return;
-
-    const device = this.state.user_devices.get(saved_device_uuid);
-    if (device) {
-      this.onSelectDevice(saved_device_uuid);
-      return true;
-    }
-    return false;
-  };
-
-  saveSelectedDevice = () => {
-    const selected_device_uuid = this.state.selected_device_uuid;
-    console.log("selected device_uuid=", selected_device_uuid);
-    if (selected_device_uuid) {
-      this.props.cookies.set('selected_device_uuid', selected_device_uuid, { path: '/' });
-    } else {
-      this.props.cookies.remove('selected_device_uuid', { path: '/' });
-    }
-  };
-
-  toggleDeviceModal = () => {
-    this.setState(prevState => {
-      return {
-        add_device_modal: !prevState.add_device_modal,
-        add_device_error_message: ''
-      }
-    });
-  };
-
-  changeRegNo = (reg_no) => {
-    this.setState({ device_reg_no: reg_no })
-  };
-
-  onSubmitDevice = (modal_state) => {
-    // console.log(modal_state);
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/register/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token'),
-        'device_name': modal_state.device_name,
-        'device_reg_no': modal_state.device_reg_no,
-        'device_notes': modal_state.device_notes,
-        'device_type': modal_state.device_type
+      .catch(error => {
+        console.error('Unable to get current recipe', error);
+        const currentRecipe = {
+          name: 'Unknown',
+          startDateString: null,
+        };
+        this.setState({ currentRecipe });
       })
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        /*console.log(responseJson)*/
-        if (responseJson["response_code"] === 200) {
-          this.toggleDeviceModal();
-          this.getUserDevices()
-        } else {
-          this.setState({
-            add_device_error_message: responseJson["message"]
-          })
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  onSelectDevice = (device_uuid) => {
-    if (device_uuid !== this.state.selected_device_uuid) {
-      const device = this.state.user_devices.get(device_uuid);
-      const name = `${device.device_name} (${device.device_reg_no})`;
-      this.setState({
-        selected_device: name,
-        selected_device_uuid: device.device_uuid
-      }, () => {
-        this.saveSelectedDevice();
-        this.getCurrentDeviceStatus(device_uuid);
-        this.getDeviceNotifications(device_uuid);
-      });
-    }
-  };
-
-  acknowledgeNotification(ID) {
-    return fetch(process.env.REACT_APP_FLASK_URL +
-      '/api/ack_device_notification/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({
-          'user_token': this.props.cookies.get('user_token'),
-          'device_uuid': this.state.selected_device_uuid,
-          'ID': ID
-        })
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // console.log(responseJson, "acknowledgeNotification");
-        if (responseJson["response_code"] === 200) {
-          // update the notifications list in the state
-          // and the UI will re-render the list of notifications
-          this.getDeviceNotifications(this.state.selected_device_uuid);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }
 
-  goToTakeMeasurments = () => {
-    let gotohorticulture = "/horticulture_success/" + this.state.selected_device_uuid;
-    this.props.history.push(gotohorticulture);
-    return false;
+  // TODO: This should be included in data from device status endpoint
+  getCurrentEnvironment(deviceUuid) {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+
+    // Request device status from data api
+    return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_current_stats/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        'user_token': userToken,
+        'selected_device_uuid': deviceUuid,
+      })
+    })
+      .then(async (response) => {
+
+        // Get response json
+        const responseJson = await response.json();
+
+        // Get parameters
+        const results = responseJson['results'] || {};
+
+        // Format results
+        const currentEnvironment = {
+          airTemperature: parseFloat(results['current_temp']).toFixed(0).toString() + " °C" || 'Unknown',
+          airHumidity: parseFloat(results['current_rh']).toFixed(0).toString() + " %RH" || 'Unknown',
+          airCo2: parseFloat(results['current_co2']).toFixed(0).toString() + " ppm" || 'Unknown',
+          waterTemperature: parseFloat(results['current_h20_temp']).toFixed(0).toString() + " °C" || 'Unknown',
+          waterPh: parseFloat(results['current_h20_ph']).toFixed(1).toString() + " pH" || 'Unknown',
+          waterEc: parseFloat(results['current_h20_ec']).toFixed(1).toString() + " mS/cm" || 'Unknown',
+        }
+
+        // Update state
+        this.setState({ currentEnvironment });
+      })
+      .catch(error => {
+        console.error('Unable to get current environment', error);
+        const currentEnvironment = {
+          airTemperature: 'Unknown',
+          airHumidity: 'Unknown',
+          airCo2: 'Unknown',
+          waterTemperature: 'Unknown',
+          waterPh: 'Unknown',
+          waterEc: 'Unknown',
+        }
+        this.setState({ currentEnvironment });
+      })
   };
 
   render() {
+    // Get parameters
+    const userToken = this.props.cookies.get('user_token');
+    const {
+      device, currentRecipe, currentEnvironment, wifiStatus,
+    } = this.state;
+    const {
+      airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
+    } = currentEnvironment;
 
-
-
-    let notification_bell_image = "";
-    if (this.state.notifications.length > 0) {
-      notification_bell_image = <FontAwesomeIcon icon={faBell} />
-    }
-    let notification_buttons = this.state.notifications.map((n) => {
-      if (undefined === n || undefined === n.message) {
-        return (<div key='12345'></div>)
-      }
-      let message = n["message"];
-      if (n["URL"] !== null && n["URL"] !== '') {
-        message = <a href={n["URL"]} target="_blank" rel="noopener noreferrer"> {n["message"]} </a>
-      }
-      return (
-        <div className="row" key={n["ID"]}>
-          <div className="col-md-9">
-            {message}
-          </div>
-          <div className="col-md-2">
-            <Button size="sm" color="primary"
-              style={{ 'padding': '0 10%' }}
-              onClick={() => this.acknowledgeNotification(n["ID"])}
-            > {n["type"]} </Button>
-          </div>
-        </div>
-      )
-    });
-
+    // Render component
     return (
-      <div className="container-fluid p-0 m-0">
+      <div>
         <NavBar />
-        <div className="row m-2 p-2">
-          <div className="col">
-            <DevicesDropdown
-              devices={[...this.state.user_devices.values()]}
-              selectedDevice={this.state.selected_device}
-              onSelectDevice={this.onSelectDevice}
-              onAddDevice={this.toggleDeviceModal}
-            />
-          </div>
+        <div style={{ width: '100%', border: 0 }}>
+          <DevicesDropdown
+            ref={this.devicesDropdown}
+            cookies={this.props.cookies}
+            userToken={userToken}
+            onSelectDevice={this.onSelectDevice}
+            onAddDevice={this.toggleAddDeviceModal}
+            borderRadius={0}
+          />
+
         </div>
-        <div className='row m-2'>
-          <div className='col-4'>
-            <div className="card notifications">
-              <div className="card-body">
-                <div className="card-title">
-                  <h3>Notifications {notification_bell_image}</h3>
-                </div>
-                <p>
-                  Your plant is {this.state.age_in_days}
-                  &nbsp;old. Congratulations!
-                                </p>
-                <hr />
+        <div style={{ margin: 20, padding: 0 }}>
+          <Row>
+            <Col md="6">
+              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+                <CardHeader>
+                  <Button
+                    size="sm"
+                    className="float-right"
+                    onClick={this.toggleAddDeviceModal}
+                  >
+                    Add Device
+                  </Button>
+                  <CardText style={{ fontSize: 22 }}>Dashboard</CardText>
+                </CardHeader>
+                <CardBody>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style={{ justifyItems: "center" }}>
+                      {currentRecipe.name === "No Recipe" && (
+                        <Button
+                          size="sm"
+                          className="float-right"
+                          onClick={() => this.props.history.push("/recipes")}
+                        >
+                          Run Recipe
+                        </Button>
+                      )}
+                      <b>Current Recipe:</b> {currentRecipe.name}
+                    </li>
+                    {currentRecipe.startDateString !== null && (
+                      <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Recipe Started:</b> {currentRecipe.startDateString}</li>
+                    )}
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }} ><b>Air Temperature:</b> {airTemperature}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air Humidity:</b> {airHumidity}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air CO2:</b> {airCo2}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water Temperature:</b> {waterTemperature}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water pH:</b> {waterPh}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water EC:</b> {waterEc}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Wifi Status:</b> {wifiStatus}</li>
+                  </ul>
+                </CardBody>
+                <CardFooter>
+                  <Button
+                    style={{ width: '100%' }}
+                    onClick={this.toggleTakeMeasurementsModal}
+                  >
+                    Take Measurements
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Col>
 
-                {notification_buttons}
-
-                <hr />
-                <p><Button size="small" onClick={this.goToTakeMeasurments}>Take horticulture measurements</Button> </p>
-              </div>
-            </div>
-          </div>
-
-          <div className='col-7'>
-            <div className="container">
-              <div className="row mb-2">
-                <div className="col">
-                  <DeviceImages
-                    deviceUUID={this.state.selected_device_uuid}
-                    user_token={this.state.user_token}
-                    enableTwitter
-                  />
-                </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">Wifi Status</div>
-                <div className="col-md-7"> {this.state.wifi_status} </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">Device Status</div>
-                <div className="col-md-4">
-                  <span className="checkmark">
-                    <div className="checkmark_circle"></div>
-                  </span>
-                  <span className="checkmark-text">OK</span>
-                </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">
-                  Progress
-                                </div>
-                <div className="col-md-1">
-                  {this.state.age_in_days}
-                </div>
-                <div className="col-md-6">
-                  <Line percent={this.state.progress} strokeWidth="4" trailWidth="4"
-                    strokeColor="#378A49"
-                    strokeLinecap="round" />
-                </div>
-              </div>
-
-              <div className="row mb-2">
-                <div className="col-md-3">Temperature</div>
-                <div className="col-md-8">
-                  {this.state.current_temp}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+            <Col md="6">
+              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+                <DeviceImages
+                  deviceUUID={device.uuid}
+                  user_token={userToken}
+                  enableTwitter
+                />
+              </Card>
+            </Col>
+          </Row>
+        </div >
         <AddDeviceModal
-          isOpen={this.state.add_device_modal}
-          toggle={this.toggleDeviceModal}
-          onSubmit={this.onSubmitDevice}
-          onRegNoChange={this.changeRegNo}
-          error_message={this.state.add_device_error_message}
-          device_reg_no={this.state.device_reg_no}
+          cookies={this.props.cookies}
+          isOpen={this.state.showAddDeviceModal}
+          toggle={this.toggleAddDeviceModal}
+          fetchDevices={this.fetchDevices}
         />
-      </div>
+        <TakeMeasurementsModal
+          deviceUuid={device.uuid}
+          cookies={this.props.cookies}
+          isOpen={this.state.showTakeMeasurementsModal}
+          toggle={this.toggleTakeMeasurementsModal}
+        />
+      </div >
     );
   }
 }
 
 export default withCookies(Home);
+
+// getDeviceNotifications(deviceUuid) {
+//   console.log('Getting device notifications for device:', deviceUuid);
+
+//   // Get parameters
+//   const userToken = this.props.cookies.get('user_token');
+
+//   // Get notifications from data api
+//   return fetch(process.env.REACT_APP_FLASK_URL +
+//     '/api/get_device_notifications/', {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json',
+//         'Access-Control-Allow-Origin': '*'
+//       },
+//       body: JSON.stringify({
+//         'user_token': userToken,
+//         'device_uuid': deviceUuid,
+//       })
+//     })
+//     .then(async (response) => {
+
+//       // Get response json
+//       const responseJson = await response.json();
+
+//       // Validate response
+//       const responseCode = responseJson["response_code"];
+//       if (responseCode !== 200) {
+//         console.log('Unable to get device notifications, invalid response code');
+//         this.setState({ notifications: [] });
+//         return;
+//       }
+
+//       // Get parameters
+//       const results = responseJson["results"] || {};
+//       const notifications = results["notifications"] || {};
+//       console.log('Got device notifications:', notifications);
+
+//       // Update state
+//       this.setState({ notifications });
+//     })
+//     .catch((error) => {
+//       console.error('Unable to get device notifications', error);
+//       this.setState({ notifications: [] });
+//     });
+// };
+
+// acknowledgeNotification(ID) {
+//   return fetch(process.env.REACT_APP_FLASK_URL +
+//     '/api/ack_device_notification/', {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json',
+//         'Access-Control-Allow-Origin': '*'
+//       },
+//       body: JSON.stringify({
+//         'user_token': this.props.cookies.get('user_token'),
+//         'device_uuid': this.state.selected_device_uuid,
+//         'ID': ID
+//       })
+//     })
+//     .then((response) => response.json())
+//     .then((responseJson) => {
+//       if (responseJson["response_code"] === 200) {
+//         this.getDeviceNotifications(this.state.device.uuid);
+//       }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//     });
+// }
+
+// // Do strange notification things
+// let notification_bell_image = "";
+// if (this.state.notifications.length > 0) {
+//   notification_bell_image = <FontAwesomeIcon icon={faBell} />
+// }
+// let notification_buttons = this.state.notifications.map((n) => {
+//   if (undefined === n || undefined === n.message) {
+//     return (<div key='12345'></div>)
+//   }
+//   let message = n["message"];
+//   if (n["URL"] !== null && n["URL"] !== '') {
+//     message = <a href={n["URL"]} target="_blank" rel="noopener noreferrer"> {n["message"]} </a>
+//   }
+//   return (
+//     <div className="row" key={n["ID"]}>
+//       <div className="col-md-9">
+//         {message}
+//       </div>
+//       <div className="col-md-2">
+//         <Button size="sm" color="primary"
+//           style={{ 'padding': '0 10%' }}
+//           onClick={() => this.acknowledgeNotification(n["ID"])}
+//         > {n["type"]} </Button>
+//       </div>
+//     </div>
+//   )
+// });
+
+// {/* <li class="list-group-item">
+// <b>Notifications:</b>
+// <ul class="list-group list-group-flush">
+//   <li class="list-group-item">Check your fluid level</li>
+//   <li class="list-group-item">Time to water your plant</li>
+// </ul>
+// </li> */}

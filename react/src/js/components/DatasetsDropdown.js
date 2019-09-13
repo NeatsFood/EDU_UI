@@ -179,7 +179,7 @@ export class DatasetsDropdown extends React.PureComponent {
     return (
       <Dropdown isOpen={this.state.isOpen} toggle={this.toggle} >
         <DropdownToggle caret>
-          {dataset.name}
+          <strong>Dataset: </strong>{dataset.name}
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem header>Datasets</DropdownItem>

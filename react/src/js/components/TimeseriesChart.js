@@ -145,14 +145,18 @@ export class TimeseriesChart extends React.PureComponent {
 
         // TODO: Make this general case
         const { temp, RH, co2, leaf_count, plant_height } = responseJson;
+        console.log(responseJson)
+
+        // Temp hack to fix data chronology bug
+        plant_height.sort((a, b) => (a.time > b.time) ? 1 : -1)
+        leaf_count.sort((a, b) => (a.time > b.time) ? 1 : -1)
+
+        // TODO: Make this general case
         sensorData["tempData"] = temp;
         sensorData["RHData"] = RH;
         sensorData["co2Data"] = co2;
         sensorData["leafCount"] = leaf_count;
         sensorData["plantHeight"] = plant_height;
-
-        // TODO: Parse data here
-
       })
       .then(() => {
         console.log("About to parse data");
