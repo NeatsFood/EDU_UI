@@ -57,7 +57,7 @@ export class DevicesDropdown extends React.PureComponent {
 
       // Get response parameters
       const { response_code, results } = responseJson;
-      const raw_devices = results["devices"] || [];
+      const raw_devices = (results && results["devices"]) || [];
       
       // Initialize devices
       const devices = [];
