@@ -52,21 +52,31 @@ export class RunRecipeModal extends React.PureComponent {
         'device_uuid': device.uuid,
         'recipe_uuid': recipe.uuid,
       })
-    })
-      .then(async (response) => {
-      
-        // Parse response json
-        const responseJson = await response.json()
-        console.log('Applied recipe to device, response', responseJson);
+    }).then(async (response) => {
 
-        // Successfully applied recipe, hide modal
-        this.toggle();
+      // Parse response json
+      const responseJson = await response.json()
 
-      }).catch((error) => {
-        console.error('Unable to run recipe', error);
-        const errorMessage = "Unable to run recipe, please try again later."
-        this.setState({ errorMessage });
-      });
+      // Verify response successful
+      if (!response.ok) {
+        throw Error(responseJson.message);
+      }
+
+      // Successfully applied recipe, hide modal
+      console.log('Applied recipe to device, response', responseJson);
+      this.toggle();
+
+    }).catch((error) => {
+      console.error('Unable to run recipe', error);
+
+      let errorMessage;
+      if (error.message.includes("not connected")) {
+        errorMessage = "Unable to run recipe, device is not connected."
+      } else {
+        errorMessage = "Unable to run recipe, please try again later."
+      }
+      this.setState({ errorMessage });
+    });
   };
 
   render() {
@@ -97,7 +107,7 @@ export class RunRecipeModal extends React.PureComponent {
           <ModalBody>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             {wifiDisconnected && <p style={{ color: 'red' }}>{wifiMessage}</p>}
-            {!wifiDisconnected && overwritingRecipe && <p style={{ color: 'red' }}>{overwriteMessage}</p>}
+            {!errorMessage && !wifiDisconnected && overwritingRecipe && <p style={{ color: 'red' }}>{overwriteMessage}</p>}
             <p>
               <strong>Recipe: </strong> {recipe.name}<br />
               <strong>Device: </strong> {device.name}<br />
