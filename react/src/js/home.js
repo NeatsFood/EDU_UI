@@ -280,12 +280,14 @@ class Home extends Component {
               </Row>
             </Col>
             <Col md="6" >
-              <Row style={{ backgroundColor: "orange", padding: 40 }}>
-                <DeviceImages
-                  deviceUUID={device.uuid}
-                  user_token={userToken}
-                  enableTwitter
-                />
+              <Row style={{ backgroundColor: "orange", padding: 40, justifyContent: 'center' }}>
+                <div style={{ width: '90%' }}>
+                  <DeviceImages
+                    deviceUUID={device.uuid}
+                    user_token={userToken}
+                    enableTwitter
+                  />
+                </div>
               </Row>
             </Col>
           </Row>
