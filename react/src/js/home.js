@@ -255,29 +255,32 @@ class Home extends Component {
 
         </div>
         <div style={{ margin: 0, padding: '0 15px' }}>
-          {/* <Container fluid> */}
           <Row>
-            <Col md="6" style={{ backgroundColor: "yellow", height: 200 }}>
+            <Col md="6" style={{ backgroundColor: "red", minHeight: 100 }}>
+              <div style={{ textAlign: 'center' }}>Recipe</div>
             </Col>
-            <Col md="6" style={{ backgroundColor: "green" }}>
+            <Col md="6" style={{ backgroundColor: "green", minHeight: 100 }}>
+              <div style={{ textAlign: 'center' }}>Plants</div>
             </Col>
           </Row>
           <Row>
             <Col md="6" style={{ backgroundColor: 'purple' }}>
-              <Row style={{ height: '50%' }}>
-                <Col style={{ backgroundColor: "blue" }}>
-                  heh
+              <Row style={{ minHeight: '66.67%' }}>
+                <Col lg="6" style={{ minHeight: '50%', backgroundColor: "grey" }}>
+                  <div style={{ textAlign: 'center' }}>Air</div>
                 </Col>
-                <Col style={{ backgroundColor: 'pink' }}>
-                  hah
+                <Col lg="6" style={{ minHeight: '50%', backgroundColor: 'blue' }}>
+                  <div style={{ textAlign: 'center' }}>Water</div>
                 </Col>
               </Row>
-              <Row style={{ height: '50%', backgroundColor: 'grey' }}>
-                poop
+              <Row style={{ minHeight: '33.33%', backgroundColor: 'yellow' }}>
+                <Col style={{ minHeight: 100 }}>
+                  <div style={{ textAlign: 'center' }}>Light</div>
+                </Col>
               </Row>
             </Col>
             <Col md="6" >
-              <Row style={{ backgroundColor: "orange" }}>
+              <Row style={{ backgroundColor: "orange", padding: 40 }}>
                 <DeviceImages
                   deviceUUID={device.uuid}
                   user_token={userToken}
@@ -286,7 +289,6 @@ class Home extends Component {
               </Row>
             </Col>
           </Row>
-          {/* </Container> */}
         </div >
         <AddDeviceModal
           cookies={this.props.cookies}
