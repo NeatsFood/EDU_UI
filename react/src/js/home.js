@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
+import { Row, Col, Container, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
@@ -243,7 +243,7 @@ class Home extends Component {
     return (
       <div>
         <NavBar />
-        <div style={{ width: '100%', border: 0 }}>
+        <div hidden style={{ width: '100%', border: 0 }}>
           <DevicesDropdown
             ref={this.devicesDropdown}
             cookies={this.props.cookies}
@@ -254,67 +254,39 @@ class Home extends Component {
           />
 
         </div>
-        <div style={{ margin: 20, padding: 0 }}>
+        <div style={{ margin: 0, padding: '0 15px' }}>
+          {/* <Container fluid> */}
           <Row>
-            <Col md="6">
-              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
-                <CardHeader>
-                  <Button
-                    size="sm"
-                    className="float-right"
-                    onClick={this.toggleAddDeviceModal}
-                  >
-                    Add Device
-                  </Button>
-                  <CardText style={{ fontSize: 22 }}>Dashboard</CardText>
-                </CardHeader>
-                <CardBody>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item" style={{ justifyItems: "center" }}>
-                      {currentRecipe.name === "No Recipe" && (
-                        <Button
-                          size="sm"
-                          className="float-right"
-                          onClick={() => this.props.history.push("/recipes")}
-                        >
-                          Run Recipe
-                        </Button>
-                      )}
-                      <b>Current Recipe:</b> {currentRecipe.name}
-                    </li>
-                    {currentRecipe.startDateString !== null && (
-                      <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Recipe Started:</b> {currentRecipe.startDateString}</li>
-                    )}
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }} ><b>Air Temperature:</b> {airTemperature}</li>
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air Humidity:</b> {airHumidity}</li>
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air CO2:</b> {airCo2}</li>
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water Temperature:</b> {waterTemperature}</li>
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water pH:</b> {waterPh}</li>
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water EC:</b> {waterEc}</li>
-                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Wifi Status:</b> {wifiStatus}</li>
-                  </ul>
-                </CardBody>
-                <CardFooter>
-                  <Button
-                    style={{ width: '100%' }}
-                    onClick={this.toggleTakeMeasurementsModal}
-                  >
-                    Take Measurements
-                  </Button>
-                </CardFooter>
-              </Card>
+            <Col md="6" style={{ backgroundColor: "yellow", height: 200 }}>
             </Col>
-
-            <Col md="6">
-              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+            <Col md="6" style={{ backgroundColor: "green" }}>
+            </Col>
+          </Row>
+          <Row>
+            <Col md="6" style={{ backgroundColor: 'purple' }}>
+              <Row style={{ height: '50%' }}>
+                <Col style={{ backgroundColor: "blue" }}>
+                  heh
+                </Col>
+                <Col style={{ backgroundColor: 'pink' }}>
+                  hah
+                </Col>
+              </Row>
+              <Row style={{ height: '50%', backgroundColor: 'grey' }}>
+                poop
+              </Row>
+            </Col>
+            <Col md="6" >
+              <Row style={{ backgroundColor: "orange" }}>
                 <DeviceImages
                   deviceUUID={device.uuid}
                   user_token={userToken}
                   enableTwitter
                 />
-              </Card>
+              </Row>
             </Col>
           </Row>
+          {/* </Container> */}
         </div >
         <AddDeviceModal
           cookies={this.props.cookies}
