@@ -97,6 +97,8 @@ export class DeviceImages extends React.PureComponent {
     return encodeURI(tweetUri);
   };
 
+  // TODO: Add tweet this image to the image timelapse component
+
   render() {
     return (
       <div className="timelapse">
@@ -110,7 +112,7 @@ export class DeviceImages extends React.PureComponent {
             />
           </div>
         </div>
-        <div className="row">
+        {/* <div className="row">
           <div className="col-md-12">
             {this.state.displayedImage ? (
               <a
@@ -121,7 +123,7 @@ export class DeviceImages extends React.PureComponent {
                 ""
               )}
           </div>
-        </div>
+        </div> */}
       </div>
     )
   }

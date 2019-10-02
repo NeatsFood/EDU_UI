@@ -1,5 +1,8 @@
 import React from 'react';
 
+// TODO: Add tweet this image
+// TODO: Move slider over image 
+
 /**
  * TimelapseImages
  *
@@ -68,10 +71,13 @@ export class ImageTimelapse extends React.PureComponent {
       return (
         <React.Fragment>
           <img
-            src={this.state.images[this.state.index]} alt=''
-            className={this.props.imageClass} />
+            style={{ borderRadius: 0 }}
+            src={this.state.images[this.state.index]}
+            alt=''
+            className={this.props.imageClass} 
+          />
           <input
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginTop: 10 }}
             className={this.props.inputClass}
             type="range"
             min="0"
