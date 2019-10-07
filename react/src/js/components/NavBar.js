@@ -38,7 +38,7 @@ export default class NavBar extends React.Component {
 
     return (
       <Navbar expand="md" dark color="dark">
-        <NavbarBrand href="/">
+        <NavbarBrand tag={RouterNavLink} to="/home">
           <img className="home-icon" src={logo} alt='' style={{ width: '150px' }} />
         </NavbarBrand>
         <NavbarToggler onClick={this.toggle} />

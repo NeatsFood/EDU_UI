@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { Row, Col, Container, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileAlt
+} from '@fortawesome/free-solid-svg-icons'
+
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
 
 import NavBar from './components/NavBar';
@@ -256,8 +260,28 @@ class Home extends Component {
         </div>
         <div style={{ margin: 0, padding: '0 15px' }}>
           <Row>
-            <Col md="6" style={{ backgroundColor: "red", minHeight: 100 }}>
-              <div style={{ textAlign: 'center' }}>Recipe</div>
+            <Col md="6" style={{ backgroundColor: "white", minHeight: 100 }}>
+
+              <div>
+                <Row>
+                  <Col style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', padding: 10 }}>
+                      <div>
+                        <FontAwesomeIcon icon={faFileAlt} size="4x" />  
+                      </div>
+                      <div style={{ textAlign: 'center', fontWeight: '600', color: 'grey' }}>Recipe</div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 10 }}>
+                      <div style={{ fontSize: 55, marginTop: '-10px', marginBottom: '-15px' }}>75
+                        <sup><span style={{ fontSize: 30, color: 'grey', paddingLeft: 5 }}>%</span></sup>
+                      </div>
+                      <div style={{ fontSize: 18, color: 'grey' }}>Complete</div>
+                    </div>
+                  </Col>
+                  <Col>
+                  </Col>
+                </Row>
+              </div>
             </Col>
             <Col md="6" style={{ backgroundColor: "green", minHeight: 100 }}>
               <div style={{ textAlign: 'center' }}>Plants</div>
