@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Row, Col, Container, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFileAlt
+  faFileAlt, faWind, faWater, faLeaf, faSun,
 } from '@fortawesome/free-solid-svg-icons'
 
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
@@ -13,6 +12,7 @@ import { DevicesDropdown } from './components/DevicesDropdown';
 import { AddDeviceModal } from './components/AddDeviceModal';
 import { DeviceImages } from './components/device/device_images';
 import { TakeMeasurementsModal } from './components/TakeMeasurementsModal';
+import { DashboardItem } from './components/DashboardItem';
 
 import '../scss/home.scss';
 
@@ -260,52 +260,74 @@ class Home extends Component {
         </div>
         <div style={{ margin: 0, padding: '0 15px' }}>
           <Row>
-            <Col md="6" style={{ backgroundColor: "white", minHeight: 100 }}>
-
-              <div>
-                <Row>
-                  <Col style={{ display: 'flex', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', padding: 10 }}>
-                      <div>
-                        <FontAwesomeIcon icon={faFileAlt} size="4x" />  
-                      </div>
-                      <div style={{ textAlign: 'center', fontWeight: '600', color: 'grey' }}>Recipe</div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 10 }}>
-                      <div style={{ fontSize: 55, marginTop: '-10px', marginBottom: '-15px' }}>75
-                        <sup><span style={{ fontSize: 30, color: 'grey', paddingLeft: 5 }}>%</span></sup>
-                      </div>
-                      <div style={{ fontSize: 18, color: 'grey' }}>Complete</div>
-                    </div>
-                  </Col>
-                  <Col>
-                  </Col>
-                </Row>
-              </div>
+            <Col md="6" style={{ minHeight: 100, backgroundColor: '#ffcd99' }}>
+              <DashboardItem
+                name="Recipe"
+                value="75"
+                unit="%"
+                variable="Complete"
+                icon={faFileAlt}
+                minor1="Get Growing - Long Green Day"
+                minor2="Started Thu Sept 03"
+              />
             </Col>
-            <Col md="6" style={{ backgroundColor: "green", minHeight: 100 }}>
-              <div style={{ textAlign: 'center' }}>Plants</div>
+            <Col md="6" style={{ minHeight: 100, backgroundColor: "#d5f3cc" }}>
+              <DashboardItem
+                name="Plants"
+                value="24"
+                unit="cm"
+                variable="Avg. Height"
+                icon={faLeaf}
+                minor1="Avg. Leaf Count: 12"
+              />
             </Col>
           </Row>
           <Row>
-            <Col md="6" style={{ backgroundColor: 'purple' }}>
+            <Col md="6">
               <Row style={{ minHeight: '66.67%' }}>
-                <Col lg="6" style={{ minHeight: '50%', backgroundColor: "grey" }}>
-                  <div style={{ textAlign: 'center' }}>Air</div>
+                <Col lg="6" style={{ minHeight: '50%', backgroundColor: "#f4f4f4", display: 'flex', alignItems: 'center' }}>
+                  <DashboardItem
+                    name="Air"
+                    value="26"
+                    unit="&deg;C"
+                    variable="Temperature"
+                    icon={faWind}
+                    minor1="Humidity: 40 %"
+                    minor2="CO2: 480 ppm"
+                  />
                 </Col>
-                <Col lg="6" style={{ minHeight: '50%', backgroundColor: 'blue' }}>
-                  <div style={{ textAlign: 'center' }}>Water</div>
+                <Col lg="6" style={{ minHeight: '50%', backgroundColor: "#93deff", display: 'flex', alignItems: 'center' }}>
+                  <DashboardItem
+                    name="Water"
+                    value="24"
+                    unit="&deg;C"
+                    variable="Temperature"
+                    icon={faWater}
+                    minor1="EC: 6.7 mS/cm"
+                    minor2="pH: 4.9"
+                  />
                 </Col>
               </Row>
-              <Row style={{ minHeight: '33.33%', backgroundColor: 'yellow' }}>
+              <Row style={{ minHeight: '33.33%', backgroundColor: '#fff7b2' }}>
                 <Col style={{ minHeight: 100 }}>
-                  <div style={{ textAlign: 'center' }}>Light</div>
+                  <DashboardItem
+                    name="Light"
+                    value="310"
+                    unit="ppm"
+                    variable="Intensity"
+                    icon={faSun}
+                    minor1="Far Red: 10 %"
+                    minor2="Red: 40 %"
+                    minor3="Green: 15 %"
+                    minor4="Blue: 3 5%"
+                    minor5="Ultraviolet: 0 %"
+                  />
                 </Col>
               </Row>
             </Col>
-            <Col md="6" >
-              <Row style={{ backgroundColor: "orange", padding: 40, justifyContent: 'center' }}>
-                <div style={{ width: '90%' }}>
+            <Col md="6">
+              <Row style={{ backgroundColor: "#", padding: 0, justifyContent: 'center' }}>
+                <div style={{ width: '100%' }}>
                   <DeviceImages
                     deviceUUID={device.uuid}
                     user_token={userToken}
