@@ -263,69 +263,71 @@ class Home extends Component {
             borderRadius={0}
           />
         </div>
-        <Container >
-          <Row>
-            <Col xl="6">
-              <Row>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
-                    name="Recipe"
-                    value="75"
-                    unit="%"
-                    variable="Complete"
-                    icon={temperature}
-                    minor1="Get Growing - Long Green Day"
-                    minor2="Started Thu Sept 03"
+        <div style={{ marginRight: 10, marginLeft: 10 }}>
+          <Container fluid>
+            <Row>
+              <Col xl="6">
+                <Row>
+                  <Col style={{ marginTop: 30 }}>
+                    <DashboardCard
+                      name="Recipe"
+                      value="75"
+                      unit="%"
+                      variable="Complete"
+                      icon={temperature}
+                      minor1="Get Growing - Long Green Day"
+                      minor2="Started Thu Sept 03"
+                    />
+                  </Col>
+                  <Col style={{ marginTop: 30 }}>
+                    <DashboardCard
+                      name="Light"
+                      value="310"
+                      unit="par"
+                      variable="Intensity"
+                      icon={light}
+                      minor1="FR: 10 %   R: 40%"
+                      minor2="G:  40 %   B: 15%   UV: 0%"
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col style={{ marginTop: 30 }}>
+                    <DashboardCard
+                      name="Air"
+                      value="26"
+                      unit="&deg;C"
+                      variable="Temperature"
+                      icon={air}
+                      minor1="Humidity: 40 %"
+                      minor2="CO2: 480 ppm"
+                    />
+                  </Col>
+                  <Col style={{ marginTop: 30 }}>
+                    <DashboardCard
+                      name="Water"
+                      value="24"
+                      unit="&deg;C"
+                      variable="Temperature"
+                      icon={water}
+                      minor1="EC: 6.7 mS/cm"
+                      minor2="pH: 4.9"
+                    />
+                  </Col>
+                </Row>
+              </Col>
+              <Col xl="6" style={{ marginTop: 30 }}>
+                <Card>
+                  <DeviceImages
+                    deviceUUID={device.uuid}
+                    user_token={userToken}
+                    enableTwitter
                   />
-                </Col>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
-                    name="Light"
-                    value="4310"
-                    unit="par"
-                    variable="Intensity"
-                    icon={light}
-                    minor1="FR: 10 %   R: 40%"
-                    minor2="G:  40 %   B: 15%   UV: 0%"
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
-                    name="Air"
-                    value="26"
-                    unit="&deg;C"
-                    variable="Temperature"
-                    icon={air}
-                    minor1="Humidity: 40 %"
-                    minor2="CO2: 480 ppm"
-                  />
-                </Col>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
-                    name="Water"
-                    value="24"
-                    unit="&deg;C"
-                    variable="Temperature"
-                    icon={water}
-                    minor1="EC: 6.7 mS/cm"
-                    minor2="pH: 4.9"
-                  />
-                </Col>
-              </Row>
-            </Col>
-            <Col xl="6" style={{ marginTop: 30 }}>
-              <Card>
-                <DeviceImages
-                  deviceUUID={device.uuid}
-                  user_token={userToken}
-                  enableTwitter
-                />
-              </Card>
-            </Col>
-          </Row>
-        </Container>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
         <AddDeviceModal
           cookies={this.props.cookies}
           isOpen={this.state.showAddDeviceModal}

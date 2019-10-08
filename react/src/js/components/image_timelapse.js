@@ -71,7 +71,7 @@ export class ImageTimelapse extends React.PureComponent {
       return (
         <React.Fragment>
           <img
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 3 }}
             src={this.state.images[this.state.index]}
             alt=''
             className={this.props.imageClass} 
