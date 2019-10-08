@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Card, Row, Col } from 'reactstrap';
+import { Row, Col, Container, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import {
   faFileAlt, faWind, faWater, faLeaf, faSun,
@@ -12,15 +12,12 @@ import { DevicesDropdown } from './components/DevicesDropdown';
 import { AddDeviceModal } from './components/AddDeviceModal';
 import { DeviceImages } from './components/device/device_images';
 import { TakeMeasurementsModal } from './components/TakeMeasurementsModal';
-import { DashboardCard } from './components/DashboardCard';
+import { DashboardItem } from './components/DashboardItem';
+
 import '../scss/home.scss';
 
-// Import images
-import temperature from '../images/temperature.png'
-import light from '../images/light.png'
-import air from '../images/air.png'
-import water from '../images/water.png'
 
+// Alternative idea: https://colorlib.com/wp/react-dashboard-templates/
 
 
 class Home extends Component {
@@ -249,6 +246,79 @@ class Home extends Component {
       airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
     } = currentEnvironment;
 
+    // OpenAg Foundation Tinted
+    // const recipeColor = '#e9d3e1'
+    // const plantColor = '#d3e7d8'
+    // const airColor = '#008bc2'
+    // const waterColor = '#cce7f2'
+    // const lightColor = '#f9e6c8'
+
+    // Sunset
+    // const recipeColor = '#fff8b6'
+    // const plantColor = '#ffe4a3'
+    // const airColor = '#ffbd91'
+    // const waterColor = '#ff8d71'
+    // const lightColor = '#ff707e'
+
+    // Plants & Sky
+    // const recipeColor = '#d9f1b5'
+    // const plantColor = '#4ea852'
+    // const airColor = '#61ac8e'
+    // const waterColor = '#86cae8'
+    // const lightColor = '#96a8ba'
+
+    // Muted Naturals
+    const recipeColor = '#e1da94'
+    const plantColor = '#b5d695'
+    const airColor = '#f4dda6'
+    const waterColor = '#afbec7'
+    const lightColor = '#c3adba'
+
+    // Miranda & Neal
+    // const recipeColor = '#96a8ba'
+    // const plantColor = '#f1d6cc'
+    // const airColor = '#feebe6'
+    // const waterColor = '#c4b9ab'
+    // const lightColor = '#f6f0e6'
+
+    // Recipe Lightest
+    // const recipeColor = '#ffcfee'
+    // const plantColor = '#b5d695'
+    // const airColor = '#ffd3b3'
+    // const waterColor = '#d2f3f7'
+    // const lightColor = '#fffabc'
+
+    // Pastel
+    // const recipeColor = '#f7e7b4'
+    // const plantColor = '#b8dbd3'
+    // const airColor = '#96ead7'
+    // const waterColor = '#68c4af'
+    // const lightColor = '#f2f6c3'
+
+    // Shades of Blue
+    // const recipeColor = '#e1f1ff'
+    // const plantColor = '#c9dae9'
+    // const airColor = '#acc5da'
+    // const waterColor = '#97b8d1'
+    // const lightColor = '#c9dae9'
+
+    // Light Greenhouse
+    // const recipeColor = '#d1ecc1'
+    // const plantColor = '#badda4'
+    // const airColor = '#acc5da'
+    // const waterColor = '#97b8d1'
+    // const lightColor = '#fffabc'
+
+    // White
+    // const recipeColor = 'white'
+    // const plantColor = 'white'
+    // const airColor = 'white'
+    // const waterColor = 'white'
+    // const lightColor = 'white'
+
+    
+
+
     // Render component
     return (
       <div>
@@ -262,70 +332,88 @@ class Home extends Component {
             onAddDevice={this.toggleAddDeviceModal}
             borderRadius={0}
           />
+
         </div>
-        <Container >
+        <div style={{ margin: 0, padding: '0 15px' }}>
           <Row>
-            <Col xl="6">
-              <Row>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
-                    name="Recipe"
-                    value="75"
-                    unit="%"
-                    variable="Complete"
-                    icon={temperature}
-                    minor1="Get Growing - Long Green Day"
-                    minor2="Started Thu Sept 03"
-                  />
-                </Col>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
-                    name="Light"
-                    value="4310"
-                    unit="par"
-                    variable="Intensity"
-                    icon={light}
-                    minor1="FR: 10 %   R: 40%"
-                    minor2="G:  40 %   B: 15%   UV: 0%"
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
+            <Col md="6" style={{ minHeight: 100, backgroundColor: recipeColor }}>
+              <DashboardItem
+                name="Recipe"
+                value="75"
+                unit="%"
+                variable="Complete"
+                icon={faFileAlt}
+                minor1="Get Growing - Long Green Day"
+                minor2="Started Thu Sept 03"
+              />
+            </Col>
+            <Col md="6" style={{ minHeight: 100, backgroundColor: plantColor }}>
+              <DashboardItem
+                name="Plants"
+                value="24"
+                unit="cm"
+                variable="Avg. Height"
+                icon={faLeaf}
+                minor1="Avg. Leaf Count: 12"
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col md="6">
+              <Row style={{ minHeight: '66.67%' }}>
+                <Col lg="6" style={{ minHeight: '50%', backgroundColor: airColor, display: 'flex', alignItems: 'center' }}>
+                  <DashboardItem
                     name="Air"
                     value="26"
                     unit="&deg;C"
                     variable="Temperature"
-                    icon={air}
+                    icon={faWind}
                     minor1="Humidity: 40 %"
                     minor2="CO2: 480 ppm"
                   />
                 </Col>
-                <Col style={{ marginTop: 30 }}>
-                  <DashboardCard
+                <Col lg="6" style={{ minHeight: '50%', backgroundColor: waterColor, display: 'flex', alignItems: 'center' }}>
+                  <DashboardItem
                     name="Water"
                     value="24"
                     unit="&deg;C"
                     variable="Temperature"
-                    icon={water}
+                    icon={faWater}
                     minor1="EC: 6.7 mS/cm"
                     minor2="pH: 4.9"
                   />
                 </Col>
               </Row>
+              <Row style={{ minHeight: '33.33%', backgroundColor: lightColor }}>
+                <Col style={{ minHeight: 100 }}>
+                  <DashboardItem
+                    name="Light"
+                    value="310"
+                    unit="ppm"
+                    variable="Intensity"
+                    icon={faSun}
+                    minor1="Far Red: 10 %"
+                    minor2="Red: 40 %"
+                    minor3="Green: 15 %"
+                    minor4="Blue: 3 5%"
+                    minor5="Ultraviolet: 0 %"
+                  />
+                </Col>
+              </Row>
             </Col>
-            <Col xl="6" style={{ marginTop: 30 }}>
-              <Card>
-                <DeviceImages
-                  deviceUUID={device.uuid}
-                  user_token={userToken}
-                  enableTwitter
-                />
-              </Card>
+            <Col md="6">
+              <Row style={{ backgroundColor: "#", padding: 0, justifyContent: 'center' }}>
+                <div style={{ width: '100%' }}>
+                  <DeviceImages
+                    deviceUUID={device.uuid}
+                    user_token={userToken}
+                    enableTwitter
+                  />
+                </div>
+              </Row>
             </Col>
           </Row>
-        </Container>
+        </div >
         <AddDeviceModal
           cookies={this.props.cookies}
           isOpen={this.state.showAddDeviceModal}
