@@ -24,8 +24,12 @@ export const Auth0Provider = ({
       setAuth0(auth0FromHook);
 
       if (window.location.search.includes("code=")) {
-        const { appState } = await auth0FromHook.handleRedirectCallback();
-        onRedirectCallback(appState);
+        try {
+          const { appState } = await auth0FromHook.handleRedirectCallback();
+          onRedirectCallback(appState);
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       const isAuthenticated = await auth0FromHook.isAuthenticated();
