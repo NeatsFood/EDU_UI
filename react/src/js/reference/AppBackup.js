@@ -7,12 +7,12 @@ import { useAuth0 } from "./auth/react-auth0-spa";
 
 import NavBar from './components/NavBar';
 import LandingPage from "./LandingPage";
-import Dashboard from './components/Dashboard';
+import Dashboard from '../components/Dashboard';
 import DeviceHomepage from './DeviceHomepage';
-import Recipes from "./Recipes";
-import RecipeDetails from "./RecipeDetails";
+import Recipes from "../Recipes";
+import RecipeDetails from "../components/recipe/RecipeDetails";
 import EditRecipe from "./components/reference/EditRecipe";
-import HorticultureSuccess from "./HorticultureSuccess";
+import HorticultureSuccess from "../HorticultureSuccess";
 
 function App() {
   const { isAuthenticated } = useAuth0();

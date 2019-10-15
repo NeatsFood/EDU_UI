@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
 import { Card, Media } from 'reactstrap';
-import { DevicesDropdown } from './components/DevicesDropdown';
-import { AddDeviceModal } from './components/AddDeviceModal';
-import { RunRecipeModal } from './components/RunRecipeModal';
+import { DevicesDropdown } from '../DevicesDropdown';
+import { AddDeviceModal } from '../AddDeviceModal';
+import { RunRecipeModal } from './RunRecipeModal';
 
 const DEFAULT_IMAGE_URL = 'https://cdn.shopify.com/s/files/1/0156/0137/products/refill_0012_basil.jpg?v=1520501227';
 

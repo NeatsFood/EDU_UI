@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { useAuth0 } from "./react-auth0-wrapper";
 
 import PrivateRoute from "./components/PrivateRoute";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/navigation/NavBar";
 import Landing from './components/Landing';
 import Dashboard from './components/Dashboard';
 import Profile from "./components/Profile";

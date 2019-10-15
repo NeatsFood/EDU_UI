@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './js/App';
-import * as serviceWorker from './js/serviceWorker';
+import App from '../App';
+import * as serviceWorker from '../serviceWorker';
 import { Auth0Provider } from "./js/auth/react-auth0-spa";
 import config from "./auth_config.json";
 

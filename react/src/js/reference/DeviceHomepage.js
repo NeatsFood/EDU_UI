@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { withCookies } from 'react-cookie';
-import { DevicesDropdown } from './components/DevicesDropdown';
-import { AddDeviceModal } from './components/AddDeviceModal';
-import { DatasetsDropdown } from './components/DatasetsDropdown';
-import { DownloadCsvButton } from './components/DownloadCsvButton';
-import { TimeseriesChart } from './components/TimeseriesChart';
+import { DevicesDropdown } from '../components/DevicesDropdown';
+import { AddDeviceModal } from '../components/AddDeviceModal';
+import { DatasetsDropdown } from '../components/DatasetsDropdown';
+import { DownloadCsvButton } from '../components/DownloadCsvButton';
+import { TimeseriesChart } from '../components/TimeseriesChart';
 
 import '../scss/device_homepage.scss';
 

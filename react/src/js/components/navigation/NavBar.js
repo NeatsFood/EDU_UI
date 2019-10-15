@@ -3,80 +3,14 @@ import {
   Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown,
   DropdownToggle, DropdownMenu, DropdownItem, UncontrolledAlert,
 } from 'reactstrap';
-import { useAuth0, Auth0Consumer } from "../react-auth0-wrapper";
+import { Auth0Consumer } from "../../react-auth0-wrapper";
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTachometerAlt, faFileAlt, faChartLine, faUser, faSignInAlt, faSignOutAlt, faWifi,
-} from '@fortawesome/free-solid-svg-icons'
+import { faTachometerAlt, faFileAlt, faChartLine, faWifi } from '@fortawesome/free-solid-svg-icons'
 
-import logo from "../../images/logo-initiative-white.png";
-
-// const LogoutButton = () => {
-//   const { logout } = useAuth0();
-//   const logoutWithRedirect = () =>
-//     logout({
-//       returnTo: window.location.origin
-//     });
-
-//   return (
-//     <div>
-//       <DropdownItem onClick={() => logoutWithRedirect()} >
-//         <FontAwesomeIcon icon={faSignOutAlt} style={{ marginRight: 5 }} />
-//         Logout
-//       </DropdownItem>
-//     </div>
-//   );
-// };
-
-// const LoginButton = () => {
-//   const { loginWithRedirect } = useAuth0();
-
-//   return (
-//     <div>
-//       <DropdownItem onClick={() => loginWithRedirect()} >
-//         <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: 5 }} />
-//         Login
-//       </DropdownItem>
-//     </div>
-//   );
-// };
-
-const LoginNavItem = () => {
-  const { loginWithRedirect } = useAuth0();
-
-  return (
-    <div>
-      <NavItem>
-        <NavLink tag={RouterNavLink} 
-          onClick={() => loginWithRedirect()}>
-          <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: 5 }} />
-          Login
-        </NavLink>
-      </NavItem>
-    </div>
-  );
-};
-
-const LogoutNavItem = () => {
-  const { logout } = useAuth0();
-  const logoutWithRedirect = () =>
-    logout({
-      returnTo: window.location.origin
-    });
-
-  return (
-    <div>
-      <NavItem>
-        <NavLink tag={RouterNavLink} onClick={() => logoutWithRedirect()}>
-          <FontAwesomeIcon icon={faSignOutAlt} style={{ marginRight: 5 }} />
-          Logout
-        </NavLink>
-      </NavItem>
-    </div>
-  );
-};
-
+import LoginNavItem from './LoginNavItem';
+import LogoutNavItem from './LogoutNavItem';
+import logo from "../../../images/logo-initiative-white.png";
 
 
 export default class NavBar extends React.Component {
@@ -93,7 +27,7 @@ export default class NavBar extends React.Component {
       isOpen: !this.state.isOpen
     });
   }
-  
+
 
   render() {
     return <Auth0Consumer>
@@ -161,12 +95,15 @@ export default class NavBar extends React.Component {
                 </Nav>
               </Collapse>
             </Navbar>
+
             {/* <UncontrolledAlert color="danger" style={{ textAlign: 'center', borderRadius: 0, marginBottom: 0 }}>
               Your food computer is not connected to the internet!
             </UncontrolledAlert> */}
-            <UncontrolledAlert color="info" style={{ textAlign: 'center', borderRadius: 0, marginBottom: 0 }}>
-              Remember to refill the reservoir and prune your plants!
-            </UncontrolledAlert>
+            {isAuthenticated && (
+              <UncontrolledAlert color="info" style={{ textAlign: 'center', borderRadius: 0, marginBottom: 0 }}>
+                Remember to refill the reservoir and prune your plants!
+              </UncontrolledAlert>
+            )}
           </div>
         );
 
