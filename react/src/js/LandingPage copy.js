@@ -36,34 +36,36 @@ function LandingPage() {
   }, [isAuthenticated]);
 
   return (
-    // <div className="container-fluid login-page h-100">
-    //   {!isAuthenticated && (
-    //     <div className="row h-100 align-items-center">
-    //       <div className="col">
-    //         <div className="card w-75 mx-auto my-auto border-0 openag-form">
-    //           <img className="mb-2" src={logo} alt='' />
-    //           <button className="btn btn-primary" onClick={() => loginWithRedirect({})}>
-    //             Log In
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )}
+    <div className="container-fluid login-page h-100">
+      {!isAuthenticated && (
+        <div className="row h-100 align-items-center">
+          <div className="col">
+            <div className="card w-75 mx-auto my-auto border-0 openag-form">
+              <img className="mb-2" src={logo} alt='' />
+              <button className="btn btn-primary" onClick={() => loginWithRedirect({})}>
+                Log In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-    //   {isAuthenticated && !oauthLoggedIn && (
+      {isAuthenticated && !oauthLoggedIn && (
 
-    //     <div className="row h-100 align-items-center">
-    //       <div className="col">
-    //         <div className="card w-75 mx-auto my-auto border-0 openag-form">
-    //           <img className="mb-2" src={logo} alt='' />
-    //           <p>Loading...</p>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )}
-    <div>
-      {!isAuthenticated && <Redirect to="/login" />}
-      {isAuthenticated && oauthLoggedIn && <Redirect to="/dashboard" />}
+        <div className="row h-100 align-items-center">
+          <div className="col">
+            <div className="card w-75 mx-auto my-auto border-0 openag-form">
+              <img className="mb-2" src={logo} alt='' />
+              <p>Loading...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAuthenticated && oauthLoggedIn && (
+        <Redirect to="/dashboard" />
+      )}
+
     </div>
   )
 }
