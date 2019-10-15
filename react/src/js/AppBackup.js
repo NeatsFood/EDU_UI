@@ -6,9 +6,8 @@ import RequireOAuth from './auth/RequireOAuth';
 import { useAuth0 } from "./auth/react-auth0-spa";
 
 import NavBar from './components/NavBar';
-import Login from './Login';
 import LandingPage from "./LandingPage";
-import Dashboard from './Dashboard';
+import Dashboard from './components/Dashboard';
 import DeviceHomepage from './DeviceHomepage';
 import Recipes from "./Recipes";
 import RecipeDetails from "./RecipeDetails";

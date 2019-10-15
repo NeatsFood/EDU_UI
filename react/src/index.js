@@ -5,8 +5,9 @@ import * as serviceWorker from "./js/serviceWorker";
 import { Auth0Provider } from "./js/react-auth0-wrapper";
 import config from "./auth_config.json";
 
-// A function that routes the user to the right place
-// after login
+import { CookiesProvider } from 'react-cookie';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const onRedirectCallback = appState => {
   window.history.replaceState(
     {},
@@ -24,7 +25,7 @@ ReactDOM.render(
     redirect_uri={window.location.origin}
     onRedirectCallback={onRedirectCallback}
   >
-    <App />
+    <CookiesProvider><App /></CookiesProvider>
   </Auth0Provider>,
   document.getElementById("root")
 );

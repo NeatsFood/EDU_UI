@@ -17,7 +17,7 @@ const Auth0Login = () => {
               onClick={() => loginWithRedirect({})}
             >
               Log In
-                    </button>
+          </button>
 
           </div>
         </div>

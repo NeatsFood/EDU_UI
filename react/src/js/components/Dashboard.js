@@ -7,18 +7,18 @@ import {
 
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
 
-import { DevicesDropdown } from './components/DevicesDropdown';
-import { AddDeviceModal } from './components/AddDeviceModal';
-import { DeviceImages } from './components/DeviceImages';
-import { TakeMeasurementsModal } from './components/TakeMeasurementsModal';
-import { DashboardCard } from './components/DashboardCard';
-import '../scss/home.scss';
+import { DevicesDropdown } from './DevicesDropdown';
+import { AddDeviceModal } from './AddDeviceModal';
+import { DeviceImages } from './DeviceImages';
+import { TakeMeasurementsModal } from './TakeMeasurementsModal';
+import { DashboardCard } from './DashboardCard';
+import '../../scss/home.scss';
 
 // Import images
-import temperature from '../images/temperature.png'
-import light from '../images/light.png'
-import air from '../images/air.png'
-import water from '../images/water.png'
+import temperature from '../../images/temperature.png'
+import light from '../../images/light.png'
+import air from '../../images/air.png'
+import water from '../../images/water.png'
 
 class Dashboard extends Component {
   constructor(props) {
