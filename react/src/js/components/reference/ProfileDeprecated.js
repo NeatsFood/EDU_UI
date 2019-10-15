@@ -7,9 +7,9 @@ import {ImageUploader} from './components/image_uploader';
 // import edit_icon from "../images/pencil-edit-button.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-regular-svg-icons";
-import NavBar from "./components/NavBar";
+import NavBar from "../NavBar";
 
-import * as api from './utils/api';
+import * as api from '../../utils/api';
 
 // import discourse_icon from "../images/discourse.png"
 

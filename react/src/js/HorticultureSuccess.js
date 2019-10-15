@@ -13,7 +13,6 @@ import brown_root from "../images/brown.png";
 import brownish_root from "../images/brownish_root.png";
 import white_root from "../images/white_root.png";
 import classNames from 'classnames';
-import NavBar from "./components/NavBar";
 
 class HorticultureSuccess extends Component {
   constructor(props) {
@@ -153,8 +152,6 @@ class HorticultureSuccess extends Component {
     return (
 
       <div className="container-fluid p-0 m-0">
-        <NavBar />
-
         {this.state.successfully_submitted ? <div className="row measurements-row">
           <div className="row">
             <div className="row">

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
 import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import basil from '../images/basil.jpg'
-import NavBar from "./components/NavBar";
+import NavBar from "../NavBar";
 
 class RecipeDetails extends Component {
   constructor(props) {

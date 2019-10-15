@@ -1,18 +1,9 @@
 import React from 'react';
 import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledAlert,
+  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown,
+  DropdownToggle, DropdownMenu, DropdownItem, UncontrolledAlert,
 } from 'reactstrap';
+import { useAuth0 } from "../auth/react-auth0-spa";
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,6 +11,24 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import logo from "../../images/logo-initiative-white.png";
+
+
+const LogoutButton = () => {
+  const { logout } = useAuth0();
+  const logoutWithRedirect = () =>
+    logout({
+      returnTo: window.location.origin
+    });
+
+  return (
+    <div>
+      <DropdownItem onClick={() => logoutWithRedirect()} >
+        <FontAwesomeIcon icon={faSignOutAlt} style={{ marginRight: 5 }} />
+        Logout
+      </DropdownItem>
+    </div>
+  );
+};
 
 
 export default class NavBar extends React.Component {
@@ -30,13 +39,14 @@ export default class NavBar extends React.Component {
       isOpen: false
     };
   }
+
   toggle() {
     this.setState({
       isOpen: !this.state.isOpen
     });
   }
-  render() {
 
+  render() {
     return (
       <div>
         <Navbar expand="md" dark color="dark">
@@ -52,7 +62,6 @@ export default class NavBar extends React.Component {
                     {/* <span style={{ color: '#da004a' }}> */}
                     <FontAwesomeIcon icon={faWifi} style={{ marginRight: 5 }} />
                   </span>
-
                   Morning Wind
                 </DropdownToggle>
                 <DropdownMenu>
@@ -90,10 +99,7 @@ export default class NavBar extends React.Component {
                   Profile
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem>
-                    <FontAwesomeIcon icon={faSignOutAlt} style={{ marginRight: 5 }} />
-                    Logout
-                  </DropdownItem>
+                  <LogoutButton />
                 </DropdownMenu>
               </UncontrolledDropdown>
             </Nav>

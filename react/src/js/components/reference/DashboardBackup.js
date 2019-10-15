@@ -1,26 +1,16 @@
 import React, { Component } from 'react';
-import { Container, Card, Row, Col } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBody, CardText, CardFooter, Button } from 'reactstrap';
 import { withCookies } from "react-cookie";
-import {
-  faFileAlt, faWind, faWater, faLeaf, faSun,
-} from '@fortawesome/free-solid-svg-icons'
-
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
 
-import NavBar from './components/NavBar';
-import { DevicesDropdown } from './components/DevicesDropdown';
-import { AddDeviceModal } from './components/AddDeviceModal';
+import NavBar from '../NavBar';
+import { DevicesDropdown } from '../DevicesDropdown';
+import { AddDeviceModal } from '../AddDeviceModal';
 import { DeviceImages } from './components/device/device_images';
-import { TakeMeasurementsModal } from './components/TakeMeasurementsModal';
-import { DashboardCard } from './components/DashboardCard';
+import { TakeMeasurementsModal } from '../TakeMeasurementsModal';
+
 import '../scss/home.scss';
-
-// Import images
-import temperature from '../images/temperature.png'
-import light from '../images/light.png'
-import air from '../images/air.png'
-import water from '../images/water.png'
-
 
 
 class Home extends Component {
@@ -253,7 +243,7 @@ class Home extends Component {
     return (
       <div>
         <NavBar />
-        <div hidden style={{ width: '100%', border: 0 }}>
+        <div style={{ width: '100%', border: 0 }}>
           <DevicesDropdown
             ref={this.devicesDropdown}
             cookies={this.props.cookies}
@@ -262,72 +252,70 @@ class Home extends Component {
             onAddDevice={this.toggleAddDeviceModal}
             borderRadius={0}
           />
+
         </div>
-        <div style={{ marginRight: 10, marginLeft: 10 }}>
-          <Container fluid>
-            <Row>
-              <Col xl="6">
-                <Row>
-                  <Col style={{ marginTop: 30 }}>
-                    <DashboardCard
-                      name="Recipe"
-                      value="75"
-                      unit="%"
-                      variable="Complete"
-                      icon={temperature}
-                      minor1="Get Growing - Long Green Day"
-                      minor2="Started Thu Sept 03"
-                    />
-                  </Col>
-                  <Col style={{ marginTop: 30 }}>
-                    <DashboardCard
-                      name="Light"
-                      value="310"
-                      unit="par"
-                      variable="Intensity"
-                      icon={light}
-                      minor1="FR: 10 %   R: 40%"
-                      minor2="G:  40 %   B: 15%   UV: 0%"
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={{ marginTop: 30 }}>
-                    <DashboardCard
-                      name="Air"
-                      value="26"
-                      unit="&deg;C"
-                      variable="Temperature"
-                      icon={air}
-                      minor1="Humidity: 40 %"
-                      minor2="CO2: 480 ppm"
-                    />
-                  </Col>
-                  <Col style={{ marginTop: 30 }}>
-                    <DashboardCard
-                      name="Water"
-                      value="24"
-                      unit="&deg;C"
-                      variable="Temperature"
-                      icon={water}
-                      minor1="EC: 6.7 mS/cm"
-                      minor2="pH: 4.9"
-                    />
-                  </Col>
-                </Row>
-              </Col>
-              <Col xl="6" style={{ marginTop: 30 }}>
-                <Card>
-                  <DeviceImages
-                    deviceUUID={device.uuid}
-                    user_token={userToken}
-                    enableTwitter
-                  />
-                </Card>
-              </Col>
-            </Row>
-          </Container>
-        </div>
+        <div style={{ margin: 20, padding: 0 }}>
+          <Row>
+            <Col md="6">
+              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+                <CardHeader>
+                  <Button
+                    size="sm"
+                    className="float-right"
+                    onClick={this.toggleAddDeviceModal}
+                  >
+                    Add Device
+                  </Button>
+                  <CardText style={{ fontSize: 22 }}>Dashboard</CardText>
+                </CardHeader>
+                <CardBody>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style={{ justifyItems: "center" }}>
+                      {currentRecipe.name === "No Recipe" && (
+                        <Button
+                          size="sm"
+                          className="float-right"
+                          onClick={() => this.props.history.push("/recipes")}
+                        >
+                          Run Recipe
+                        </Button>
+                      )}
+                      <b>Current Recipe:</b> {currentRecipe.name}
+                    </li>
+                    {currentRecipe.startDateString !== null && (
+                      <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Recipe Started:</b> {currentRecipe.startDateString}</li>
+                    )}
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }} ><b>Air Temperature:</b> {airTemperature}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air Humidity:</b> {airHumidity}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Air CO2:</b> {airCo2}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water Temperature:</b> {waterTemperature}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water pH:</b> {waterPh}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Water EC:</b> {waterEc}</li>
+                    <li class="list-group-item" style={{ paddingTop: 8, paddingBottom: 8 }}><b>Wifi Status:</b> {wifiStatus}</li>
+                  </ul>
+                </CardBody>
+                <CardFooter>
+                  <Button
+                    style={{ width: '100%' }}
+                    onClick={this.toggleTakeMeasurementsModal}
+                  >
+                    Take Measurements
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Col>
+
+            <Col md="6">
+              <Card style={{ marginBottom: 20, borderRadius: 0 }}>
+                <DeviceImages
+                  deviceUUID={device.uuid}
+                  user_token={userToken}
+                  enableTwitter
+                />
+              </Card>
+            </Col>
+          </Row>
+        </div >
         <AddDeviceModal
           cookies={this.props.cookies}
           isOpen={this.state.showAddDeviceModal}

@@ -6,14 +6,14 @@ import { withCookies } from "react-cookie";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-regular-svg-icons'
-import { DevicesDropdown } from './components/DevicesDropdownDeprecated';
+import { DevicesDropdown } from '../DevicesDropdownDeprecated';
 import { AddDeviceModal } from './components/add_device_modal';
 
 // TODO: Replace this with the Bootstrap4 Progress Bar
 import { Line } from 'rc-progress';
 
 import { DeviceImages } from "./components/device/device_images";
-import NavBar from "./components/NavBar";
+import NavBar from "../NavBar";
 
 const querystring = require('querystring');
 

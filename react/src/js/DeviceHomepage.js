@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { withCookies } from 'react-cookie';
-
-import NavBar from './components/NavBar';
 import { DevicesDropdown } from './components/DevicesDropdown';
 import { AddDeviceModal } from './components/AddDeviceModal';
 import { DatasetsDropdown } from './components/DatasetsDropdown';
@@ -61,7 +59,6 @@ class DeviceHomepage extends Component {
     // Render components
     return (
       <div className="container-fluid p-0 m-0">
-        <NavBar />
         <DevicesDropdown
           ref={this.devicesDropdown}
           cookies={this.props.cookies}

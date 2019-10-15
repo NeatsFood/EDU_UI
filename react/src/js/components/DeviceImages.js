@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageTimelapse } from "../image_timelapse";
+import { ImageTimelapse } from "./ImageTimelapse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitterSquare } from "@fortawesome/free-brands-svg-icons";
 

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
-import { RecipeCard } from './components/recipe/recipe_card';
-import { ConfirmationModal } from './components/confirmation_modal';
-
-import NavBar from "./components/NavBar";
+import { RecipeCard } from './components/RecipeCard';
+import { ConfirmationModal } from './components/reference/ConfirmationModal';
 import { DevicesDropdown } from './components/DevicesDropdown';
 import { AddDeviceModal } from './components/AddDeviceModal';
 
@@ -303,7 +301,6 @@ class recipes extends Component {
     if (!ready) {
       return (
         <div className="container-fluid p-0 m-0">
-          <NavBar />
           <DevicesDropdown
             ref={this.devicesDropdown}
             cookies={this.props.cookies}
@@ -329,7 +326,6 @@ class recipes extends Component {
 
     return (
       <div className="container-fluid p-0 m-0">
-        <NavBar />
         <DevicesDropdown
           ref={this.devicesDropdown}
           cookies={this.props.cookies}
