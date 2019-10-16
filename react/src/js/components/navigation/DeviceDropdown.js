@@ -18,9 +18,12 @@ class DeviceDropdown extends React.Component {
     const currentDevice = this.props.currentDevice || { friendlyName: 'No Devices' }
 
     return (
-      <Nav className="mr-auto" navbar>
-        <UncontrolledDropdown inNavbar>
-          <DropdownToggle caret>
+      <Nav className="mr-auto" navbar >
+        <UncontrolledDropdown inNavbar >
+          <DropdownToggle
+            caret
+            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+          >
             <span style={{ color: '#4ada00' }}>
               <FontAwesomeIcon icon={faWifi} style={{ marginRight: 5 }} />
             </span>

@@ -84,8 +84,12 @@ class NavBar extends React.Component {
                   currentDevice={this.state.currentDevice}
                   setCurrentDevice={this.setCurrentDevice}
                 />
-                <Button 
-                  style={{ marginLeft: 5 }}
+                <Button
+                  style={{
+                    marginLeft: 3,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                  }}
                   color="secondary"
                   onClick={this.toggleAddDeviceModal}
                 >
