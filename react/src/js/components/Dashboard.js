@@ -7,7 +7,7 @@ import { withCookies } from "react-cookie";
 
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
 
-import { AddDeviceModal } from './AddDeviceModal';
+import AddDeviceModal from './navigation/AddDeviceModal';
 import { DeviceImages } from './DeviceImages';
 import { TakeMeasurementsModal } from './TakeMeasurementsModal';
 import { DashboardCard } from './DashboardCard';

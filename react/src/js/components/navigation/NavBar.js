@@ -1,12 +1,11 @@
 import React from 'react';
 import {
-  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledAlert,
+  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledAlert, Button,
 } from 'reactstrap';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid-svg-icons'
-import getUserDevices from "../../services/getUserDevices";
+import { faTachometerAlt, faFileAlt, faChartLine, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 // Import assets
 import logo from "../../../images/logo-initiative-white.png";
@@ -15,17 +14,24 @@ import logo from "../../../images/logo-initiative-white.png";
 import LoginNavItem from './LoginNavItem';
 import LogoutNavItem from './LogoutNavItem';
 import DeviceDropdown from './DeviceDropdown';
+import AddDeviceModal from './AddDeviceModal';
+
+// Import services
+import getUserDevices from "../../services/getUserDevices";
 
 
 class NavBar extends React.Component {
   constructor(props) {
     super(props);
-    this.toggle = this.toggle.bind(this);
     this.state = {
-      isOpen: false,
+      navMenuIsOpen: false,
+      addDeviceModalIsOpen: false,
       initializedDevices: false,
       devices: [],
+      currentDevice: { friendlyName: 'Loading...' },
     };
+    this.toggleNavMenu = this.toggleNavMenu.bind(this);
+    this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
     this.setCurrentDevice = this.setCurrentDevice.bind(this);
   }
 
@@ -40,8 +46,8 @@ class NavBar extends React.Component {
 
   async initializeDevices(user) {
     const devices = await getUserDevices(user.token);
-    let currentDevice = null;
-    if (devices.length > 0) {
+    let { currentDevice } = this.state;
+    if (currentDevice.friendlyName === 'Loading...' && devices.length > 0) {
       currentDevice = devices[0];
     }
     this.setState({ devices, currentDevice });
@@ -49,14 +55,16 @@ class NavBar extends React.Component {
 
   setCurrentDevice(deviceUuid) {
     const { devices } = this.state;
-    const currentDevice = devices.find(( {uuid} ) => uuid === deviceUuid);
+    const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
     this.setState({ currentDevice })
   }
 
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
+  toggleNavMenu() {
+    this.setState({ navMenuIsOpen: !this.state.navMenuIsOpen });
+  }
+
+  toggleAddDeviceModal = () => {
+    this.setState({ addDeviceModalIsOpen: !this.state.addDeviceModalIsOpen });
   }
 
   render() {
@@ -67,14 +75,23 @@ class NavBar extends React.Component {
           <NavbarBrand tag={RouterNavLink} to="/dashboard">
             <img className="home-icon" src={logo} alt='' style={{ width: '150px' }} />
           </NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
+          <NavbarToggler onClick={this.toggleNavMenu} />
+          <Collapse isOpen={this.state.navMenuIsOpen} navbar>
             {(loading || isAuthenticated) && (
-              <DeviceDropdown 
-                devices={this.state.devices}
-                currentDevice={this.state.currentDevice}
-                setCurrentDevice={this.setCurrentDevice}
-              />
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <DeviceDropdown
+                  devices={this.state.devices}
+                  currentDevice={this.state.currentDevice}
+                  setCurrentDevice={this.setCurrentDevice}
+                />
+                <Button 
+                  style={{ marginLeft: 5 }}
+                  color="secondary"
+                  onClick={this.toggleAddDeviceModal}
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                </Button>
+              </div>
             )}
             < Nav className="ml-auto" navbar>
               {(loading || isAuthenticated) && (
@@ -112,8 +129,14 @@ class NavBar extends React.Component {
         {isAuthenticated && (
           <UncontrolledAlert color="info" style={{ textAlign: 'center', borderRadius: 0, marginBottom: 0 }}>
             Remember to refill the reservoir and prune your plants!
-              </UncontrolledAlert>
+          </UncontrolledAlert>
         )}
+        <AddDeviceModal
+          cookies={this.props.cookies}
+          isOpen={this.state.addDeviceModalIsOpen}
+          toggle={this.toggleAddDeviceModal}
+          fetchDevices={this.initializeDevices}
+        />
       </div>
     );
 

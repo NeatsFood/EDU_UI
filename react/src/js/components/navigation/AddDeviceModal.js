@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  Button,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
+import { Button, Form, FormGroup, Input, Label, Modal,
+  ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 
 const DEFAULT_STATE = {
@@ -26,7 +18,7 @@ const DEFAULT_STATE = {
  * - toggle (function): Callback for opening and closing the modal.
  * - fetchDevices (function): Callback for fetching the device list.
  */
-export class AddDeviceModal extends React.PureComponent {
+export default class AddDeviceModal extends React.PureComponent {
 
   state = DEFAULT_STATE;
 
@@ -100,7 +92,7 @@ export class AddDeviceModal extends React.PureComponent {
         className={this.props.className}
       >
         <ModalHeader toggle={this.toggle}>
-          New Device Registration
+          Add Device
         </ModalHeader>
         <Form onSubmit={this.onSubmit}>
           <ModalBody>
