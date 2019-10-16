@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledAlert, Button,
 } from 'reactstrap';
@@ -18,7 +18,9 @@ import AddDeviceModal from './AddDeviceModal';
 
 // Import services
 import getUserDevices from "../../services/getUserDevices";
-
+import getDeviceStatus from "../../services/getDeviceStatus";
+import getDeviceRecipe from "../../services/getDeviceRecipe";
+import getDeviceEnvironment from "../../services/getDeviceEnvironment";
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -46,17 +48,22 @@ class NavBar extends React.Component {
 
   async initializeDevices(user) {
     const devices = await getUserDevices(user.token);
+    this.setState({ devices });
     let { currentDevice } = this.state;
-    if (currentDevice.friendlyName === 'Loading...' && devices.length > 0) {
-      currentDevice = devices[0];
+    if (currentDevice.friendlyName === "Loading..." && devices.length > 0) {
+      await this.setCurrentDevice(devices[0].uuid);
     }
-    this.setState({ devices, currentDevice });
   }
 
-  setCurrentDevice(deviceUuid) {
+  async setCurrentDevice(deviceUuid) {
     const { devices } = this.state;
+    const { user } = this.props;
     const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
-    this.setState({ currentDevice })
+    currentDevice.status = await getDeviceStatus(user.token, deviceUuid);
+    currentDevice.recipe = await getDeviceRecipe(user.token, deviceUuid);
+    currentDevice.environment = await getDeviceEnvironment(user.token, deviceUuid);
+    this.setState({ currentDevice });
+    console.log('currentDevice:', currentDevice);
   }
 
   toggleNavMenu() {
@@ -143,28 +150,7 @@ class NavBar extends React.Component {
         />
       </div>
     );
-
-
   }
 }
 
 export default withCookies(NavBar);
-
-
-// componentDidMount() {
-//   // (Deprecated) Initialize devices
-//   const devices = [
-//     { name: 'Morning Wind' },
-//     { name: 'Autumn Rain' },
-//     { name: 'Clever Hopper' },
-//   ];
-//   devices.sort((a, b) => a.name > b.name);
-//   this.props.cookies.set('devices', JSON.stringify(devices));
-
-//   // (Deprecated) Initialize current device
-//   let currentDevice = this.props.cookies.get('currentDevice');
-//   if (!currentDevice && devices.length > 0) {
-//     currentDevice = devices[0];
-//     this.props.cookies.set('currentDevice', JSON.stringify(currentDevice), { path: '/' });
-//   }
-// }

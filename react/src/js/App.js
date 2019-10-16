@@ -1,5 +1,5 @@
 import React from "react";
-import '../App.css';
+import "../App.css";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { useAuth0 } from "./react-auth0-wrapper";
