@@ -18,7 +18,6 @@ class DeviceDropdown extends React.Component {
     const currentDevice = this.props.currentDevice || { friendlyName: 'No Devices' }
     const status = currentDevice.status || {}
     const wifiStatus = status.wifiStatus || 'Unknown';
-    console.log('render.drop.currentDevice:', currentDevice);
     let wifiColor = null;
     if (wifiStatus === 'Connected') {
       wifiColor = '#4ada00';

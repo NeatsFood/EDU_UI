@@ -3,9 +3,10 @@ import { Container, Card, Row, Col } from 'reactstrap';
 import { withCookies } from "react-cookie";
 
 // Import components
-import { DeviceImages } from './DeviceImages';
+// import { DeviceImages } from './DeviceImages';
 // import { TakeMeasurementsModal } from './TakeMeasurementsModal';
 import { DashboardCard } from './DashboardCard';
+import { DeviceImages } from './DeviceImages';
 
 // Import assets
 import temperature from '../../images/temperature.png'
@@ -44,8 +45,9 @@ class Dashboard extends Component {
     } = environment;
     const recipe = currentDevice.recipe || {};
     const { name, currentDay, startDateString } = recipe;
-    const user = this.props.user || {};
-    const userToken = user.token || null;
+    // const user = this.props.user || {};
+    // const userToken = user.token || null;
+    const imageUrls = currentDevice.imageUrls || [];
 
     // Render component
     return (
@@ -105,11 +107,7 @@ class Dashboard extends Component {
               </Col>
               <Col xl="6" style={{ marginTop: 30 }}>
                 <Card>
-                  <DeviceImages
-                    deviceUUID={currentDevice.uuid}
-                    user_token={userToken}
-                    enableTwitter
-                  />
+                  <DeviceImages imageUrls={imageUrls} />
                 </Card>
               </Col>
             </Row>

@@ -21,6 +21,7 @@ import getUserDevices from "../../services/getUserDevices";
 import getDeviceStatus from "../../services/getDeviceStatus";
 import getDeviceRecipe from "../../services/getDeviceRecipe";
 import getDeviceEnvironment from "../../services/getDeviceEnvironment";
+import getDeviceImageUrls from "../../services/getDeviceImageUrls";
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -63,6 +64,7 @@ class NavBar extends React.Component {
     currentDevice.status = await getDeviceStatus(user.token, deviceUuid);
     currentDevice.recipe = await getDeviceRecipe(user.token, deviceUuid);
     currentDevice.environment = await getDeviceEnvironment(user.token, deviceUuid);
+    currentDevice.imageUrls = await getDeviceImageUrls(user.token, deviceUuid);
     this.setState({ currentDevice });
     this.props.setCurrentDevice(currentDevice);
   }
