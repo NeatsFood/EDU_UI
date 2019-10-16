@@ -5,9 +5,9 @@ import '../../scss/home.scss';
 
 
 // Import components
-import { DeviceImages } from './DeviceImages';
-import { TakeMeasurementsModal } from './TakeMeasurementsModal';
-import { DashboardCard } from './DashboardCard';
+import { DeviceImages } from '../components/DeviceImages';
+import { TakeMeasurementsModal } from '../components/TakeMeasurementsModal';
+import { DashboardCard } from '../components/DashboardCard';
 
 // Import images
 import temperature from '../../images/temperature.png'

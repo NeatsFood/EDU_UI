@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
-import { RecipeCard } from './components/RecipeCard';
-import { ConfirmationModal } from './components/reference/ConfirmationModal';
-import { AddDeviceModal } from './components/AddDeviceModal';
+import { RecipeCard } from './RecipeCard';
+import { ConfirmationModal } from './ConfirmationModal';
 
 class recipes extends Component {
   constructor(props) {
@@ -30,7 +29,10 @@ class recipes extends Component {
   }
 
   componentDidMount() {
-    this.getAllRecipes()
+    const user = this.props.user || {};
+    const userToken = user.token;
+    this.getAllRecipes(userToken);
+    this.props.cookies.set('user_token', userToken, '/');
   }
 
   onSelectDevice = (device) => {
@@ -51,7 +53,6 @@ class recipes extends Component {
     this.setState({
       [event.target.name]: event.target.value
     }, () => {
-      // console.log("State", this.state);
     });
     event.preventDefault();
 
@@ -62,12 +63,10 @@ class recipes extends Component {
   };
 
   goToRecipe(value, e) {
-    // window.location.href = "/recipe_details/" + (value).toString()
     return this.props.history.push("/recipe_details/" + (value).toString());
   }
 
   newRecipe() {
-    // window.location.href = "/edit_recipe/new"
     return this.props.history.push("/edit_recipe/new");
   }
 
@@ -75,7 +74,7 @@ class recipes extends Component {
     return this.props.history.push("/edit_recipe/" + (value).toString());
   }
 
-  getAllRecipes() {
+  getAllRecipes(userToken) {
     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_all_recipes/', {
       method: 'POST',
       headers: {
@@ -84,7 +83,7 @@ class recipes extends Component {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        'user_token': this.props.cookies.get('user_token')
+        'user_token': userToken,
       })
     })
       .then(async (response) => {
@@ -249,9 +248,6 @@ class recipes extends Component {
   };
 
   render() {
-    // Get parameters
-    const userToken = this.props.cookies.get('user_token');
-
     let listRecipes = [];
     let recipes = [];
     if (this.state.all_recipes.size) {
@@ -266,21 +262,6 @@ class recipes extends Component {
           recipes = [...this.state.all_recipes.values()]
       }
 
-      // for (const recipe of recipes) {
-      //   console.log('recipe name', recipe.name);
-      //   listRecipes.push(
-      //     <RecipeCard
-      //       key={recipe.recipe_uuid}
-      //       by_user={recipe.by_user}
-      //       recipe={recipe}
-      //       users_recipe={this.state.filter_recipe_button_state === 'user'}
-      //       onSelectRecipe={this.goToRecipe}
-      //       onSaveRecipe={this.onSaveRecipe}
-      //       onDeleteRecipe={this.onDeleteRecipe}
-      //       onEditRecipe={this.editRecipe}
-      //     />
-      //   )
-      // }
       listRecipes.push(recipes.map((recipe) =>
         <RecipeCard
           key={recipe.recipe_uuid}
@@ -300,39 +281,17 @@ class recipes extends Component {
     if (!ready) {
       return (
         <div className="container-fluid p-0 m-0">
-          {/* <DevicesDropdown
-            ref={this.devicesDropdown}
-            cookies={this.props.cookies}
-            userToken={userToken}
-            onSelectDevice={this.onSelectDevice}
-            onAddDevice={this.toggleAddDeviceModal}
-            borderRadius={0}
-          /> */}
           <div className={"row graphs-row mt-5 mb-5"}>
             <div className="col-md-2 offset-5 text-center">
               Loading Recipes...
             </div>
           </div>
-          <AddDeviceModal
-            cookies={this.props.cookies}
-            isOpen={this.state.showAddDeviceModal}
-            toggle={this.toggleAddDeviceModal}
-            fetchDevices={this.fetchDevices}
-          />
         </div>
       )
     }
 
     return (
       <div className="container-fluid p-0 m-0">
-        {/* <DevicesDropdown
-          ref={this.devicesDropdown}
-          cookies={this.props.cookies}
-          userToken={userToken}
-          onSelectDevice={this.onSelectDevice}
-          onAddDevice={this.toggleAddDeviceModal}
-          borderRadius={0}
-        /> */}
         <div className="row p-2 align-content-center">
           {/* <div className="col">
             <ButtonGroup>
@@ -379,12 +338,6 @@ class recipes extends Component {
             </div>
           </div>
         </div>
-        <AddDeviceModal
-          cookies={this.props.cookies}
-          isOpen={this.state.showAddDeviceModal}
-          toggle={this.toggleAddDeviceModal}
-          fetchDevices={this.fetchDevices}
-        />
         <ConfirmationModal
           isOpen={this.state.show_confirm_delete_modal}
           toggle={this.toggleConfirmDelete}

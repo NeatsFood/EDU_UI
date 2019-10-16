@@ -9,6 +9,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import NavBar from "./components/navigation/NavBar";
 import Landing from "./components/Landing";
 import Dashboard from "./components/Dashboard";
+import Recipes from "./components/recipe/Recipes";
+import RecipeDetails from "./components/recipe/RecipeDetails";
 import Profile from "./components/Profile";
 
 function App() {
@@ -51,7 +53,16 @@ function App() {
           <Route path="/" exact component={Landing} />
           <PrivateRoute
             path="/dashboard"
-            render={(props) => <Dashboard {...props} user={user} currentDevice={currentDevice}/>} />
+            render={(props) => <Dashboard {...props} user={user} currentDevice={currentDevice}/>} 
+          />
+          <PrivateRoute
+            path="/recipes"
+            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice}/>} 
+          />
+          <PrivateRoute
+            path="/recipe_details/:recipe_uuid"
+            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice}/>} 
+          />
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>
       </BrowserRouter>

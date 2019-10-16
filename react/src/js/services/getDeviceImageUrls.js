@@ -14,6 +14,5 @@ export default async function getDeviceImageUrls(userToken, deviceUuid) {
   });
   const responseJson = await response.json();
   const imageUrls = responseJson.image_urls || [];
-  console.log('imageUrls:', imageUrls);
   return imageUrls;
 };

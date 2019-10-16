@@ -21,6 +21,11 @@ export class ImageTimelapse extends React.PureComponent {
     this.setState({ index: e.target.value });
   };
 
+  componentDidMount = () => {
+    const { images } = this.props;
+    this.setState({ images });
+  }
+
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.images.length !== this.state.images.length ||
       (nextProps.images.length > 0 && this.props.images.length > 0 && (nextProps.images[0] !== this.props.images[0]))) {
@@ -53,7 +58,7 @@ export class ImageTimelapse extends React.PureComponent {
       return (
         <React.Fragment>
           <img
-            src={this.props.images[this.state.index]} alt=''
+            src={this.state.images[this.state.index]} alt=''
             className={this.props.imageClass} />
           <input
             style={{ width: '100%' }}
@@ -61,7 +66,7 @@ export class ImageTimelapse extends React.PureComponent {
             type="range"
             min="0"
             value={this.state.index}
-            max={this.props.images.length - 1}
+            max={this.state.images.length - 1}
             onChange={this.onSliderChange} />
         </React.Fragment>
       );
