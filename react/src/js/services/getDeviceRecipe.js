@@ -39,7 +39,6 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
   if (end === null) {
     name = recipe_name;
     startDate = new Date(Date.parse(start));
-    console.log(startDate.getTime())
     currentDay = ((Date.now() - startDate.getTime()) / (1000 * 3600 * 24)).toFixed()
     startDateString = `Started ${startDate.toDateString()}`;
   }

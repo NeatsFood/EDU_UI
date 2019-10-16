@@ -64,7 +64,6 @@ class NavBar extends React.Component {
     currentDevice.recipe = await getDeviceRecipe(user.token, deviceUuid);
     currentDevice.environment = await getDeviceEnvironment(user.token, deviceUuid);
     this.setState({ currentDevice });
-    console.log('currentDevice:', currentDevice);
     this.props.setCurrentDevice(currentDevice);
   }
 

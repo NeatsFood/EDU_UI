@@ -32,8 +32,8 @@ function App() {
     },
     recipe: {
       currentDay: 0,
-      name: 'Loading...',
-      startDateString: 'Loading...',
+      name: 'Recipe: -----',
+      startDateString: 'Started: -----',
     },
   });
 

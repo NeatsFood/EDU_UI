@@ -22,23 +22,6 @@ class Dashboard extends Component {
     super(props);
     this.set_modal = false;
     this.state = {
-      device: {
-        uuid: null,
-        name: 'Loading',
-      },
-      currentRecipe: {
-        uuid: null,
-        name: 'Loading',
-        startDateString: null,
-      },
-      currentEnvironment: {
-        airTemperature: 'Loading',
-        airHumidity: 'Loading',
-        airCo2: 'Loading',
-        waterTemperature: 'Loading',
-        waterPh: 'Loading',
-        waterEc: 'Loading',
-      },
       showTakeMeasurementsModal: false,
     };
   }
@@ -53,8 +36,6 @@ class Dashboard extends Component {
 
   render() {
     // Get parameters
-    console.log('dashboard.render.user:', this.props.user);
-    console.log('dashboard.render.currentDevice:', this.props.currentDevice);
     const { currentDevice } = this.props;
     const environment = currentDevice.environment || {};
     const {
@@ -63,6 +44,8 @@ class Dashboard extends Component {
     } = environment;
     const recipe = currentDevice.recipe || {};
     const { name, currentDay, startDateString } = recipe;
+    const user = this.props.user || {};
+    const userToken = user.token || null;
 
     // Render component
     return (
@@ -122,11 +105,11 @@ class Dashboard extends Component {
               </Col>
               <Col xl="6" style={{ marginTop: 30 }}>
                 <Card>
-                  {/* <DeviceImages
+                  <DeviceImages
                     deviceUUID={currentDevice.uuid}
-                    user_token={user.token}
+                    user_token={userToken}
                     enableTwitter
-                  /> */}
+                  />
                 </Card>
               </Col>
             </Row>
