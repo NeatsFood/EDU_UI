@@ -62,7 +62,9 @@ class NavBar extends React.Component {
 
   render() {    
     return <Auth0Consumer>
-      {({ isAuthenticated }) => {
+      {({ isAuthenticated, loading, user }) => {
+        console.log('user:', user);
+        console.log('loading:', loading);
         return (
           <div>
             <Navbar expand="md" dark color="dark">
@@ -71,9 +73,9 @@ class NavBar extends React.Component {
               </NavbarBrand>
               <NavbarToggler onClick={this.toggle} />
               <Collapse isOpen={this.state.isOpen} navbar>
-                {isAuthenticated && <DeviceDropdown cookies={this.props.cookies} />}
+                {(loading || isAuthenticated) && <DeviceDropdown cookies={this.props.cookies} />}
                 < Nav className="ml-auto" navbar>
-                  {isAuthenticated && (
+                  {(loading || isAuthenticated) && (
                     <NavItem>
                       <NavLink tag={RouterNavLink} to="/dashboard">
                         <FontAwesomeIcon icon={faTachometerAlt} style={{ marginRight: 5 }} />
@@ -81,7 +83,7 @@ class NavBar extends React.Component {
                       </NavLink>
                     </NavItem>
                   )}
-                  {isAuthenticated && (
+                  {(loading || isAuthenticated) && (
                     <NavItem>
                       <NavLink tag={RouterNavLink} to="/recipes">
                         <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: 5 }} />
@@ -89,7 +91,7 @@ class NavBar extends React.Component {
                       </NavLink>
                     </NavItem>
                   )}
-                  {isAuthenticated && (
+                  {(loading || isAuthenticated) && (
                     <NavItem>
                       <NavLink tag={RouterNavLink} to="/device_homepage">
                         <FontAwesomeIcon icon={faChartLine} style={{ marginRight: 5 }} />
@@ -97,7 +99,7 @@ class NavBar extends React.Component {
                       </NavLink>
                     </NavItem>
                   )}
-                  {isAuthenticated ? <LogoutNavItem /> : <LoginNavItem />}
+                  {(loading || isAuthenticated) ? <LogoutNavItem /> : <LoginNavItem />}
                 </Nav>
               </Collapse>
             </Navbar>
