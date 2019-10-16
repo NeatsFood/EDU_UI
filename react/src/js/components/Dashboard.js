@@ -7,7 +7,6 @@ import {
 
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
 
-import { DevicesDropdown } from './DevicesDropdown';
 import { AddDeviceModal } from './AddDeviceModal';
 import { DeviceImages } from './DeviceImages';
 import { TakeMeasurementsModal } from './TakeMeasurementsModal';
@@ -250,14 +249,14 @@ class Dashboard extends Component {
     return (
       <div>
         <div hidden style={{ width: '100%', border: 0 }}>
-          <DevicesDropdown
+          {/* <DevicesDropdown
             ref={this.devicesDropdown}
             cookies={this.props.cookies}
             userToken={userToken}
             onSelectDevice={this.onSelectDevice}
             onAddDevice={this.toggleAddDeviceModal}
             borderRadius={0}
-          />
+          /> */}
         </div>
         <div style={{ marginRight: 10, marginLeft: 10 }}>
           <Container fluid>

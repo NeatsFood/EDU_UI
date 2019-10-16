@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withCookies } from "react-cookie";
 import { RecipeCard } from './components/RecipeCard';
 import { ConfirmationModal } from './components/reference/ConfirmationModal';
-import { DevicesDropdown } from './components/DevicesDropdown';
 import { AddDeviceModal } from './components/AddDeviceModal';
 
 class recipes extends Component {
@@ -301,14 +300,14 @@ class recipes extends Component {
     if (!ready) {
       return (
         <div className="container-fluid p-0 m-0">
-          <DevicesDropdown
+          {/* <DevicesDropdown
             ref={this.devicesDropdown}
             cookies={this.props.cookies}
             userToken={userToken}
             onSelectDevice={this.onSelectDevice}
             onAddDevice={this.toggleAddDeviceModal}
             borderRadius={0}
-          />
+          /> */}
           <div className={"row graphs-row mt-5 mb-5"}>
             <div className="col-md-2 offset-5 text-center">
               Loading Recipes...
@@ -326,14 +325,14 @@ class recipes extends Component {
 
     return (
       <div className="container-fluid p-0 m-0">
-        <DevicesDropdown
+        {/* <DevicesDropdown
           ref={this.devicesDropdown}
           cookies={this.props.cookies}
           userToken={userToken}
           onSelectDevice={this.onSelectDevice}
           onAddDevice={this.toggleAddDeviceModal}
           borderRadius={0}
-        />
+        /> */}
         <div className="row p-2 align-content-center">
           {/* <div className="col">
             <ButtonGroup>

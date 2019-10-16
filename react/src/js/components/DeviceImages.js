@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageTimelapse } from "./ImageTimelapse";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTwitterSquare } from "@fortawesome/free-brands-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faTwitterSquare } from "@fortawesome/free-brands-svg-icons";
 
 /**
  * DeviceImages
@@ -102,7 +102,7 @@ export class DeviceImages extends React.PureComponent {
   render() {
     return (
       <div className="timelapse">
-        <div class="row">
+        <div className="row">
           <div className="col-md-12">
             <ImageTimelapse
               imageClass="img-fluid"

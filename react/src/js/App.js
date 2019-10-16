@@ -1,11 +1,12 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { useAuth0 } from "./react-auth0-wrapper";
+import { withCookies } from "react-cookie";
 
 import PrivateRoute from "./components/PrivateRoute";
 import NavBar from "./components/navigation/NavBar";
-import Landing from './components/Landing';
-import Dashboard from './components/Dashboard';
+import Landing from "./components/Landing";
+import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 
 function App() {
@@ -28,4 +29,4 @@ function App() {
   );
 }
 
-export default App;
+export default withCookies(App);

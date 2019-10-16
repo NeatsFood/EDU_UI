@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withCookies } from 'react-cookie';
-import { DevicesDropdown } from '../components/DevicesDropdown';
 import { AddDeviceModal } from '../components/AddDeviceModal';
 import { DatasetsDropdown } from '../components/DatasetsDropdown';
 import { DownloadCsvButton } from '../components/DownloadCsvButton';
@@ -59,14 +58,14 @@ class DeviceHomepage extends Component {
     // Render components
     return (
       <div className="container-fluid p-0 m-0">
-        <DevicesDropdown
+        {/* <DevicesDropdown
           ref={this.devicesDropdown}
           cookies={this.props.cookies}
           userToken={userToken}
           onSelectDevice={this.onSelectDevice}
           onAddDevice={this.toggleAddDeviceModal}
           borderRadius={0}
-        />
+        /> */}
         <div className="row m-2 p-2">
           <div style={{ paddingLeft: 20 }}>
             <DatasetsDropdown
