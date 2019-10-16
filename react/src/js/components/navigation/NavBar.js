@@ -8,10 +8,16 @@ import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid-svg-icons'
 
+// Import assets
 import logo from "../../../images/logo-initiative-white.png";
+
+// Import components
 import LoginNavItem from './LoginNavItem';
 import LogoutNavItem from './LogoutNavItem';
-import DeviceDropdown from './DeviceDropdown'
+import DeviceDropdown from './DeviceDropdown';
+
+// Import services
+import getUserDevices from '../../services/getUserDevices';
 
 
 class NavBar extends React.Component {
@@ -26,6 +32,10 @@ class NavBar extends React.Component {
 
   componentDidMount() {
     console.log('NavBar mounted');
+
+    // Initialize devices
+    // const userToken = this.props.cookies.get('userToken');
+    // getUserDevices(userToken);
 
     // Initialize devices
     const devices = [
