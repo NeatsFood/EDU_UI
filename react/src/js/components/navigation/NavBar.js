@@ -17,7 +17,7 @@ import LogoutNavItem from './LogoutNavItem';
 import DeviceDropdown from './DeviceDropdown';
 
 // Import services
-import getUserDevices from '../../services/getUserDevices';
+// import getUserDevices from '../../services/getUserDevices';
 
 
 class NavBar extends React.Component {

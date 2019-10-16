@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth0 } from "../reference/auth/react-auth0-spa";
-
+import React, { useEffect, useState } from "react";
+import { useAuth0 } from "./auth/react-auth0-spa";
 // import logo from "../../images/logo";
 import '../../scss/login.scss';
 import { Redirect } from "react-router-dom";
@@ -15,18 +14,24 @@ function LandingPage() {
 
   useEffect(() => {
     const callApi = async () => {
+      // console.log("In callApi");
       try {
         const token = await getTokenSilently();
+        console.log("got token");
         const response = await fetch(process.env.REACT_APP_FLASK_URL + "/oauth_login/", {
           method: 'post',
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+        console.log("got response?");
+
         const responseData = await response.json();
-        // console.log('responseData:', responseData);
+        console.log("GotData?");
+        console.log(responseData.user_token);
         setUser_token(responseData.user_token);
         setCookie('user_token', responseData.user_token);
+        //cookies.set('user_token', responseData.user_token, '/');
         setOauthLoggedIn(true);
       } catch (error) {
         console.error(error);
@@ -44,9 +49,12 @@ function LandingPage() {
           <div className="col">
             <div className="card w-75 mx-auto my-auto border-0 openag-form">
               {/* <img className="mb-2" src={logo} alt='' /> */}
-              <button className="btn btn-primary" onClick={() => loginWithRedirect({})}>
+              <button className="btn btn-primary"
+                onClick={() => loginWithRedirect({})}
+              >
                 Log In
-              </button>
+                          </button>
+
             </div>
           </div>
         </div>
@@ -62,12 +70,14 @@ function LandingPage() {
             </div>
           </div>
         </div>
+
       )}
 
       {isAuthenticated && oauthLoggedIn && (
-        <Redirect to="/dashboard" />
-      )}
 
+        <Redirect to="/home" />
+
+      )}
     </div>
   )
 }

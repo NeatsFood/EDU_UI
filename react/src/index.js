@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import './index.css';
 import App from "./js/App";
 import * as serviceWorker from "./js/serviceWorker";
 import { Auth0Provider } from "./js/react-auth0-wrapper";
@@ -22,6 +23,7 @@ ReactDOM.render(
   <Auth0Provider
     domain={config.domain}
     client_id={config.clientId}
+    audience={config.audience}
     redirect_uri={window.location.origin}
     onRedirectCallback={onRedirectCallback}
   >

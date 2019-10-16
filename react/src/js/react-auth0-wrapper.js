@@ -37,7 +37,24 @@ export const Auth0Provider = ({
       setIsAuthenticated(isAuthenticated);
 
       if (isAuthenticated) {
+        // Get auth0 user
         const user = await auth0FromHook.getUser();
+
+        // Get oauth user
+        const token = await auth0FromHook.getTokenSilently();
+        const response = await fetch(process.env.REACT_APP_FLASK_URL + "/oauth_login/", {
+          method: 'post',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const responseJson = await response.json();
+
+        // Update user
+        user.token = responseJson.user_token;
+        user.uuid = responseJson.user_uuid;
+        user.isAdmin = responseJson.is_admin;
+        console.log('user', user);
         setUser(user);
       }
 
