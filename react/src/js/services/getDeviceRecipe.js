@@ -34,12 +34,17 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
   // TODO: Include recipe uuid in this too...
   let name = 'No Recipe';
   let startDate = null;
+  let startDateString = 'Not started yet';
+  let currentDay = 0;
   if (end === null) {
     name = recipe_name;
     startDate = new Date(Date.parse(start));
+    console.log(startDate.getTime())
+    currentDay = ((Date.now() - startDate.getTime()) / (1000 * 3600 * 24)).toFixed()
+    startDateString = `Started ${startDate.toDateString()}`;
   }
 
   // Update recipe
-  const recipe = { name, startDate };
+  const recipe = { name, startDate, currentDay, startDateString };
   return recipe;
 }

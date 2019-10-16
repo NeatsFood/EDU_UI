@@ -3,7 +3,7 @@ import { Container, Card, Row, Col } from 'reactstrap';
 import { withCookies } from "react-cookie";
 
 // Import components
-// import { DeviceImages } from './DeviceImages';
+import { DeviceImages } from './DeviceImages';
 // import { TakeMeasurementsModal } from './TakeMeasurementsModal';
 import { DashboardCard } from './DashboardCard';
 
@@ -53,10 +53,16 @@ class Dashboard extends Component {
 
   render() {
     // Get parameters
-    // const { user, currentDevice } = this.props;
-    // const {
-    //   airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
-    // } = currentDevice.environment;
+    console.log('dashboard.render.user:', this.props.user);
+    console.log('dashboard.render.currentDevice:', this.props.currentDevice);
+    const { currentDevice } = this.props;
+    const environment = currentDevice.environment || {};
+    const {
+      airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
+      lightIntensity, lightSpectrum,
+    } = environment;
+    const recipe = currentDevice.recipe || {};
+    const { name, currentDay, startDateString } = recipe;
 
     // Render component
     return (
@@ -69,23 +75,23 @@ class Dashboard extends Component {
                   <Col style={{ marginTop: 30 }}>
                     <DashboardCard
                       name="Recipe"
-                      value="75"
-                      unit="%"
-                      variable="Complete"
+                      value={currentDay}
+                      unit="days"
+                      variable="Growing"
                       icon={temperature}
-                      minor1="Get Growing - Long Green Day"
-                      minor2="Started Thu Sept 03"
+                      minor1={name}
+                      minor2={startDateString}
                     />
                   </Col>
                   <Col style={{ marginTop: 30 }}>
                     <DashboardCard
                       name="Light"
-                      value="310"
+                      value={lightIntensity}
                       unit="par"
                       variable="Intensity"
                       icon={light}
-                      minor1="FR: 10 %   R: 40%"
-                      minor2="G:  40 %   B: 15%   UV: 0%"
+                      minor1={`FR: ${lightSpectrum.FR}%   R: ${lightSpectrum.R}%`}
+                      minor2={`G: ${lightSpectrum.G}%   B: ${lightSpectrum.B}%   ${lightSpectrum.UV}: 0%`}
                     />
                   </Col>
                 </Row>
@@ -93,23 +99,23 @@ class Dashboard extends Component {
                   <Col style={{ marginTop: 30 }}>
                     <DashboardCard
                       name="Air"
-                      value="26"
+                      value={airTemperature}
                       unit="&deg;C"
                       variable="Temperature"
                       icon={air}
-                      minor1="Humidity: 40 %"
-                      minor2="CO2: 480 ppm"
+                      minor1={`Humidity: ${airHumidity} %`}
+                      minor2={`CO2: ${airCo2} ppm`}
                     />
                   </Col>
                   <Col style={{ marginTop: 30 }}>
                     <DashboardCard
                       name="Water"
-                      value="24"
+                      value={waterTemperature}
                       unit="&deg;C"
                       variable="Temperature"
                       icon={water}
-                      minor1="EC: 6.7 mS/cm"
-                      minor2="pH: 4.9"
+                      minor1={`EC: ${waterEc} mS/cm`}
+                      minor2={`pH: ${waterPh}`}
                     />
                   </Col>
                 </Row>
@@ -117,8 +123,8 @@ class Dashboard extends Component {
               <Col xl="6" style={{ marginTop: 30 }}>
                 <Card>
                   {/* <DeviceImages
-                    deviceUUID={device.uuid}
-                    user_token={userToken}
+                    deviceUUID={currentDevice.uuid}
+                    user_token={user.token}
                     enableTwitter
                   /> */}
                 </Card>

@@ -10,7 +10,7 @@ class DeviceDropdown extends React.Component {
 
   onSelectDevice = (event) => {
     const deviceUuid = event.target.value;
-    this.props.setCurrentDevice(deviceUuid);
+    this.props.updateCurrentDevice(deviceUuid);
   }
 
   render() {

@@ -34,7 +34,7 @@ class NavBar extends React.Component {
     };
     this.toggleNavMenu = this.toggleNavMenu.bind(this);
     this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
-    this.setCurrentDevice = this.setCurrentDevice.bind(this);
+    this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
   }
 
   componentDidUpdate() {
@@ -51,19 +51,21 @@ class NavBar extends React.Component {
     this.setState({ devices });
     let { currentDevice } = this.state;
     if (currentDevice.friendlyName === "Loading..." && devices.length > 0) {
-      await this.setCurrentDevice(devices[0].uuid);
+      await this.updateCurrentDevice(devices[0].uuid);
     }
   }
 
-  async setCurrentDevice(deviceUuid) {
+  async updateCurrentDevice(deviceUuid) {
     const { devices } = this.state;
     const { user } = this.props;
     const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
+    this.setState({ currentDevice }); // Keep the dropdown responsive
     currentDevice.status = await getDeviceStatus(user.token, deviceUuid);
     currentDevice.recipe = await getDeviceRecipe(user.token, deviceUuid);
     currentDevice.environment = await getDeviceEnvironment(user.token, deviceUuid);
     this.setState({ currentDevice });
     console.log('currentDevice:', currentDevice);
+    this.props.setCurrentDevice(currentDevice);
   }
 
   toggleNavMenu() {
@@ -89,7 +91,7 @@ class NavBar extends React.Component {
                 <DeviceDropdown
                   devices={this.state.devices}
                   currentDevice={this.state.currentDevice}
-                  setCurrentDevice={this.setCurrentDevice}
+                  updateCurrentDevice={this.updateCurrentDevice}
                 />
                 <Button
                   style={{
