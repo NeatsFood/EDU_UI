@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import createAuth0Client from "@auth0/auth0-spa-js";
+import getOauthUser from "./services/getOathUser";
 
 const DEFAULT_REDIRECT_CALLBACK = () =>
   window.history.replaceState({}, document.title, window.location.pathname);
@@ -41,20 +42,13 @@ export const Auth0Provider = ({
         const user = await auth0FromHook.getUser();
 
         // Get oauth user
-        const token = await auth0FromHook.getTokenSilently();
-        const response = await fetch(process.env.REACT_APP_FLASK_URL + "/oauth_login/", {
-          method: 'post',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        const responseJson = await response.json();
+        const authOToken = await auth0FromHook.getTokenSilently();
+        const oathUser = await getOauthUser(authOToken);
 
         // Update user
-        user.token = responseJson.user_token;
-        user.uuid = responseJson.user_uuid;
-        user.isAdmin = responseJson.is_admin;
-        console.log('user', user);
+        user.token = oathUser.token;
+        user.uuid = oathUser.uuid;
+        user.isAdmin = oathUser.isAdmin;
         setUser(user);
       }
 

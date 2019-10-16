@@ -9,17 +9,14 @@ import { faWifi } from '@fortawesome/free-solid-svg-icons'
 class DeviceDropdown extends React.Component {
 
   onSelectDevice = (event) => {
-    const currentDevice = {};
-    currentDevice.name = event.target.value;
-    this.props.cookies.set('currentDevice', JSON.stringify(currentDevice), { path: '/' });
+    const deviceUuid = event.target.value;
+    this.props.setCurrentDevice(deviceUuid);
   }
 
   render() {
-    // Get parameters
-    const currentDevice = this.props.cookies.get('currentDevice');
-    const devices = this.props.cookies.get('devices');
+    const devices = this.props.devices || [];
+    const currentDevice = this.props.currentDevice || { friendlyName: 'No Devices' }
 
-    // Render device dropdown
     return (
       <Nav className="mr-auto" navbar>
         <UncontrolledDropdown inNavbar>
@@ -27,18 +24,18 @@ class DeviceDropdown extends React.Component {
             <span style={{ color: '#4ada00' }}>
               <FontAwesomeIcon icon={faWifi} style={{ marginRight: 5 }} />
             </span>
-            {currentDevice.name}
+            {currentDevice.friendlyName}
           </DropdownToggle>
           <DropdownMenu>
             {devices.map((device) => {
-              if (device.name !== currentDevice.name) {
+              if (device.uuid !== currentDevice.uuid) {
                 return (
                   <DropdownItem
-                    key={device.name}
-                    value={device.name}
+                    key={device.uuid}
+                    value={device.uuid}
                     onClick={this.onSelectDevice}
                   >
-                    {device.name}
+                    {device.friendlyName}
                   </DropdownItem>
                 )
               }

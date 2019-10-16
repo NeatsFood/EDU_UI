@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Container, Card, Row, Col } from 'reactstrap';
 import { withCookies } from "react-cookie";
-import {
-  faFileAlt, faWind, faWater, faLeaf, faSun,
-} from '@fortawesome/free-solid-svg-icons'
+// import {
+//   faFileAlt, faWind, faWater, faLeaf, faSun,
+// } from '@fortawesome/free-solid-svg-icons'
 
 // import { faBell } from '@fortawesome/free-regular-svg-icons'
 
@@ -238,12 +238,13 @@ class Dashboard extends Component {
   render() {
     // Get parameters
     const userToken = this.props.cookies.get('user_token');
-    const {
-      device, currentRecipe, currentEnvironment, wifiStatus,
-    } = this.state;
-    const {
-      airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
-    } = currentEnvironment;
+    const { device } = this.state;
+    // const {
+    //   device, currentRecipe, currentEnvironment, wifiStatus,
+    // } = this.state;
+    // const {
+    //   airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
+    // } = currentEnvironment;
 
     // Render component
     return (

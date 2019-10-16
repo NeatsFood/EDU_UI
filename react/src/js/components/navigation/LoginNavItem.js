@@ -11,7 +11,9 @@ export default function LoginNavItem() {
   return (
     <div>
       <NavItem>
-        <NavLink tag={RouterNavLink}
+        <NavLink
+          tag={RouterNavLink}
+          to="/login"
           onClick={() => loginWithRedirect()}>
           <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: 5 }} />
           Login

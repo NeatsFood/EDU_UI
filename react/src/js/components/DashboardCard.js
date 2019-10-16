@@ -57,23 +57,23 @@ export class DashboardCard extends React.PureComponent {
   }
 }
 
-{/* <Card style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-<div style={{ display: 'flex', alignItems: 'center' }}>
-  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', padding: 10 }}>
-    <div>
-      <img  src={icon} style={{ height: 100, width: 100 }} alt="Card Icon"/>         
-    </div>
-      <div style={{ textAlign: 'center', fontWeight: '600', color: 'grey' }}>{name}</div>
-    </div>
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 10 }}>
-      <div style={{ fontSize: 50, marginTop: '-10px', marginBottom: '-15px' }}>{value}
-        <sup><span style={{ fontSize: 25, color: 'grey', paddingLeft: 5 }}>{unit}</span></sup>
-      </div>
-      <div style={{ fontSize: 20, color: 'grey' }}>{variable}</div>
-    </div>
-  </div>
-  <div style={{ padding: 10, fontSize: 18, color: 'grey' }}>
-    <span>{minor1}</span><br />
-    <span>{minor2}</span>
-  </div>
-</Card> */}
+// {/* <Card style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+// <div style={{ display: 'flex', alignItems: 'center' }}>
+//   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', padding: 10 }}>
+//     <div>
+//       <img  src={icon} style={{ height: 100, width: 100 }} alt="Card Icon"/>         
+//     </div>
+//       <div style={{ textAlign: 'center', fontWeight: '600', color: 'grey' }}>{name}</div>
+//     </div>
+//     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 10 }}>
+//       <div style={{ fontSize: 50, marginTop: '-10px', marginBottom: '-15px' }}>{value}
+//         <sup><span style={{ fontSize: 25, color: 'grey', paddingLeft: 5 }}>{unit}</span></sup>
+//       </div>
+//       <div style={{ fontSize: 20, color: 'grey' }}>{variable}</div>
+//     </div>
+//   </div>
+//   <div style={{ padding: 10, fontSize: 18, color: 'grey' }}>
+//     <span>{minor1}</span><br />
+//     <span>{minor2}</span>
+//   </div>
+// </Card> */}

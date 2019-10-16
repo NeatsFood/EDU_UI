@@ -12,14 +12,13 @@ import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 
 function App() {
-  const { isAuthenticated } = useAuth0();
-  console.log('isAuthenticated:', isAuthenticated);
+  const { isAuthenticated, loading, user } = useAuth0();
 
   return (
     <div className="App">
       <BrowserRouter>
         <header>
-          <NavBar/>
+          <NavBar isAuthenticated={isAuthenticated} loading={loading} user={user}/>
         </header>
         <Switch>
           <Route path="/" exact component={Landing} />
