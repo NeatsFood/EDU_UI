@@ -11,6 +11,7 @@ import Landing from "./components/Landing";
 import Dashboard from "./components/Dashboard";
 import Recipes from "./components/recipe/Recipes";
 import RecipeDetails from "./components/recipe/RecipeDetails";
+import DeviceHomepage from "./components/DeviceHomepage";
 import Profile from "./components/Profile";
 
 function App() {
@@ -62,6 +63,10 @@ function App() {
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"
             render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice}/>} 
+          />
+          <PrivateRoute
+            path="/device_homepage"
+            render={(props) => <DeviceHomepage {...props} user={user} currentDevice={currentDevice}/>} 
           />
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>

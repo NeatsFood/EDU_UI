@@ -8,7 +8,7 @@ import { useAuth0 } from "./auth/react-auth0-spa";
 import NavBar from './components/NavBar';
 import LandingPage from "./LandingPage";
 import Dashboard from '../components/Dashboard';
-import DeviceHomepage from './DeviceHomepage';
+import DeviceHomepage from '../components/DeviceHomepage';
 import Recipes from "../Recipes";
 import RecipeDetails from "../components/recipe/RecipeDetails";
 import EditRecipe from "./components/reference/EditRecipe";

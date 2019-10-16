@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { withCookies } from 'react-cookie';
-import { AddDeviceModal } from '../components/AddDeviceModal';
-import { DatasetsDropdown } from '../components/DatasetsDropdown';
-import { DownloadCsvButton } from '../components/DownloadCsvButton';
-import { TimeseriesChart } from '../components/TimeseriesChart';
+import { DatasetsDropdown } from './DatasetsDropdown';
+import { DownloadCsvButton } from './DownloadCsvButton';
+import { TimeseriesChart } from './TimeseriesChart';
 
-import '../scss/device_homepage.scss';
+import '../../scss/device_homepage.scss';
 
 
 class DeviceHomepage extends Component {
@@ -16,15 +15,6 @@ class DeviceHomepage extends Component {
       dataset: { name: 'Loading', startDate: null, endDate: null },
       showAddDeviceModal: false,
     };
-
-    // Create reference to devices dropdown so we can access fetch
-    // devices function. Currently using this method b/c anticipating 
-    // moving add device button out of the dropdown in the near future.
-    this.devicesDropdown = React.createRef();
-  }
-
-  fetchDevices = () => {
-    this.devicesDropdown.current.fetchDevices();
   }
 
   onSelectDevice = (device) => {
@@ -51,21 +41,15 @@ class DeviceHomepage extends Component {
 
   render() {
     // Get parameters
-    const userToken = this.props.cookies.get('user_token');
-    const { device, dataset } = this.state;
+    const user = this.props.user || {};
+    const userToken = user.token;
+    const device = this.props.currentDevice;
+    const { dataset } = this.state;
     console.log(`Rendering device homepage, device: ${device.name}, dataset: ${dataset.name}`);
 
     // Render components
     return (
       <div className="container-fluid p-0 m-0">
-        {/* <DevicesDropdown
-          ref={this.devicesDropdown}
-          cookies={this.props.cookies}
-          userToken={userToken}
-          onSelectDevice={this.onSelectDevice}
-          onAddDevice={this.toggleAddDeviceModal}
-          borderRadius={0}
-        /> */}
         <div className="row m-2 p-2">
           <div style={{ paddingLeft: 20 }}>
             <DatasetsDropdown
@@ -91,12 +75,6 @@ class DeviceHomepage extends Component {
             />
           </div>
         </div>
-        <AddDeviceModal
-          cookies={this.props.cookies}
-          isOpen={this.state.showAddDeviceModal}
-          toggle={this.toggleDeviceModal}
-          fetchDevices={this.fetchDevices}
-        />
       </div>
     );
   }

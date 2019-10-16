@@ -1,5 +1,4 @@
 export default async function getDeviceImageUrls(userToken, deviceUuid) {
-  console.log('Getting device image urls for device:', deviceUuid);
   const response = await fetch(process.env.REACT_APP_FLASK_URL + '/api/get_device_images/', {
     method: 'POST',
     headers: {
