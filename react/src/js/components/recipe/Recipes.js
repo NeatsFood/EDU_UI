@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import { withCookies } from "react-cookie";
 import { RecipeCard } from "./RecipeCard";
 import getAllRecipes from "../../services/getAllRecipes";
 
-class recipes extends Component {
+class recipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

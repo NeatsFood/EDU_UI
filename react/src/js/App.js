@@ -11,11 +11,15 @@ import Landing from "./components/Landing";
 import Dashboard from "./components/Dashboard";
 import Recipes from "./components/recipe/Recipes";
 import RecipeDetails from "./components/recipe/RecipeDetails";
-import DeviceHomepage from "./components/DeviceHomepage";
+import Data from "./components/Data";
 import Profile from "./components/Profile";
 
 function App() {
-  const { isAuthenticated, loading, user } = useAuth0();
+  const { isAuthenticated, loading } = useAuth0();
+  let { user } = useAuth0();
+  if (!user) {
+    user = {};
+  };
   const [currentDevice, setCurrentDevice] = useState({
     environment: {
       airTemperature: '--',
@@ -66,8 +70,8 @@ function App() {
             render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice}/>} 
           />
           <PrivateRoute
-            path="/device_homepage"
-            render={(props) => <DeviceHomepage {...props} user={user} currentDevice={currentDevice}/>} 
+            path="/data"
+            render={(props) => <Data {...props} user={user} currentDevice={currentDevice}/>} 
           />
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>

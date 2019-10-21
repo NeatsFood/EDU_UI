@@ -1,22 +1,8 @@
 import React from 'react';
-
 import {
-  AreaChart,
-  Brush,
-  ChartContainer,
-  ChartRow,
-  Charts,
-  LabelAxis,
-  LineChart,
-  Resizable,
-  ScatterChart,
-  styler,
-  YAxis,
-  ValueAxis,
-  Legend
+  AreaChart, Brush, ChartContainer, ChartRow, Charts, LabelAxis,
+  LineChart, Resizable, ScatterChart, styler, YAxis, ValueAxis, Legend
 } from "react-timeseries-charts";
-
-
 import { TimeSeries, TimeRange } from 'pondjs';
 import { format } from "d3-format";
 

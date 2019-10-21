@@ -22,6 +22,7 @@ import getDeviceStatus from "../../services/getDeviceStatus";
 import getDeviceRecipe from "../../services/getDeviceRecipe";
 import getDeviceEnvironment from "../../services/getDeviceEnvironment";
 import getDeviceImageUrls from "../../services/getDeviceImageUrls";
+import getDeviceDatasets from "../../services/getDeviceDatasets";
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -61,10 +62,17 @@ class NavBar extends React.Component {
     const { user } = this.props;
     const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
     this.setState({ currentDevice }); // Keep the dropdown responsive
-    currentDevice.status = await getDeviceStatus(user.token, deviceUuid);
-    currentDevice.recipe = await getDeviceRecipe(user.token, deviceUuid);
-    currentDevice.environment = await getDeviceEnvironment(user.token, deviceUuid);
-    currentDevice.imageUrls = await getDeviceImageUrls(user.token, deviceUuid);
+
+    // Get all device parameters asyncrhonously
+    const promises = [];
+    promises.push(getDeviceStatus(user.token, deviceUuid).then(status => currentDevice.status = status));
+    promises.push(getDeviceRecipe(user.token, deviceUuid).then(recipe => currentDevice.recipe = recipe));
+    promises.push(getDeviceEnvironment(user.token, deviceUuid).then(environment => currentDevice.environment = environment));
+    promises.push(getDeviceImageUrls(user.token, deviceUuid).then(imageUrls => currentDevice.imageUrls = imageUrls));
+    promises.push(getDeviceDatasets(user.token, deviceUuid).then(datasets => currentDevice.datasets = datasets));
+    await Promise.all(promises);
+
+    // Update state
     this.setState({ currentDevice });
     this.props.setCurrentDevice(currentDevice);
   }
@@ -126,7 +134,7 @@ class NavBar extends React.Component {
               )}
               {(loading || isAuthenticated) && (
                 <NavItem>
-                  <NavLink tag={RouterNavLink} to="/device_homepage">
+                  <NavLink tag={RouterNavLink} to="/data">
                     <FontAwesomeIcon icon={faChartLine} style={{ marginRight: 5 }} />
                     Data
                   </NavLink>
