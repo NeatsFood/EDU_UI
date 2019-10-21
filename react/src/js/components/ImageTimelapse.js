@@ -2,26 +2,38 @@ import React from 'react';
 
 const PLACEHOLDER_IMAGE_URL = 'https://storage.googleapis.com/openag-v1-images/placeholder_1944x2592.png';
 
-export default class ImageTimelapse extends React.PureComponent {
-
-  state = {
-    index: 0,
+export default class ImageTimelapse extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      index: 0,
+      previousNumberOfImages: 0,
+    };
+    this.onSliderChange = this.onSliderChange.bind(this);
   }
 
-  onSliderChange = (event) => {
-    console.log('Slider changed');
+  onSliderChange(event) {
     this.setState({ index: event.target.value });
   };
 
-  componentDidMount = () => {
-    console.log('Image timelapse mounted');
+  componentDidUpdate() {
+    // Get parameters
+    const images = this.props.images || [];
+    const { deviceUuid } = this.props;
+    const { previousDeviceUuid } = this.state;
+
+    // Show latest image whenever a new device is loaded
+    if (previousDeviceUuid !== deviceUuid) {
+      const index = images.length > 0 ? images.length - 1 : 0;
+      this.setState({ previousDeviceUuid: deviceUuid, index });
+    }
+
   }
 
   render() {
-    console.log('Rendering image timelapse');
     const { index } = this.state;
     const images = this.props.images || [];
-    const image = images.length > 1 ? images[index] : PLACEHOLDER_IMAGE_URL;
+    const image = images.length > 0 ? images[index] : PLACEHOLDER_IMAGE_URL;
 
     return (
       <React.Fragment>

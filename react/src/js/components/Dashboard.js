@@ -104,7 +104,7 @@ class Dashboard extends Component {
               </Col>
               <Col xl="6" style={{ marginTop: 30 }}>
                 <Card>
-                  <ImageTimelapse images={imageUrls} />
+                  <ImageTimelapse images={imageUrls} deviceUuid={currentDevice.uuid} />
                 </Card>
               </Col>
             </Row>
