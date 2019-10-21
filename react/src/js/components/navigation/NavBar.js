@@ -88,13 +88,12 @@ class NavBar extends React.Component {
   render() {
     const { isAuthenticated, loading } = this.props;
     return (
-      <div>
+      <div >
         <Navbar expand="md" dark color="dark" style={{ textAlign: 'center' }}>
-          <NavbarBrand tag={RouterNavLink} to="/dashboard">
-            <img className="home-icon" src={logo} alt='' style={{ width: '150px' }} />
-          </NavbarBrand>
-          <NavbarToggler onClick={this.toggleNavMenu} />
-          <Collapse isOpen={this.state.navMenuIsOpen} navbar>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+            <NavbarBrand tag={RouterNavLink} to="/dashboard">
+              <img className="home-icon" src={logo} alt='' style={{ width: '140px' }} />
+            </NavbarBrand>
             {(loading || isAuthenticated) && (
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DeviceDropdown
@@ -105,17 +104,23 @@ class NavBar extends React.Component {
                 />
               </div>
             )}
-            < Nav className="ml-auto" navbar style={{ marginTop: 8 }}>
+          </div>
+          <NavbarToggler
+            onClick={this.toggleNavMenu}
+            style={{ alignSelf: 'flex-start', marginTop: 4 }}
+          />
+          <Collapse isOpen={this.state.navMenuIsOpen} navbar>
+            <Nav className="ml-auto" navbar >
               {(loading || isAuthenticated) && (
-                <NavItem style={{ marginLeft: 8 }}>
-                  <NavLink tag={RouterNavLink} to="/dashboard">
+                <NavItem >
+                  <NavLink tag={RouterNavLink} to="/dashboard" style={{ textAlign: 'flex-end'}}>
                     <FontAwesomeIcon icon={faTachometerAlt} style={{ marginRight: 5 }} />
                     Dashboard
                   </NavLink>
                 </NavItem>
               )}
               {(loading || isAuthenticated) && (
-                <NavItem style={{ marginLeft: 8 }}>
+                <NavItem>
                   <NavLink tag={RouterNavLink} to="/recipes">
                     <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: 5 }} />
                     Recipes
@@ -123,7 +128,7 @@ class NavBar extends React.Component {
                 </NavItem>
               )}
               {(loading || isAuthenticated) && (
-                <NavItem style={{ marginLeft: 8 }}>
+                <NavItem>
                   <NavLink tag={RouterNavLink} to="/data">
                     <FontAwesomeIcon icon={faChartLine} style={{ marginRight: 5 }} />
                     Data

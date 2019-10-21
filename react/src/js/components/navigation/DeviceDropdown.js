@@ -39,9 +39,9 @@ class DeviceDropdown extends React.Component {
     }
 
     return (
-      <div style={{ display: 'flex', width: '100%' }}>
-        <Nav className="mr-auto" navbar style={{ flexDirection: 'row', width: '100%', marginLeft: 5, marginTop: 5 }}>
-          <UncontrolledDropdown inNavbar style={{ width: '100%'}}>
+      <div >
+        <Nav className="mr-auto" navbar style={{ flexDirection: 'row', marginTop: 6, paddingRight: 4 }}>
+          <UncontrolledDropdown inNavbar >
             <DropdownToggle
               caret
               style={{
@@ -77,7 +77,7 @@ class DeviceDropdown extends React.Component {
               marginLeft: 3,
               borderTopLeftRadius: 0,
               borderBottomLeftRadius: 0,
-              maxHeight: 37,
+              maxHeight: 38,
             }}
             color="secondary"
             onClick={this.toggleAddDeviceModal}
