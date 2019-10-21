@@ -22,6 +22,7 @@ export class ImageTimelapse extends React.PureComponent {
   };
 
   componentDidMount = () => {
+    console.log('Image timelapse mounted');
     const { images } = this.props;
     this.setState({ images });
   }
@@ -54,6 +55,7 @@ export class ImageTimelapse extends React.PureComponent {
 
 
   render() {
+    console.log('Rendering image timelapse');
     if (!this.state.disabled) {
       return (
         <React.Fragment>

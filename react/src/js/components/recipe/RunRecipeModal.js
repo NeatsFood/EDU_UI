@@ -81,7 +81,7 @@ export class RunRecipeModal extends React.PureComponent {
             {!errorMessage && !wifiDisconnected && overwritingRecipe && <p style={{ color: 'red' }}>{overwriteMessage}</p>}
             <p>
               <strong>Recipe: </strong> {recipeDetails.name}<br />
-              <strong>Device: </strong> {currentDevice.name}<br />
+              <strong>Device: </strong> {currentDevice.friendlyName}<br />
             </p>
           </ModalBody>
           <ModalFooter>

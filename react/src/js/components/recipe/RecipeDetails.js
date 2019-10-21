@@ -24,6 +24,11 @@ class RecipeDetails extends Component {
     };
   }
 
+  componentDidMount() {
+    console.log('Recipe details mounted');
+    this.setState({ gotRecipeDetails: false });
+  }
+
   async componentDidUpdate() {
     // Get parameters
     const user = this.props.user || {};
@@ -45,24 +50,13 @@ class RecipeDetails extends Component {
     });
   }
 
-  handleChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-    event.preventDefault();
-  }
-
-
   render() {
     // Get parameters
     const user = this.props.user || {};
     const userToken = user.token;
     const currentDevice = this.props.currentDevice || {};
-    console.log('Rendering, currentDevice:', currentDevice);
-
-    // const { device, recipe, currentRecipe, wifiStatus } = this.state;
     const { recipeDetails } = this.state;
-
+    console.log('Rendering recipe details');
 
     // Render component
     return (

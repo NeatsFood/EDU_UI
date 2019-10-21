@@ -39,6 +39,7 @@ function App() {
       startDateString: 'Started: -----',
     },
   });
+  console.log('Rendering app');
 
   return (
     <div className="App">

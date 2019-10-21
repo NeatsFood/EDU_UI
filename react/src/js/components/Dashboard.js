@@ -3,7 +3,6 @@ import { Container, Card, Row, Col } from 'reactstrap';
 import { withCookies } from "react-cookie";
 
 // Import components
-// import { DeviceImages } from './DeviceImages';
 // import { TakeMeasurementsModal } from './TakeMeasurementsModal';
 import { DashboardCard } from './DashboardCard';
 import { DeviceImages } from './DeviceImages';
@@ -45,8 +44,6 @@ class Dashboard extends Component {
     } = environment;
     const recipe = currentDevice.recipe || {};
     const { name, currentDay, startDateString } = recipe;
-    // const user = this.props.user || {};
-    // const userToken = user.token || null;
     const imageUrls = currentDevice.imageUrls || [];
 
     // Render component

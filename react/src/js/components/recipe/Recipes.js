@@ -13,6 +13,11 @@ class recipes extends Component {
     this.goToRecipe = this.goToRecipe.bind(this);
   }
 
+  componentDidMount() {
+    console.log('Recipes mounted');
+    this.setState({ gotAllRecipes: false });
+  }
+
   async componentDidUpdate() {
     // Get parameters
     const user = this.props.user || {};
@@ -33,6 +38,8 @@ class recipes extends Component {
 
   render() {
     const { allRecipes, gotAllRecipes } = this.state;
+    console.log('Rendering recipes, num recipes:', allRecipes.size);
+
     let listRecipes = [];
     if (allRecipes.size) {
       const recipes = [...allRecipes.values()]

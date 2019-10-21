@@ -22,6 +22,8 @@ export class DeviceImages extends React.PureComponent {
   };
 
   render() {
+    const imageUrls = this.props.imageUrls || [];
+    console.log('Rendering device images, num images:', imageUrls.length)
     return (
       <div className="timelapse">
         <div class="row">
@@ -29,7 +31,7 @@ export class DeviceImages extends React.PureComponent {
             <ImageTimelapse
               imageClass="img-fluid"
               inputClass="range-slider__range"
-              images={this.props.imageUrls}
+              images={imageUrls}
               imageNameCallback={this.imageNameCallback}
             />
           </div>
