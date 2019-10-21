@@ -43,6 +43,7 @@ function App() {
       startDateString: 'Started: -----',
     },
   });
+  const [allRecipes, setAllRecipes] = useState(new Map());
   console.log('Rendering app');
 
   return (
@@ -53,7 +54,9 @@ function App() {
             isAuthenticated={isAuthenticated}
             loading={loading}
             user={user}
-            setCurrentDevice={setCurrentDevice} />
+            setCurrentDevice={setCurrentDevice} 
+            setAllRecipes={setAllRecipes}
+          />
         </header>
         <Switch>
           <Route path="/" exact component={Landing} />
@@ -63,7 +66,7 @@ function App() {
           />
           <PrivateRoute
             path="/recipes"
-            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice}/>} 
+            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} allRecipes={allRecipes}/>} 
           />
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"

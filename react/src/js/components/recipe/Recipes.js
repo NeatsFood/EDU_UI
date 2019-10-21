@@ -1,7 +1,6 @@
 import React from "react";
 import { withCookies } from "react-cookie";
 import { RecipeCard } from "./RecipeCard";
-import getAllRecipes from "../../services/getAllRecipes";
 
 class recipes extends React.Component {
   constructor(props) {
@@ -13,32 +12,12 @@ class recipes extends React.Component {
     this.goToRecipe = this.goToRecipe.bind(this);
   }
 
-  componentDidMount() {
-    console.log('Recipes mounted');
-    this.setState({ gotAllRecipes: false });
-  }
-
-  async componentDidUpdate() {
-    // Get parameters
-    const user = this.props.user || {};
-    const userToken = user.token;
-    let { gotAllRecipes } = this.state;
-    
-    // Check if need to get recipes
-    if (!gotAllRecipes && userToken) {
-      this.setState({ gotAllRecipes: true });
-      const allRecipes = await getAllRecipes(userToken);
-      this.setState({ allRecipes });
-    }
-  }
-
   goToRecipe(value, e) {
     return this.props.history.push("/recipe_details/" + (value).toString());
   }
 
   render() {
-    const { allRecipes, gotAllRecipes } = this.state;
-    console.log('Rendering recipes, num recipes:', allRecipes.size);
+    const allRecipes = this.props.allRecipes || new Map();
 
     let listRecipes = [];
     if (allRecipes.size) {
@@ -58,7 +37,7 @@ class recipes extends React.Component {
     }
 
 
-    if (!gotAllRecipes) {
+    if (allRecipes.size < 1) {
       return (
         <div className="container-fluid p-0 m-0">
           <div className={"row graphs-row mt-5 mb-5"}>

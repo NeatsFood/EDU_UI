@@ -1,5 +1,4 @@
 export default async function getAllRecipes(userToken) {
-  console.log('Getting all recipes');
   const response = await fetch(process.env.REACT_APP_FLASK_URL + '/api/get_all_recipes/', {
     method: 'POST',
     headers: {

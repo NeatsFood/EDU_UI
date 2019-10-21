@@ -23,28 +23,35 @@ import getDeviceRecipe from "../../services/getDeviceRecipe";
 import getDeviceEnvironment from "../../services/getDeviceEnvironment";
 import getDeviceImageUrls from "../../services/getDeviceImageUrls";
 import getDeviceDatasets from "../../services/getDeviceDatasets";
+import getAllRecipes from "../../services/getAllRecipes";
+
 
 class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      navMenuIsOpen: false,
-      addDeviceModalIsOpen: false,
-      initializedDevices: false,
+      initialized: false,
       devices: [],
       currentDevice: { friendlyName: 'Loading...' },
+      allRecipes: new Map(),
+      navMenuIsOpen: false,
+      addDeviceModalIsOpen: false,
+      
     };
     this.toggleNavMenu = this.toggleNavMenu.bind(this);
     this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
     this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
   }
 
-  componentDidUpdate() {
-    const { initializedDevices } = this.state;
+  async componentDidUpdate() {
+    const { initialized } = this.state;
     const { user } = this.props;
-    if (!initializedDevices && user && user.token) {
-      this.setState({ initializedDevices: true });
-      this.initializeDevices(user);
+    if (!initialized && user && user.token) {
+      this.setState({ initialized: true });
+      const promises = [];
+      promises.push(this.initializeDevices(user));
+      promises.push(getAllRecipes(user.token).then(allRecipes => this.props.setAllRecipes(allRecipes)));
+      await Promise.all(promises);
     }
   }
 
