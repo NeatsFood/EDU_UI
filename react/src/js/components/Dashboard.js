@@ -5,7 +5,7 @@ import { withCookies } from "react-cookie";
 // Import components
 // import { TakeMeasurementsModal } from './TakeMeasurementsModal';
 import { DashboardCard } from './DashboardCard';
-import { DeviceImages } from './DeviceImages';
+import ImageTimelapse from "./ImageTimelapse";
 
 // Import assets
 import temperature from '../../images/temperature.png'
@@ -104,7 +104,7 @@ class Dashboard extends Component {
               </Col>
               <Col xl="6" style={{ marginTop: 30 }}>
                 <Card>
-                  <DeviceImages imageUrls={imageUrls} />
+                  <ImageTimelapse images={imageUrls} />
                 </Card>
               </Col>
             </Row>

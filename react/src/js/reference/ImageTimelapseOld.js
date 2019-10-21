@@ -21,13 +21,10 @@ export class ImageTimelapse extends React.PureComponent {
     this.setState({ index: e.target.value });
   };
 
-  componentDidMount = () => {
-    console.log('Image timelapse mounted');
-    const { images } = this.props;
-    this.setState({ images });
-  }
 
   componentWillReceiveProps = (nextProps) => {
+    // Check to see if we've recieved new images.
+
     if (nextProps.images.length !== this.state.images.length ||
       (nextProps.images.length > 0 && this.props.images.length > 0 && (nextProps.images[0] !== this.props.images[0]))) {
       if (nextProps.images.length > 0) {
@@ -36,13 +33,25 @@ export class ImageTimelapse extends React.PureComponent {
         this.setState({ disabled: true, index: -1, images: nextProps.images });
       }
     }
+    // this.updateParent();
   };
+
 
   componentDidUpdate() {
+    //if (this.state.index >= 0 && this.state.index < this.state.images.length) {
     this.updateParent();
+    //}
   };
 
+
   updateParent = () => {
+    /*if (this.props.imageNameCallback != null &&
+        this.props.images &&
+        !disabled &&
+        index < this.props.images.length){
+        this.props.imageNameCallback(this.props.images[index].split("/").pop());
+    } else
+*/
     if (this.state.imageNameCallback != null &&
       this.state.images &&
       !this.state.disabled &&
@@ -55,7 +64,6 @@ export class ImageTimelapse extends React.PureComponent {
 
 
   render() {
-    console.log('Rendering image timelapse');
     if (!this.state.disabled) {
       return (
         <React.Fragment>
@@ -73,6 +81,20 @@ export class ImageTimelapse extends React.PureComponent {
         </React.Fragment>
       );
     }
+    /* return (
+         <React.Fragment>
+             <img
+                 src={placeholder} alt=''
+                 className={this.props.imageClass} />
+             <input
+                 className={this.props.inputClass}
+                 type="range"
+                 value={this.state.index}
+                 min="0"
+                 max="1"
+                 disabled />
+         </React.Fragment>
+     );*/
     return ("");
   }
 
