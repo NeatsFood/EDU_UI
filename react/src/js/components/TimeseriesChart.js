@@ -95,6 +95,9 @@ export class TimeseriesChart extends React.PureComponent {
     const { userToken } = this.props;
     const { startDate, endDate } = dataset;
     console.log(`startDate: ${startDate}, endDate: ${endDate}`);
+    if (!startDate || !endDate) {
+      return {};
+    }
 
     // Convert datetime objects to timestamp strings
     const startTimestamp = startDate.toISOString().split('.')[0] + "Z";

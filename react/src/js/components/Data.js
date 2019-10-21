@@ -13,19 +13,28 @@ class Data extends Component {
     this.state = {
       dataset: { name: 'Loading...', startDate: null, endDate: null },
     };
+    this.initializeDataset = this.initializeDataset.bind(this);
+  }
+
+  componentDidMount = () => {
+    this.initializeDataset();
   }
 
   componentDidUpdate = () => {
-    // Get parameters
+    this.initializeDataset();
+  };
+
+  /**
+   * Initializes dataset once datasets load
+   */
+  initializeDataset = () => {
     const { currentDevice } = this.props;
     const { dataset } = this.state;
     const datasets = currentDevice.datasets || [];
-
-    // Update dataset once datasets load
     if (dataset.name === "Loading..." && datasets.length > 0) {
       this.setState({ dataset: datasets[0] });
     }
-  };
+  }
 
   onSelectDataset = (dataset) => {
     this.setState({ dataset });
@@ -57,11 +66,11 @@ class Data extends Component {
         </div>
         <div className='row m-2'>
           <div className='col'>
-            {/* <TimeseriesChart
-              userToken={userToken}
+            <TimeseriesChart
+              userToken={user.token}
               device={currentDevice}
               dataset={dataset}
-            /> */}
+            />
           </div>
         </div>
       </div>
