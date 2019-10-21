@@ -1,7 +1,7 @@
 import React from 'react';
-import {
-  Button, Form, Modal, ModalHeader, ModalBody, ModalFooter,
-} from 'reactstrap';
+import { Button, Form, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
+import runRecipe from "../../services/runRecipe";
 
 const DEFAULT_STATE = {
   errorMessage: null,
@@ -30,68 +30,39 @@ export class RunRecipeModal extends React.PureComponent {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     console.log('Applying recipe to device');
 
     // Prevent default
     event.preventDefault();
 
     // Get parameters
-    const { userToken, device, recipe } = this.props;
+    const { userToken, currentDevice, recipeDetails } = this.props;
+    const response = await runRecipe(userToken, currentDevice.uuid, recipeDetails.uuid);
 
-    // Request to run recipe on device from data api
-    fetch(process.env.REACT_APP_FLASK_URL + '/api/apply_to_device/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        'user_token': userToken,
-        'device_uuid': device.uuid,
-        'recipe_uuid': recipe.uuid,
-      })
-    }).then(async (response) => {
+    // Update state
+    this.setState({ errorMessage: response.errorMessage });
 
-      // Parse response json
-      const responseJson = await response.json()
+    // Toggle modal if successful
+    if (response.successful) {
+      this.toggle(); 
+    };
 
-      // Verify response successful
-      if (!response.ok) {
-        throw Error(responseJson.message);
-      }
-
-      // Successfully applied recipe, hide modal
-      console.log('Applied recipe to device, response', responseJson);
-      this.toggle();
-
-    }).catch((error) => {
-      console.error('Unable to run recipe', error);
-
-      let errorMessage;
-      if (error.message.includes("not connected")) {
-        errorMessage = "Unable to run recipe, device is not connected."
-      } else {
-        errorMessage = "Unable to run recipe, please try again later."
-      }
-      this.setState({ errorMessage });
-    });
   };
 
   render() {
     // Get parameters
     const { errorMessage } = this.state;
-    const { isOpen, recipe, device, wifiStatus, currentRecipeName } = this.props;
+    const { isOpen, recipeDetails, currentDevice } = this.props;
+    const currentRecipeName = currentDevice.recipe.name;
 
     // Get system state
-    const wifiDisconnected = wifiStatus === 'Disconnected';
+    const wifiDisconnected = currentDevice.wifiStatus === 'Disconnected';
     const overwritingRecipe = currentRecipeName !== 'No Recipe' && currentRecipeName !== 'Loading' && currentRecipeName !== 'Unknown';
 
     // Initialize warning and error messages
     const wifiMessage = "Error: Unable to run recipe, device is disconnected from the network."
     const overwriteMessage = `Warning: Running this recipe will overwrite your current recipe: ${currentRecipeName}. `
-
 
     // Render component
     return (
@@ -109,8 +80,8 @@ export class RunRecipeModal extends React.PureComponent {
             {wifiDisconnected && <p style={{ color: 'red' }}>{wifiMessage}</p>}
             {!errorMessage && !wifiDisconnected && overwritingRecipe && <p style={{ color: 'red' }}>{overwriteMessage}</p>}
             <p>
-              <strong>Recipe: </strong> {recipe.name}<br />
-              <strong>Device: </strong> {device.name}<br />
+              <strong>Recipe: </strong> {recipeDetails.name}<br />
+              <strong>Device: </strong> {currentDevice.name}<br />
             </p>
           </ModalBody>
           <ModalFooter>

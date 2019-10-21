@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, CardBody, CardTitle, CardFooter, CardImg } from 'reactstrap';
+import { Button, Card, CardBody, CardTitle, CardImg } from 'reactstrap';
 
 /**
  * RecipeCard
