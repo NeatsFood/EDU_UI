@@ -1,16 +1,29 @@
 import React from 'react';
 import {
-  Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
+  Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button,
 } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWifi } from '@fortawesome/free-solid-svg-icons'
+import { faWifi, faPlus } from '@fortawesome/free-solid-svg-icons'
+import AddDeviceModal from './AddDeviceModal';
+
 
 class DeviceDropdown extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      addDeviceModalIsOpen: false,
+    };
+    this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
+  }
 
   onSelectDevice = (event) => {
     const deviceUuid = event.target.value;
     this.props.updateCurrentDevice(deviceUuid);
+  }
+
+  toggleAddDeviceModal = () => {
+    this.setState({ addDeviceModalIsOpen: !this.state.addDeviceModalIsOpen });
   }
 
   render() {
@@ -26,35 +39,59 @@ class DeviceDropdown extends React.Component {
     }
 
     return (
-      <Nav className="mr-auto" navbar >
-        <UncontrolledDropdown inNavbar >
-          <DropdownToggle
-            caret
-            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+      <div style={{ display: 'flex', width: '100%' }}>
+        <Nav className="mr-auto" navbar style={{ flexDirection: 'row', width: '100%', marginLeft: 5, marginTop: 5 }}>
+          <UncontrolledDropdown inNavbar style={{ width: '100%'}}>
+            <DropdownToggle
+              caret
+              style={{
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                width: '100%'
+              }}
+            >
+              <span style={{ color: wifiColor }}>
+                <FontAwesomeIcon icon={faWifi} style={{ marginRight: 5 }} />
+              </span>
+              {currentDevice.friendlyName}
+            </DropdownToggle>
+            <DropdownMenu style={{ textAlign: 'center' }}>
+              {devices.map((device) => {
+                if (device.uuid !== currentDevice.uuid) {
+                  return (
+                    <DropdownItem
+                      key={device.uuid}
+                      value={device.uuid}
+                      onClick={this.onSelectDevice}
+                    >
+                      {device.friendlyName}
+                    </DropdownItem>
+                  )
+                }
+                return null;
+              })}
+            </DropdownMenu>
+          </UncontrolledDropdown>
+          <Button
+            style={{
+              marginLeft: 3,
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+              maxHeight: 37,
+            }}
+            color="secondary"
+            onClick={this.toggleAddDeviceModal}
           >
-            <span style={{ color: wifiColor }}>
-              <FontAwesomeIcon icon={faWifi} style={{ marginRight: 5 }} />
-            </span>
-            {currentDevice.friendlyName}
-          </DropdownToggle>
-          <DropdownMenu>
-            {devices.map((device) => {
-              if (device.uuid !== currentDevice.uuid) {
-                return (
-                  <DropdownItem
-                    key={device.uuid}
-                    value={device.uuid}
-                    onClick={this.onSelectDevice}
-                  >
-                    {device.friendlyName}
-                  </DropdownItem>
-                )
-              }
-              return null;
-            })}
-          </DropdownMenu>
-        </UncontrolledDropdown>
-      </Nav >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        </Nav >
+        <AddDeviceModal
+          cookies={this.props.cookies}
+          isOpen={this.state.addDeviceModalIsOpen}
+          toggle={this.toggleAddDeviceModal}
+          fetchDevices={this.props.fetchDevices}
+        />
+      </div>
     );
   };
 }

@@ -1,11 +1,11 @@
 import React from "react";
 import {
-  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledAlert, Button,
+  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledAlert,
 } from 'reactstrap';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTachometerAlt, faFileAlt, faChartLine, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid-svg-icons'
 
 // Import assets
 import logo from "../../../images/logo-initiative-white.png";
@@ -14,7 +14,6 @@ import logo from "../../../images/logo-initiative-white.png";
 import LoginNavItem from './LoginNavItem';
 import LogoutNavItem from './LogoutNavItem';
 import DeviceDropdown from './DeviceDropdown';
-import AddDeviceModal from './AddDeviceModal';
 
 // Import services
 import getUserDevices from "../../services/getUserDevices";
@@ -35,11 +34,9 @@ class NavBar extends React.Component {
       currentDevice: { friendlyName: 'Loading...' },
       allRecipes: new Map(),
       navMenuIsOpen: false,
-      addDeviceModalIsOpen: false,
-      
+
     };
     this.toggleNavMenu = this.toggleNavMenu.bind(this);
-    this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
     this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
   }
 
@@ -88,15 +85,11 @@ class NavBar extends React.Component {
     this.setState({ navMenuIsOpen: !this.state.navMenuIsOpen });
   }
 
-  toggleAddDeviceModal = () => {
-    this.setState({ addDeviceModalIsOpen: !this.state.addDeviceModalIsOpen });
-  }
-
   render() {
     const { isAuthenticated, loading } = this.props;
     return (
       <div>
-        <Navbar expand="md" dark color="dark">
+        <Navbar expand="md" dark color="dark" style={{ textAlign: 'center' }}>
           <NavbarBrand tag={RouterNavLink} to="/dashboard">
             <img className="home-icon" src={logo} alt='' style={{ width: '150px' }} />
           </NavbarBrand>
@@ -108,23 +101,13 @@ class NavBar extends React.Component {
                   devices={this.state.devices}
                   currentDevice={this.state.currentDevice}
                   updateCurrentDevice={this.updateCurrentDevice}
+                  fetchDevices={this.initializeDevices}
                 />
-                <Button
-                  style={{
-                    marginLeft: 3,
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
-                  }}
-                  color="secondary"
-                  onClick={this.toggleAddDeviceModal}
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </Button>
               </div>
             )}
-            < Nav className="ml-auto" navbar>
+            < Nav className="ml-auto" navbar style={{ marginTop: 8 }}>
               {(loading || isAuthenticated) && (
-                <NavItem>
+                <NavItem style={{ marginLeft: 8 }}>
                   <NavLink tag={RouterNavLink} to="/dashboard">
                     <FontAwesomeIcon icon={faTachometerAlt} style={{ marginRight: 5 }} />
                     Dashboard
@@ -132,7 +115,7 @@ class NavBar extends React.Component {
                 </NavItem>
               )}
               {(loading || isAuthenticated) && (
-                <NavItem>
+                <NavItem style={{ marginLeft: 8 }}>
                   <NavLink tag={RouterNavLink} to="/recipes">
                     <FontAwesomeIcon icon={faFileAlt} style={{ marginRight: 5 }} />
                     Recipes
@@ -140,7 +123,7 @@ class NavBar extends React.Component {
                 </NavItem>
               )}
               {(loading || isAuthenticated) && (
-                <NavItem>
+                <NavItem style={{ marginLeft: 8 }}>
                   <NavLink tag={RouterNavLink} to="/data">
                     <FontAwesomeIcon icon={faChartLine} style={{ marginRight: 5 }} />
                     Data
@@ -160,12 +143,6 @@ class NavBar extends React.Component {
             Remember to refill the reservoir and prune your plants!
           </UncontrolledAlert>
         )}
-        <AddDeviceModal
-          cookies={this.props.cookies}
-          isOpen={this.state.addDeviceModalIsOpen}
-          toggle={this.toggleAddDeviceModal}
-          fetchDevices={this.initializeDevices}
-        />
       </div>
     );
   }

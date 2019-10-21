@@ -15,7 +15,7 @@ export default function LogoutNavItem() {
 
   return (
     <div>
-      <NavItem>
+      <NavItem style={{ marginLeft: 8 }}>
         <NavLink tag={RouterNavLink} to="/logout" onClick={() => logoutWithRedirect()}>
           <FontAwesomeIcon icon={faSignOutAlt} style={{ marginRight: 5 }} />
           Logout
