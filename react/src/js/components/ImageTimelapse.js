@@ -22,7 +22,8 @@ export default class ImageTimelapse extends React.Component {
   }
 
   /**
-   * Show latest image whenever a new device is loaded
+   * Shows latest image if a new
+   * device has been loaded.
    */
   initializeImage() {
     const images = this.props.images || [];

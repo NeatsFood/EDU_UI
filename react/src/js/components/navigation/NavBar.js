@@ -40,6 +40,7 @@ class NavBar extends React.Component {
     this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
   }
 
+
   async componentDidUpdate() {
     const { initialized } = this.state;
     const { user } = this.props;
@@ -57,7 +58,10 @@ class NavBar extends React.Component {
     this.setState({ devices });
     let { currentDevice } = this.state;
     if (currentDevice.friendlyName === "Loading..." && devices.length > 0) {
-      await this.updateCurrentDevice(devices[0].uuid);
+      const cachedDeviceUuid = this.props.cookies.get('deviceUuid');
+      const device = devices.find(device => device.uuid === cachedDeviceUuid) || devices[0];
+      this.props.cookies.set('deviceUuid', device.uuid);
+      await this.updateCurrentDevice(device.uuid);
     }
   }
 
@@ -66,6 +70,7 @@ class NavBar extends React.Component {
     const { user } = this.props;
     const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
     this.setState({ currentDevice }); // Keep the dropdown responsive
+    this.props.cookies.set('deviceUuid', deviceUuid); // Update cached device uuid
 
     // Get all device parameters asyncrhonously
     const promises = [];
