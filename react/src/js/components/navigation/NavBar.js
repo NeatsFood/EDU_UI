@@ -78,8 +78,13 @@ class NavBar extends React.Component {
     promises.push(getDeviceRecipe(user.token, deviceUuid).then(recipe => currentDevice.recipe = recipe));
     promises.push(getDeviceEnvironment(user.token, deviceUuid).then(environment => currentDevice.environment = environment));
     promises.push(getDeviceImageUrls(user.token, deviceUuid).then(imageUrls => currentDevice.imageUrls = imageUrls));
-    promises.push(getDeviceDatasets(user.token, deviceUuid).then(datasets => currentDevice.datasets = datasets));
+    promises.push(getDeviceDatasets(user.token, deviceUuid).then(async (datasets) => {
+      currentDevice.datasets = datasets;
+      currentDevice.dataset = datasets[0];
+      // TODO: Get telemetry data
+    }));
     await Promise.all(promises);
+
 
     // Update state
     this.setState({ currentDevice });

@@ -6,8 +6,6 @@ import {
 import { TimeSeries, TimeRange } from 'pondjs';
 import { format } from "d3-format";
 
-import getDeviceTelemetry from "../services/getDeviceTelemetry";
-
 const style = styler([
   { key: "tempData", color: "#008BC2", width: 2 },
   { key: "RHData", color: "#95266A", width: 2 },
@@ -90,12 +88,70 @@ export class TimeseriesChart extends React.PureComponent {
     clearInterval(this.timerID);
   }
 
-  fetchData = async (device, dataset) => {
+  fetchData = (device, dataset) => {
     console.log('Fetching time series data');
+
+    // Get parameters
     const { userToken } = this.props;
     const { startDate, endDate } = dataset;
-    const telemetry = await getDeviceTelemetry(userToken, device.uuid, startDate, endDate);
-    this.parseData(this.state.displayChannels, this.state.channels, telemetry);
+    console.log(`startDate: ${startDate}, endDate: ${endDate}`);
+    if (!startDate || !endDate) {
+      return {};
+    }
+
+    // Convert datetime objects to timestamp strings
+    const startTimestamp = startDate.toISOString().split('.')[0] + "Z";
+
+    // Check for currently running recipes
+    let endTimestamp;
+    if (endDate === null) {
+      const date = new Date();
+      endTimestamp = date.toISOString().split('.')[0] + "Z";
+    } else {
+      endTimestamp = endDate.toISOString().split('.')[0] + "Z";
+    }
+
+    // Request data from api
+    let sensorData = {};
+    return fetch(process.env.REACT_APP_FLASK_URL +
+      '/api/get_all_values/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          'user_token': userToken,
+          'device_uuid': device.uuid,
+          'start_ts': startTimestamp,
+          'end_ts': endTimestamp,
+        })
+      })
+      .then(async (response) => {
+        // Parse response json
+        const responseJson = await response.json();
+
+        // TODO: Make this general case
+        const { temp, RH, co2, leaf_count, plant_height } = responseJson;
+        console.log(responseJson)
+
+        // Temp hack to fix data chronology bug
+        plant_height.sort((a, b) => (a.time > b.time) ? 1 : -1)
+        leaf_count.sort((a, b) => (a.time > b.time) ? 1 : -1)
+
+        // TODO: Make this general case
+        sensorData["tempData"] = temp;
+        sensorData["RHData"] = RH;
+        sensorData["co2Data"] = co2;
+        sensorData["leafCount"] = leaf_count;
+        sensorData["plantHeight"] = plant_height;
+      })
+      .then(() => {
+        console.log("About to parse data");
+        return this.parseData(this.state.displayChannels, this.state.channels, sensorData)
+      })
+      .catch(error => console.error('Unable to get data', error))
   };
 
   handleTrackerChanged = t => {

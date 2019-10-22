@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "../App.css";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -54,7 +54,7 @@ function App() {
             isAuthenticated={isAuthenticated}
             loading={loading}
             user={user}
-            setCurrentDevice={setCurrentDevice} 
+            setCurrentDevice={setCurrentDevice}
             setAllRecipes={setAllRecipes}
           />
         </header>
@@ -62,19 +62,19 @@ function App() {
           <Route path="/" exact component={Landing} />
           <PrivateRoute
             path="/dashboard"
-            render={(props) => <Dashboard {...props} user={user} currentDevice={currentDevice}/>} 
+            render={(props) => <Dashboard {...props} user={user} currentDevice={currentDevice} />}
           />
           <PrivateRoute
             path="/recipes"
-            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} allRecipes={allRecipes}/>} 
+            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} allRecipes={allRecipes} />}
           />
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"
-            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice}/>} 
+            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice} />}
           />
           <PrivateRoute
             path="/data"
-            render={(props) => <Data {...props} user={user} currentDevice={currentDevice}/>} 
+            render={(props) => <Data {...props} user={user} currentDevice={currentDevice} setCurrentDevice={setCurrentDevice} />}
           />
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>
