@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'reactstrap';
+import { Card, Button } from 'reactstrap';
 
 /**
  * DashboardCard
@@ -14,7 +14,10 @@ export class DashboardCard extends React.PureComponent {
   render() {
 
     // Get parameters
-    const { name, value, unit, variable, icon, minor1, minor2 } = this.props;
+    const {
+      name, value, unit, variable, icon, minor1, minor2,
+      buttonEnabled, buttonText, buttonOnClick,
+    } = this.props;
 
     // Initialize subelements
     const region = (
@@ -35,10 +38,16 @@ export class DashboardCard extends React.PureComponent {
       </div>
     );
 
-    const minor = (
+    const minorText = (
       <div style={{ padding: 10, fontSize: 16, color: 'grey', textAlign: 'center', }}>
         <span>{minor1}</span><br />
         <span>{minor2}</span>
+      </div>
+    );
+
+    const minorButton = (
+      <div style={{ padding: 15, }}>
+        <Button onClick={buttonOnClick}>{buttonText}</Button>
       </div>
     );
 
@@ -50,7 +59,7 @@ export class DashboardCard extends React.PureComponent {
             {region}
             {major}
           </div>
-          {minor}
+          {buttonEnabled ? minorButton : minorText}
         </div>
       </Card>
     )

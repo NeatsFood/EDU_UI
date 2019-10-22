@@ -18,7 +18,7 @@ function Landing() {
 
   return (
     <Container style={{ display: 'flex', justifyContent: 'center' }} >
-      <Card className="text-center" style={{ marginTop: '50px', width: '400px' }}>
+      <Card className="text-center" style={{ marginTop: '30px', width: '400px' }}>
         <CardHeader style={{ fontSize: '20px' }}>
           {/* Welcome! */}
           Welcome to the OpenAg Education UI
@@ -44,13 +44,3 @@ function Landing() {
 }
 
 export default Landing;
-
-
-{/* <div style={{ alignItems: 'center', justifyItems: 'center' }}> */ }
-{/* <Card style={{ width: 300 }}> */ }
-{/* <CardImg top width="100%" src={lab} alt="Card image cap" /> */ }
-{/* Landing...{isAuthenticated ? 'Authenticated' : 'Not Authenticated'} */ }
-{/* {isAuthenticated && <Redirect to="/dashboard" />} */ }
-{/* <img src={lab} alt="Card Icon" /> */ }
-{/* </Card> */ }
-{/* </div> */ }

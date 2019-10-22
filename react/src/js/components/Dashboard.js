@@ -63,6 +63,9 @@ class Dashboard extends Component {
                       icon={temperature}
                       minor1={name}
                       minor2={startDateString}
+                      buttonEnabled={name === 'No Recipe'}
+                      buttonText={"Start Recipe"}
+                      buttonOnClick={() => this.props.history.push({ pathname: '/recipes' })}
                     />
                   </Col>
                   <Col style={{ marginTop: 30 }}>
