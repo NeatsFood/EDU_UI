@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button,
+  Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, Tooltip,
 } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +13,7 @@ class DeviceDropdown extends React.Component {
     super(props);
     this.state = {
       addDeviceModalIsOpen: false,
+      tooltipIsOpen: false,
     };
     this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
   }
@@ -24,6 +25,10 @@ class DeviceDropdown extends React.Component {
 
   toggleAddDeviceModal = () => {
     this.setState({ addDeviceModalIsOpen: !this.state.addDeviceModalIsOpen });
+  }
+
+  toggleTooltip = () => {
+    this.setState({ tooltipIsOpen: !this.state.tooltipIsOpen });
   }
 
   render() {
@@ -72,18 +77,31 @@ class DeviceDropdown extends React.Component {
               })}
             </DropdownMenu>
           </UncontrolledDropdown>
-          <Button
-            style={{
-              marginLeft: 3,
-              borderTopLeftRadius: 0,
-              borderBottomLeftRadius: 0,
-              maxHeight: 38,
-            }}
-            color="secondary"
-            onClick={this.toggleAddDeviceModal}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>
+          <span>
+            <Button
+              id="add-device-button"
+              style={{
+                marginLeft: 3,
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+                maxHeight: 38,
+              }}
+              color="secondary"
+              onClick={this.toggleAddDeviceModal}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </Button>
+            <Tooltip
+              placement="bottom"
+              isOpen={this.state.tooltipIsOpen}
+              target={"add-device-button"}
+              toggle={this.toggleTooltip}
+            >
+              Add Device
+            </Tooltip>
+          </span>
+
+
         </Nav >
         <AddDeviceModal
           cookies={this.props.cookies}
