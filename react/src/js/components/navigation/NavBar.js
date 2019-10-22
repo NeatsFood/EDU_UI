@@ -23,6 +23,10 @@ import getDeviceEnvironment from "../../services/getDeviceEnvironment";
 import getDeviceImageUrls from "../../services/getDeviceImageUrls";
 import getDeviceDatasets from "../../services/getDeviceDatasets";
 import getAllRecipes from "../../services/getAllRecipes";
+import getDeviceTelemetry from "../../services/getDeviceTelemetry";
+
+// Import utilities
+import formatTelemetryData from "../../utils/formatTelemetryData";
 
 
 class NavBar extends React.Component {
@@ -79,12 +83,13 @@ class NavBar extends React.Component {
     promises.push(getDeviceEnvironment(user.token, deviceUuid).then(environment => currentDevice.environment = environment));
     promises.push(getDeviceImageUrls(user.token, deviceUuid).then(imageUrls => currentDevice.imageUrls = imageUrls));
     promises.push(getDeviceDatasets(user.token, deviceUuid).then(async (datasets) => {
-      currentDevice.datasets = datasets;
-      currentDevice.dataset = datasets[0];
-      // TODO: Get telemetry data
+      const currentData = { datasets, dataset: datasets[0] };
+      const { startDate, endDate } = currentData.dataset;
+      const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
+      currentData.telemetry = formatTelemetryData(rawTelemetryData);
+      this.props.setCurrentData(currentData);
     }));
     await Promise.all(promises);
-
 
     // Update state
     this.setState({ currentDevice });
@@ -123,7 +128,7 @@ class NavBar extends React.Component {
             <Nav className="ml-auto" navbar >
               {(loading || isAuthenticated) && (
                 <NavItem >
-                  <NavLink tag={RouterNavLink} to="/dashboard" style={{ textAlign: 'flex-end'}}>
+                  <NavLink tag={RouterNavLink} to="/dashboard" style={{ textAlign: 'flex-end' }}>
                     <FontAwesomeIcon icon={faTachometerAlt} style={{ marginRight: 5 }} />
                     Dashboard
                   </NavLink>

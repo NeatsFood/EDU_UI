@@ -18,16 +18,15 @@ export class DatasetsDropdown extends React.PureComponent {
 
   onSelectDataset = (event) => {
     const index = event.target.value;
-    const { datasets } = this.props;
-    const dataset = datasets[index];
+    const { currentData } = this.props;
+    const dataset = currentData.datasets[index];
     this.props.onSelectDataset(dataset);
   };
 
 
   render() {
     // Get parameters
-    const datasets = this.props.datasets || [{ name: 'Loading...' }];
-    const dataset = this.props.dataset || { name: 'Loading...' };
+    const { datasets, dataset } = this.props.currentData;
 
     // Render dropdown
     return (

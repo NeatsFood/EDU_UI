@@ -3,10 +3,8 @@ import {
   AreaChart, Brush, ChartContainer, ChartRow, Charts, LabelAxis,
   LineChart, Resizable, ScatterChart, styler, YAxis, ValueAxis, Legend
 } from "react-timeseries-charts";
-import { TimeSeries, TimeRange } from 'pondjs';
+import { TimeRange } from 'pondjs';
 import { format } from "d3-format";
-
-import getDeviceTelemetry from "../services/getDeviceTelemetry";
 
 const style = styler([
   { key: "tempData", color: "#008BC2", width: 2 },
@@ -25,157 +23,48 @@ export class TimeseriesChart extends React.PureComponent {
   constructor(props) {
     super(props);
     const initialRange = new TimeRange([75 * 60 * 1000, 125 * 60 * 1000]);
-
-    // Storage for all the data channels
-    const channels = {
-      tempData: {
-        units: "deg C",
-        label: "Temperature",
-        format: ",.1f",
-        series: null,
-        show: false,
-        type: "line"
-      },
-      RHData: { units: "percent", label: "% RH", format: ",.1f", series: null, show: false, type: "line" },
-      co2Data: { units: "ppm", label: "CO2", format: "d", series: null, show: false, type: "line" },
-      topTempData: { units: "deg C", label: "Top Temp", format: ",.1f", series: null, show: false, type: "line" },
-      middleTempData: { units: "deg C", label: "Mid Temp", format: ",.1f", series: null, show: false, type: "line" },
-      bottomTempData: { units: "deg C", label: "Bottom Temp", format: ",.1f", series: null, show: false, type: "line" },
-      leafCount: { units: "", label: "Leaf Count", format: "d", series: null, show: false, type: "scatter" },
-      plantHeight: { units: "cm", label: "Plant Height", format: ",.2f", series: null, show: false, type: "scatter" }
-    };
-
-
-    // Channel names list, in order we want them shown
     const channelNames = ["tempData", "RHData", "co2Data", "leafCount", "plantHeight"];
-
-    // Default channels we'll actually display on our charts -- We'll build this dynamically...
-    const displayChannels = [];
-
+    const displayChannelNames = [];
     this.state = {
       ready: false,
       noData: false,
       mode: "channels",
-      channels,
+      channels: {},
       channelNames,
-      displayChannels,
+      displayChannelNames,
       tracker: null,
-      timerange: initialRange,
+      timeRange: initialRange,
       brushrange: initialRange
     };
   }
-
-  componentDidMount() {
-    console.log('Timeseries chart mounted');
-    this.timerID = setInterval(
-      () => {
-        const { device, dataset } = this.props;
-        this.fetchData(device, dataset);
-      },
-      1000 * 60 * 5  // update every 5 minutes
-    );
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { device, dataset } = nextProps;
-    console.log(`Timeseries chart will receive props, device: ${device.name}, dataset: ${dataset.name}`);
-    if (device.name !== 'Loading' && dataset.name !== 'Loading') {
-      if (device !== this.props.device || dataset !== this.props.dataset) {
-        this.fetchData(device, dataset);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-
-  fetchData = async (device, dataset) => {
-    console.log('Fetching time series data');
-    const { userToken } = this.props;
-    const { startDate, endDate } = dataset;
-    const telemetry = await getDeviceTelemetry(userToken, device.uuid, startDate, endDate);
-    this.parseData(this.state.displayChannels, this.state.channels, telemetry);
-  };
 
   handleTrackerChanged = t => {
     this.setState({ tracker: t });
   };
 
   handleActiveChange = channelName => {
-    console.log("handling change for " + channelName);
     const newChannels = this.state.channels;
     newChannels[channelName].show = !newChannels[channelName].show;
     this.setState({ channels: newChannels });
   };
 
-  parseData = (displayChannels, channels, newData) => {
-    var noData = true;
-    var timeRange = null;
-    var newDisplayChannels = this.state.displayChannels;
-    this.state.channelNames.forEach(function (name) {
+  handleTimeRangeChange = timeRange => {
+    const { channels, displayChannelNames } = this.state;
 
-      if (newData[name]) {
-        const dataEvents = [];
-        newData[name].forEach(function (d) {
-          //console.log(d);
-          const eventDate = new Date(d.time);
-          dataEvents.push([eventDate, parseFloat(d.value)]);
-        });
-        if (dataEvents.length > 0) {
-          noData = false;
-          // if this is the first time we're seeing data for a channel, show it
-          if (channels[name]["series"] === null) {
-            channels[name]["show"] = true;
-            if (!newDisplayChannels.includes(name)) {
-              newDisplayChannels.push(name);
-            }
-          }
-          if (name === "plantHeight" || name === "leafCount") { // Temporary until we get a new API endpoint
-            channels[name]["series"] = new TimeSeries({
-              name: name,
-              columns: ["time", name],
-              points: dataEvents
-            });
-          } else {
-            channels[name]["series"] = new TimeSeries({
-              name: name,
-              columns: ["time", name],
-              points: dataEvents.reverse()
-            });
-          }
-          channels[name]["max"] = channels[name]["series"].max(name);
-          channels[name]["min"] = channels[name]["series"].min(name);
-          if (timeRange === null) {
-            timeRange = channels[name]["series"].timerange()
-          } else {
-            timeRange = timeRange.extents(channels[name]["series"].timerange())
-          }
-        }
-      }
-    });
-    //ready = true;  Using 'ready' to indicate that we attempted to load data.
-    this.setState({ ready: true, noData: noData, channels: channels, timerange: timeRange, brushrange: timeRange, displayChannels: displayChannels });
-  };
-
-  handleTimeRangeChange = timerange => {
-    const { channels, displayChannels } = this.state;
-
-    if (timerange) {
-      this.setState({ timerange: timerange, brushrange: timerange });
+    if (timeRange) {
+      this.setState({ timeRange: timeRange, brushrange: timeRange });
     } else {
-      this.setState({ timerange: channels[displayChannels[0]].series.range(), brushrange: null });
+      this.setState({ timeRange: channels[displayChannelNames[0]].series.range(), brushrange: null });
     }
   };
 
   renderMultiAxisChart = () => {
 
-    const { displayChannels, channels, timerange } = this.state;
+    const { displayChannelNames, channels, timeRange } = this.state;
 
     const charts = [];
     const axisList = [];
-    //for (let channelName of displayChannels) {
-    displayChannels.forEach((channelName) => {
+    displayChannelNames.forEach((channelName) => {
 
       let series = channels[channelName].series;
       const label = channels[channelName].label;
@@ -228,13 +117,13 @@ export class TimeseriesChart extends React.PureComponent {
       }
     });
 
-    const trackerInfoValues = displayChannels
+    const trackerInfoValues = displayChannelNames
       .filter(channelName => channels[channelName].show)
       .map(channelName => {
         const fmt = format(channels[channelName].format);
         let v = "--";
         if (channels[channelName].series !== null) {
-          let series = channels[channelName].series.crop(timerange);
+          let series = channels[channelName].series.crop(timeRange);
 
           if (this.state.tracker) {
             const i = series.bisect(new Date(this.state.tracker));
@@ -251,7 +140,7 @@ export class TimeseriesChart extends React.PureComponent {
       });
 
     return (
-      <ChartContainer timeRange={timerange}
+      <ChartContainer timeRange={timeRange}
 
         trackerPosition={this.state.tracker}
         onTrackerChanged={this.handleTrackerChanged}
@@ -269,23 +158,15 @@ export class TimeseriesChart extends React.PureComponent {
     );
   };
 
-  renderChannelsChart = () => {
-    const { channels, timerange } = this.state;
-    const displayChannels = this.state.displayChannels || [];
+  renderChannelsChart = (channels, timeRange, displayChannelNames) => {
     const rows = [];
-    displayChannels.forEach((channelName) => {
+    displayChannelNames.forEach((channelName) => {
       const channel = channels[channelName] || null;
       let series = null;
       if (channel !== null) {
         series = channel.series;
       }
 
-      //const label = channels[channelName].label;
-      //const max = channels[channelName].max;
-      //const min = channels[channelName].min;
-      //const format = channels[channelName].format;
-      //const id = `${channelName}_axis`;
-      //const visible = channels[channelName].show;
       if (series !== null) {
         const summary = [
           { label: "Current", value: channels[channelName].series.atLast().get(channelName) }
@@ -294,7 +175,7 @@ export class TimeseriesChart extends React.PureComponent {
         let value = "--";
         if (this.state.tracker) {
           const fmt = format(channels[channelName].format);
-          let shortSeries = series.crop(timerange);
+          let shortSeries = series.crop(timeRange);
           const i = shortSeries.bisect(new Date(this.state.tracker)) || null;
           if (i !== null) {
             const seriesAt = shortSeries.at(i);
@@ -303,16 +184,6 @@ export class TimeseriesChart extends React.PureComponent {
               value = fmt(vv);
             }
           }
-          /*
-          const approx =
-              (+this.state.tracker - +timerange.begin()) /
-              (+timerange.end() - +timerange.begin());
-          const ii = Math.floor(approx * series.size());
-          const i = series.bisect(new Date(this.state.tracker), ii);
-          const v = i < series.size() ? series.at(i).get(channelName) : null;
-          if (v) {
-              value = parseFloat(v);
-          }*/
         }
         const mainChart = [];
         if (channels[channelName].type === "line") {
@@ -373,7 +244,7 @@ export class TimeseriesChart extends React.PureComponent {
     });
     return (
       <ChartContainer
-        timeRange={timerange}
+        timeRange={timeRange}
         showGrid={false}
         enablePanZoom
         trackerPosition={this.state.tracker}
@@ -386,11 +257,10 @@ export class TimeseriesChart extends React.PureComponent {
     );
   };
 
-  renderBrush = () => {
-    const { displayChannels, channels } = this.state;
+  renderBrush = (channels, displayChannelNames) => {
     return (
       <ChartContainer
-        timeRange={channels[displayChannels[0]].series.range()}
+        timeRange={channels[displayChannelNames[0]].series.range()}
         trackerPosition={this.state.tracker}
       >
         <ChartRow height="100" debug={false}>
@@ -401,9 +271,9 @@ export class TimeseriesChart extends React.PureComponent {
           />
           <YAxis
             id="axis1"
-            label={[displayChannels[0]].label}
+            label={[displayChannelNames[0]].label}
             min={0}
-            max={channels[displayChannels[0]].max}
+            max={channels[displayChannelNames[0]].max}
             width={70}
             type="linear"
             format="d"
@@ -412,8 +282,8 @@ export class TimeseriesChart extends React.PureComponent {
             <AreaChart
               axis="axis1"
               style={style.areaChartStyle()}
-              columns={{ up: [displayChannels[0]], down: [] }}
-              series={channels[displayChannels[0]].series}
+              columns={{ up: [displayChannelNames[0]], down: [] }}
+              series={channels[displayChannelNames[0]].series}
             />
           </Charts>
         </ChartRow>
@@ -422,18 +292,26 @@ export class TimeseriesChart extends React.PureComponent {
   };
 
   render() {
-    const { ready, noData, displayChannels, channels } = this.state;
+    // Get parameters
+    const { telemetry } = this.props.currentData;
+    const channels = telemetry.channels || {};
+    const timeRange = telemetry.timeRange;
+    const ready = telemetry.ready || false;
+    const displayChannelNames = Object.keys(channels) || [];
+    const noData = displayChannelNames.length < 1; // HACK
 
+    // Check if loading
     if (!ready) {
       return (
         <div className={"row graphs-row mt-5 mb-5"}>
           <div className="col-md-2 offset-5 text-center">
             Loading Sensor Data...
-                    </div>
+          </div>
         </div>
       )
     }
 
+    // Check for no data
     if (ready && noData) {
       return (
         <div className={"row graphs-row mt-5 mb-5"}>
@@ -444,19 +322,20 @@ export class TimeseriesChart extends React.PureComponent {
       )
     }
 
-    const legend = displayChannels.map(channelName => ({
+    // Initialize legend
+    const legend = displayChannelNames.map(channelName => ({
       key: channelName,
-      label: channels[channelName].label, // + " - " + channels[channelName].series.atLast().get(channelName),
+      label: channels[channelName].label,
       disabled: !channels[channelName].show
     }));
 
-
+    // Render component
     return (
       <div>
         <div className="row graphs-row mt-5 mb-5">
           <div className="col-md-10">
             <Resizable>
-              {this.renderChannelsChart()}
+              {this.renderChannelsChart(channels, timeRange, displayChannelNames)}
             </Resizable>
           </div>
           <div className="col-md-2">
@@ -482,7 +361,7 @@ export class TimeseriesChart extends React.PureComponent {
         <div className={"row graphs-row mt-5 mb-5"}>
           <div className={"col-md-10"}>
             <Resizable>
-              {this.renderBrush()}
+              {this.renderBrush(channels, displayChannelNames)}
             </Resizable>
           </div>
         </div>
@@ -490,104 +369,3 @@ export class TimeseriesChart extends React.PureComponent {
     )
   }
 }
-
-
-
-// fetchDataDeprecated = (device_uuid, user_token) => {
-//   console.log('Getting data from old method')
-//   if (device_uuid) {
-//     // First get the Temp and Humidity data
-//     var sensorData = {};
-//     return fetch(process.env.REACT_APP_FLASK_URL +
-//       '/api/get_temp_details/', {
-//         method: 'POST',
-//         headers: {
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//           'Access-Control-Allow-Origin': '*'
-//         },
-//         body: JSON.stringify({
-//           'user_token': user_token,
-//           'selected_device_uuid': device_uuid
-//         })
-//       })
-//       .then((response) => response.json())
-//       .then((responseJson) => {
-
-//         //console.log(responseJson)
-//         if (responseJson["response_code"] === 200) {
-
-//           let tempData = responseJson["results"]["temp"];
-//           let RHData = responseJson["results"]["RH"];
-//           let topTempData = responseJson["results"]["top_h2o_temp"];
-//           let middleTempData = responseJson["results"]["middle_h2o_temp"];
-//           let bottomTempData = responseJson["results"]["bottom_h2o_temp"];
-
-//           sensorData["tempData"] = tempData;
-//           sensorData["RHData"] = RHData;
-//           sensorData["topTempData"] = topTempData;
-//           sensorData["middleTempData"] = middleTempData;
-//           sensorData["bottomTempData"] = bottomTempData;
-//           console.log('tempData', tempData);
-//         }
-//       })
-//       .then(() => {
-
-//         // Get CO2 Data
-//         return fetch(process.env.REACT_APP_FLASK_URL +
-//           '/api/get_co2_details/', {
-//             method: 'POST',
-//             headers: {
-//               'Accept': 'application/json',
-//               'Content-Type': 'application/json',
-//               'Access-Control-Allow-Origin': '*'
-//             },
-//             body: JSON.stringify({
-//               'user_token': user_token,
-//               'selected_device_uuid': device_uuid
-//             })
-//           })
-
-//           .then((response) => response.json())
-//           .then((responseJson) => {
-//             //console.log("CO2 data");
-//             //console.log(responseJson)
-//             if (responseJson["response_code"] === 200) {
-
-//               let co2Data = responseJson["results"];
-
-//               sensorData["co2Data"] = co2Data;
-//             }
-
-//           });
-//       })
-//       // .then(() => {
-//       //     // get the HorticultureDailyLogs
-//       //     return fetch(process.env.REACT_APP_FLASK_URL + '/api/get_horticulture_daily_logs/', {
-//       //         method: 'POST',
-//       //         headers: {
-//       //             'Accept': 'application/json',
-//       //             'Content-Type': 'application/json',
-//       //             'Access-Control-Allow-Origin': '*'
-//       //         },
-//       //         body: JSON.stringify({
-//       //             'user_token': user_token,
-//       //             'device_uuid': device_uuid
-//       //         })
-//       //     })
-//       //         .then((response) => response.json())
-//       //         .then((responseJson) => {
-//       //             //console.log(responseJson)
-//       //             if (responseJson["response_code"] == 200) {
-//       //                 sensorData["plantHeight"] = responseJson["plant_height_results"];
-//       //                 sensorData["leafCount"] = responseJson["leaf_count_results"];
-//       //             }
-//       //         });
-//       // })
-//       .then(() => {
-//         //console.log("About to parse data");
-//         return this.parseData(this.state.displayChannels, this.state.channels, sensorData)
-//       });
-
-//   }
-// };

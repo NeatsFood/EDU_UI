@@ -41,7 +41,7 @@ export default async function getUserDevices(userToken) {
       registrationNumber: device_reg_no,
     });
   }
-  devices.sort((a, b) => a.name > b.name);
+  devices.sort((a, b) => a.friendlyName > b.friendlyName ? 1 : -1);
 
   // Successfully got devices
   return devices;

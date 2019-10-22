@@ -1,6 +1,5 @@
 export default async function getDeviceTelemetry(userToken, deviceUuid, startDate, endDate) {
   console.log('Getting device telemetry');
-
   // Validate parameters
   if (!userToken || !deviceUuid || !startDate) {
     return {};
@@ -55,6 +54,5 @@ export default async function getDeviceTelemetry(userToken, deviceUuid, startDat
   };
 
   // Successfully got device telemetry
-  console.log('Got device telemetry:', telemetry);
   return telemetry;
 }

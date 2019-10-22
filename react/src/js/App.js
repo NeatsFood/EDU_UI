@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "../App.css";
-
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { useAuth0 } from "./react-auth0-wrapper";
 import { withCookies } from "react-cookie";
 
+// Import components
 import PrivateRoute from "./components/PrivateRoute";
 import NavBar from "./components/navigation/NavBar";
 import Landing from "./components/Landing";
@@ -13,6 +13,12 @@ import Recipes from "./components/recipe/Recipes";
 import RecipeDetails from "./components/recipe/RecipeDetails";
 import Data from "./components/Data";
 import Profile from "./components/Profile";
+
+// Import services
+import getDeviceTelemetry from "./services/getDeviceTelemetry";
+
+// Import utilities
+import formatTelemetryData from "./utils/formatTelemetryData";
 
 function App() {
   const { isAuthenticated, loading } = useAuth0();
@@ -44,7 +50,20 @@ function App() {
     },
   });
   const [allRecipes, setAllRecipes] = useState(new Map());
-  console.log('Rendering app');
+  const [currentData, setCurrentData] = useState({
+    datasets: [{ name: 'Loading...' }],
+    dataset: { name: 'Loading...' },
+    telemetry: { ready: false },
+  });
+
+  const setDataset = async (dataset) => {
+    currentData.dataset = dataset;
+    setCurrentData({ ...currentData, dataset, telemetry: { ready: false } });
+    const { startDate, endDate } = dataset;
+    const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
+    currentData.telemetry = formatTelemetryData(rawTelemetryData);
+    setCurrentData(currentData);
+  }
 
   return (
     <div className="App">
@@ -55,6 +74,7 @@ function App() {
             loading={loading}
             user={user}
             setCurrentDevice={setCurrentDevice}
+            setCurrentData={setCurrentData}
             setAllRecipes={setAllRecipes}
           />
         </header>
@@ -74,7 +94,14 @@ function App() {
           />
           <PrivateRoute
             path="/data"
-            render={(props) => <Data {...props} user={user} currentDevice={currentDevice} setCurrentDevice={setCurrentDevice} />}
+            render={(props) =>
+              <Data
+                {...props}
+                user={user}
+                currentDeviceUuid={currentDevice.uuid}
+                currentData={currentData}
+                setDataset={setDataset}
+              />}
           />
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>

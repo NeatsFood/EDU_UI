@@ -17,7 +17,7 @@ export class DownloadCsvButton extends React.Component {
 
   fetchData = () => {
     // Get parameters
-    const { userToken, device, dataset } = this.props;
+    const { userToken, deviceUuid, dataset } = this.props;
 
     // Convert datetime objects to timestamp strings
     const startTimestamp = dataset.startDate.toISOString().split('.')[0] + "Z";
@@ -44,7 +44,7 @@ export class DownloadCsvButton extends React.Component {
         },
         body: JSON.stringify({
           'user_token': userToken,
-          'device_uuid': device.uuid,
+          'device_uuid': deviceUuid,
           'start_ts': startTimestamp,
           'end_ts': endTimestamp,
         })
