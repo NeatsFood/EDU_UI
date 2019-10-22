@@ -9,26 +9,34 @@ export default class ImageTimelapse extends React.Component {
       index: 0,
       previousNumberOfImages: 0,
     };
+    this.initializeImage = this.initializeImage.bind(this);
     this.onSliderChange = this.onSliderChange.bind(this);
+  }
+
+  componentDidMount() {
+    this.initializeImage();
+  }
+
+  componentDidUpdate() {
+    this.initializeImage();
+  }
+
+  /**
+   * Show latest image whenever a new device is loaded
+   */
+  initializeImage() {
+    const images = this.props.images || [];
+    const { deviceUuid } = this.props;
+    const { previousDeviceUuid } = this.state;
+    if (previousDeviceUuid !== deviceUuid) {
+      const index = images.length > 0 ? images.length - 1 : 0;
+      this.setState({ previousDeviceUuid: deviceUuid, index });
+    }
   }
 
   onSliderChange(event) {
     this.setState({ index: event.target.value });
   };
-
-  componentDidUpdate() {
-    // Get parameters
-    const images = this.props.images || [];
-    const { deviceUuid } = this.props;
-    const { previousDeviceUuid } = this.state;
-
-    // Show latest image whenever a new device is loaded
-    if (previousDeviceUuid !== deviceUuid) {
-      const index = images.length > 0 ? images.length - 1 : 0;
-      this.setState({ previousDeviceUuid: deviceUuid, index });
-    }
-
-  }
 
   render() {
     const { index } = this.state;
