@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledAlert,
+  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink,
 } from 'reactstrap';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { withCookies } from "react-cookie";
@@ -14,6 +14,7 @@ import logo from "../../../images/logo-initiative-white.png";
 import LoginNavItem from './LoginNavItem';
 import LogoutNavItem from './LogoutNavItem';
 import DeviceDropdown from './DeviceDropdown';
+import Notifications from "./Notifications";
 
 // Import services
 import getUserDevices from "../../services/getUserDevices";
@@ -154,15 +155,7 @@ class NavBar extends React.Component {
             </Nav>
           </Collapse>
         </Navbar>
-
-        {/* <UncontrolledAlert color="danger" style={{ textAlign: 'center', borderRadius: 0, marginBottom: 0 }}>
-              Your food computer is not connected to the internet!
-            </UncontrolledAlert> */}
-        {isAuthenticated && (
-          <UncontrolledAlert color="info" style={{ textAlign: 'center', borderRadius: 0, marginBottom: 0 }}>
-            Remember to refill the reservoir and prune your plants!
-          </UncontrolledAlert>
-        )}
+        {isAuthenticated && <Notifications currentDevice={this.state.currentDevice}/>}
       </div>
     );
   }
