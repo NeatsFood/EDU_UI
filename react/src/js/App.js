@@ -36,11 +36,12 @@ function App() {
       waterPh: '--',
       lightIntensity: '--',
       lightSpectrum: {
-        FR: '--',
-        R: '--',
-        G: '--',
+        UV: '--',
         B: '--',
-        UV: '--'
+        G: '--',
+        R: '--',
+        FR: '--',
+        
       },
     },
     recipe: {

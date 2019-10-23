@@ -59,7 +59,9 @@ export class DashboardCard extends React.PureComponent {
             {region}
             {major}
           </div>
-          {buttonEnabled ? minorButton : minorText}
+          <div style={{ minHeight: 70, display:'flex', alignItems: 'center' }}>
+            {buttonEnabled ? minorButton : minorText}
+          </div>
         </div>
       </Card>
     )

@@ -34,6 +34,26 @@ class Dashboard extends Component {
     });
   }
 
+  getLightSpectrumString = (lightSpectrum) => {
+    // Fix spectrum percentage to 0 decimals
+    const fixedLightSpectrum = {}
+    Object.keys(lightSpectrum).forEach((key) => {
+      const float = parseFloat(lightSpectrum[key]);
+      if (!isNaN(float)) {
+        fixedLightSpectrum[key] = float.toFixed();
+      } else {
+        fixedLightSpectrum[key] = lightSpectrum[key];
+      }
+    });
+
+    // Convert to string with known channel abbreviations
+    const lightSpectrumString = JSON.stringify(fixedLightSpectrum)
+    .replace(/["{}]/g, '').replace(/,/g, '%, ').replace(/:/g, ': ')
+    .replace('380-399', 'UV').replace('400-499', 'B').replace('500-599', 'G')
+    .replace('600-700', 'R').replace('701-780', 'FR') + '%';
+    return lightSpectrumString;
+  }
+
   render() {
     // Get parameters
     const { currentDevice } = this.props;
@@ -45,6 +65,7 @@ class Dashboard extends Component {
     const recipe = currentDevice.recipe || {};
     const { name, currentDay, startDateString } = recipe;
     const imageUrls = currentDevice.imageUrls || [];
+    const lightSpectrumString = this.getLightSpectrumString(lightSpectrum);
 
     // Render component
     return (
@@ -75,8 +96,8 @@ class Dashboard extends Component {
                       unit="par"
                       variable="Intensity"
                       icon={light}
-                      minor1={`FR: ${lightSpectrum.FR}%   R: ${lightSpectrum.R}%`}
-                      minor2={`G: ${lightSpectrum.G}%   B: ${lightSpectrum.B}%   ${lightSpectrum.UV}: 0%`}
+                      minor1={lightSpectrumString}
+                    // minor2={lightSpectrum2}
                     />
                   </Col>
                 </Row>

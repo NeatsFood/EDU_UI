@@ -1,3 +1,11 @@
+function parseJson(rawJson) {
+  try {
+    return JSON.parse(rawJson);
+  } catch {
+    return {}
+  }
+}
+
 export default async function getCurrentEnvironment(userToken, deviceUuid) {
   const response = await fetch(process.env.REACT_APP_FLASK_URL + '/api/get_current_stats/', {
     method: 'POST',
@@ -12,7 +20,7 @@ export default async function getCurrentEnvironment(userToken, deviceUuid) {
     })
   })
   const responseJson = await response.json();
-  const results = responseJson['results'] || {};
+  const results = responseJson.results || {};
   const environment = {
     airTemperature: parseFloat(results.current_temp).toFixed(0).toString() || 'N/A',
     airHumidity: parseFloat(results.current_rh).toFixed(0).toString() || 'N/A',
@@ -20,8 +28,8 @@ export default async function getCurrentEnvironment(userToken, deviceUuid) {
     waterTemperature: parseFloat(results.current_h20_temp).toFixed(0).toString() || 'N/A',
     waterPh: parseFloat(results.current_h20_ph).toFixed(1).toString()  || 'N/A',
     waterEc: parseFloat(results.current_h20_ec).toFixed(1).toString() || 'N/A',
-    lightIntensity: '308',
-    lightSpectrum: { FR: '10', R: '40', G: '40', B: '15', UV: 0 }
+    lightIntensity: parseFloat(results.current_light_intensity).toFixed().toString() || 'N/A',
+    lightSpectrum: parseJson(results.current_light_spectrum),
   };
   return environment;
 };
