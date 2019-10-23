@@ -15,7 +15,7 @@ export default async function runRecipe(userToken, deviceUuid, recipeUuid) {
     console.error('Unable to run recipe', error);
     let errorMessage;
     if (error.message.includes("not connected")) {
-      errorMessage = "Unable to run recipe, device is not connected."
+      errorMessage = "Unable to run recipe, device is not connected to the internet."
     } else {
       errorMessage = "Unable to run recipe, please try again later."
     }
@@ -27,7 +27,7 @@ export default async function runRecipe(userToken, deviceUuid, recipeUuid) {
   if (!response.ok) {
     let errorMessage;
     if (responseJson.message.includes("not connected")) {
-      errorMessage = "Unable to run recipe, device is not connected."
+      errorMessage = "Unable to run recipe, device is not connected to the internet."
     } else {
       errorMessage = "Unable to run recipe, please try again later."
     }

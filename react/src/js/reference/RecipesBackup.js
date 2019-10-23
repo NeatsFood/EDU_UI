@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { withCookies } from "react-cookie";
+import { Spinner } from "reactstrap";
+
+// Import components
 import { RecipeCard } from './RecipeCard';
 import { ConfirmationModal } from './ConfirmationModal';
 
@@ -280,12 +283,8 @@ class recipes extends Component {
 
     if (!ready) {
       return (
-        <div className="container-fluid p-0 m-0">
-          <div className={"row graphs-row mt-5 mb-5"}>
-            <div className="col-md-2 offset-5 text-center">
-              Loading Recipes...
-            </div>
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 200 }}>
+          <Spinner color="dark" />
         </div>
       )
     }

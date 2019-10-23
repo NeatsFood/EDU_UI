@@ -42,7 +42,6 @@ class DeviceDropdown extends React.Component {
     } else if (wifiStatus === 'Disconnected') {
       wifiColor = '#da004a';
     }
-
     const noDevices = currentDevice.friendlyName === 'No Devices';
 
     return (
@@ -62,22 +61,24 @@ class DeviceDropdown extends React.Component {
               </span>
               {currentDevice.friendlyName}
             </DropdownToggle>
-            <DropdownMenu style={{ textAlign: 'center' }}>
-              {devices.map((device) => {
-                if (device.uuid !== currentDevice.uuid) {
-                  return (
-                    <DropdownItem
-                      key={device.uuid}
-                      value={device.uuid}
-                      onClick={this.onSelectDevice}
-                    >
-                      {device.friendlyName}
-                    </DropdownItem>
-                  )
-                }
-                return null;
-              })}
-            </DropdownMenu>
+            {devices.length > 1 && (
+              <DropdownMenu style={{ textAlign: 'center' }}>
+                {devices.map((device) => {
+                  if (device.uuid !== currentDevice.uuid) {
+                    return (
+                      <DropdownItem
+                        key={device.uuid}
+                        value={device.uuid}
+                        onClick={this.onSelectDevice}
+                      >
+                        {device.friendlyName}
+                      </DropdownItem>
+                    )
+                  }
+                  return null;
+                })}
+              </DropdownMenu>
+            )}
           </UncontrolledDropdown>
           <span>
             <Button
@@ -106,7 +107,7 @@ class DeviceDropdown extends React.Component {
 
         </Nav >
         <AddDeviceModal
-          cookies={this.props.cookies}
+          userToken={this.props.userToken}
           isOpen={this.state.addDeviceModalIsOpen}
           toggle={this.toggleAddDeviceModal}
           fetchDevices={this.props.fetchDevices}

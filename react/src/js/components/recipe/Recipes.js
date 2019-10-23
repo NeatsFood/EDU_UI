@@ -1,6 +1,6 @@
 import React from "react";
 import { withCookies } from "react-cookie";
-import { Container, Row, Col } from 'reactstrap';
+import { Container, Row, Col, Spinner } from 'reactstrap';
 
 // Import components
 import { RecipeCard } from "./RecipeCard";
@@ -43,7 +43,11 @@ class recipes extends React.Component {
 
     return (
       <Container fluid style={{ marginBottom: 30 }}>
-        { allRecipes.size < 1 && <div style={{ display: 'flex', justifyContent: 'center', marginTop: 100 }}>Loading Recipes...</div>}
+        {allRecipes.size < 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 200 }}>
+            <Spinner color="dark" />
+          </div>
+        )}
         <Row style={{ marginLeft: 0, marginRight: 0 }}>
           {listRecipes}
         </Row>

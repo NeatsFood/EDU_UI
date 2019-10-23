@@ -5,6 +5,7 @@ import {
 } from "react-timeseries-charts";
 import { TimeRange } from 'pondjs';
 import { format } from "d3-format";
+import { Spinner } from "reactstrap";
 
 const style = styler([
   { key: "tempData", color: "#008BC2", width: 2 },
@@ -303,10 +304,8 @@ export class TimeseriesChart extends React.PureComponent {
     // Check if loading
     if (!ready) {
       return (
-        <div className={"row graphs-row mt-5 mb-5"}>
-          <div className="col-md-2 offset-5 text-center">
-            Loading Sensor Data...
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 200 }}>
+          <Spinner color="dark" />
         </div>
       )
     }

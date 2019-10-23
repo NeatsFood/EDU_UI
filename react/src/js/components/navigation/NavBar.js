@@ -52,13 +52,14 @@ class NavBar extends React.Component {
     if (!initialized && user && user.token) {
       this.setState({ initialized: true });
       const promises = [];
-      promises.push(this.initializeDevices(user));
+      promises.push(this.initializeDevices());
       promises.push(getAllRecipes(user.token).then(allRecipes => this.props.setAllRecipes(allRecipes)));
       await Promise.all(promises);
     }
   }
 
-  async initializeDevices(user) {
+  async initializeDevices() {
+    const { user } = this.props;
     const devices = await getUserDevices(user.token);
     this.setState({ devices });
     let { currentDevice } = this.state;
@@ -106,6 +107,7 @@ class NavBar extends React.Component {
 
   render() {
     const { isAuthenticated, loading } = this.props;
+    const user = this.props.user || {};
     return (
       <div >
         <Navbar expand="md" dark color="dark" style={{ textAlign: 'center' }}>
@@ -116,6 +118,7 @@ class NavBar extends React.Component {
             {(loading || isAuthenticated) && (
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DeviceDropdown
+                  userToken={user.token}
                   devices={this.state.devices}
                   currentDevice={this.state.currentDevice}
                   updateCurrentDevice={this.updateCurrentDevice}

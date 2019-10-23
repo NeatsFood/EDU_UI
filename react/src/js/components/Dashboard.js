@@ -110,7 +110,7 @@ class Dashboard extends Component {
                     <DashboardCard
                       name="Recipe"
                       value={currentDay}
-                      unit="days"
+                      unit={currentDay === 1 ? "day": "days"}
                       variable="Growing"
                       icon={temperature}
                       minor1={name}

@@ -1,7 +1,11 @@
 import React from 'react';
-import { Button, Form, FormGroup, Input, Label, Modal,
+import {
+  Button, Form, FormGroup, Input, Label, Modal,
   ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
+
+// Import services
+import registerDevice from "../../services/registerDevice";
 
 const DEFAULT_STATE = {
   deviceName: '',
@@ -31,52 +35,27 @@ export default class AddDeviceModal extends React.PureComponent {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     console.log('Submitting new device');
 
     // Prevent default
     event.preventDefault();
 
     // Get parameters
+    const { userToken } = this.props;
     const { deviceName, deviceNumber } = this.state;
-    const userToken = this.props.cookies.get('user_token');
 
-    // Send registration request to api
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/register/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        'user_token': userToken,
-        'device_name': deviceName,
-        'device_reg_no': deviceNumber,
-        'device_notes': '',
-        'device_type': 'EDU',
-      })
-    })
-      .then(async (response) => {
-        // Parse response json
-        const responseJson = await response.json();
+    // Register device
+    const errorMessage = await registerDevice(userToken, deviceName, deviceNumber);
 
-        // Validate response
-        if (responseJson["response_code"] !== 200) {
-          const errorMessage = responseJson["message"] || "Unable to register device, please try again later."
-          console.log('Invalid response:', errorMessage);
-          this.setState({ errorMessage });
-          return;
-        }
+    // Check if successful
+    if (errorMessage) {
+      return this.setState({ errorMessage });
+    }
 
-        // Successfully registered, hide modal then re-fetch devices
-        this.toggle();
-        this.props.fetchDevices();
-      }).catch((error) => {
-        console.error('Unable to add new device', error);
-        const errorMessage = "Unable to register device, please try again later."
-        this.setState({ errorMessage });
-      });
+    // Successfully registered
+    this.toggle();
+    this.props.fetchDevices();
   };
 
   render() {
