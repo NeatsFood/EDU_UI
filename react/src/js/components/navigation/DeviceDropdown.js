@@ -43,12 +43,14 @@ class DeviceDropdown extends React.Component {
       wifiColor = '#da004a';
     }
 
+    const noDevices = currentDevice.friendlyName === 'No Devices';
+
     return (
       <div >
         <Nav className="mr-auto" navbar style={{ flexDirection: 'row', marginTop: 6, paddingRight: 4 }}>
           <UncontrolledDropdown inNavbar >
             <DropdownToggle
-              caret
+              disabled={noDevices}
               style={{
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,

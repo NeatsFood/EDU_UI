@@ -12,7 +12,14 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
       'user_token': userToken,
       'device_uuid': deviceUuid,
     })
-  })
+  }).catch((error) => {
+    console.error('Unable to get device recipe');
+    return {
+      currentDay: '--',
+      name: 'No Recipe',
+      startDateString: null,
+    };
+  });
 
   // Parse response json
   const responseJson = await response.json();
@@ -21,7 +28,11 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
 
   // Validate response
   if (response_code !== 200 || runs.length === 0) {
-    return {};
+    return {
+      currentDay: '0',
+      name: 'No Recipe',
+      startDateString: null,
+    };
   }
 
   // Get latest recipe run
@@ -39,7 +50,7 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
   if (end === null) {
     name = recipe_name;
     startDate = new Date(Date.parse(start));
-    currentDay = ((Date.now() - startDate.getTime()) / (1000 * 3600 * 24)).toFixed()
+    currentDay = Math.ceil((Date.now() - startDate.getTime()) / (1000 * 3600 * 24))
     startDateString = `Started ${startDate.toDateString()}`;
   }
 

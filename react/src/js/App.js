@@ -27,6 +27,7 @@ function App() {
     user = {};
   };
   const [currentDevice, setCurrentDevice] = useState({
+    loading: true,
     environment: {
       airTemperature: '--',
       airHumidity: '--',
@@ -41,11 +42,10 @@ function App() {
         G: '--',
         R: '--',
         FR: '--',
-        
       },
     },
     recipe: {
-      currentDay: 0,
+      currentDay: '--',
       name: 'Recipe: -----',
       startDateString: 'Started: -----',
     },

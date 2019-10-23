@@ -78,21 +78,24 @@ class NavBar extends React.Component {
     this.props.cookies.set('deviceUuid', deviceUuid); // Update cached device uuid
 
     // Get all device parameters asyncrhonously
-    const promises = [];
-    promises.push(getDeviceStatus(user.token, deviceUuid).then(status => currentDevice.status = status));
-    promises.push(getDeviceRecipe(user.token, deviceUuid).then(recipe => currentDevice.recipe = recipe));
-    promises.push(getDeviceEnvironment(user.token, deviceUuid).then(environment => currentDevice.environment = environment));
-    promises.push(getDeviceImageUrls(user.token, deviceUuid).then(imageUrls => currentDevice.imageUrls = imageUrls));
-    promises.push(getDeviceDatasets(user.token, deviceUuid).then(async (datasets) => {
-      const currentData = { datasets, dataset: datasets[0] };
-      const { startDate, endDate } = currentData.dataset;
-      const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
-      currentData.telemetry = formatTelemetryData(rawTelemetryData);
-      this.props.setCurrentData(currentData);
-    }));
-    await Promise.all(promises);
+    if (deviceUuid) {
+      const promises = [];
+      promises.push(getDeviceStatus(user.token, deviceUuid).then(status => currentDevice.status = status));
+      promises.push(getDeviceRecipe(user.token, deviceUuid).then(recipe => currentDevice.recipe = recipe));
+      promises.push(getDeviceEnvironment(user.token, deviceUuid).then(environment => currentDevice.environment = environment));
+      promises.push(getDeviceImageUrls(user.token, deviceUuid).then(imageUrls => currentDevice.imageUrls = imageUrls));
+      promises.push(getDeviceDatasets(user.token, deviceUuid).then(async (datasets) => {
+        const currentData = { datasets, dataset: datasets[0] };
+        const { startDate, endDate } = currentData.dataset;
+        const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
+        currentData.telemetry = formatTelemetryData(rawTelemetryData);
+        this.props.setCurrentData(currentData);
+      }));
+      await Promise.all(promises);
+    }
 
     // Update state
+    currentDevice.loading = false;
     this.setState({ currentDevice });
     this.props.setCurrentDevice(currentDevice);
   }
@@ -155,7 +158,7 @@ class NavBar extends React.Component {
             </Nav>
           </Collapse>
         </Navbar>
-        {isAuthenticated && <Notifications currentDevice={this.state.currentDevice}/>}
+        {isAuthenticated && <Notifications currentDevice={this.state.currentDevice} />}
       </div>
     );
   }

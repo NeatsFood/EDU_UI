@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from "react-router-dom";
 import { useAuth0 } from "../react-auth0-wrapper";
 import { Container, Card, CardHeader, CardBody, CardText, CardFooter, CardImg, CardTitle, Button, } from "reactstrap";
-import lab from '../../images/laboratory-analyst.png'
+import illustration from '../../images/laboratory-analyst.svg' // from manypixels.co
 
 
 function Landing() {
@@ -18,7 +18,7 @@ function Landing() {
 
   return (
     <Container style={{ display: 'flex', justifyContent: 'center' }} >
-      <Card className="text-center" style={{ marginTop: '30px', width: '400px' }}>
+      <Card className="text-center" style={{ marginTop: '50px', width: '400px' }}>
         <CardHeader style={{ fontSize: '20px' }}>
           {/* Welcome! */}
           Welcome to the OpenAg Education UI
@@ -26,9 +26,9 @@ function Landing() {
         <CardBody>
           <CardTitle>
           </CardTitle>
-          <CardImg top style={{ width: '280px', marginBottom: '10px' }} src={lab} alt="Card image cap" />
+          <CardImg top style={{ width: '280px', marginBottom: '10px' }} src={illustration} alt="Card image cap" />
           <CardText style={{ margin: 20 }}>
-            Connect a device, start a recipe, and view you data.
+            Connect a device, start a recipe, and view your data.
             Create an account to get started.
           </CardText>
           <Button onClick={() => loginWithRedirect()}>Create Account</Button>

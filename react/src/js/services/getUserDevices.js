@@ -11,6 +11,8 @@ export default async function getUserDevices(userToken) {
     body: JSON.stringify({
       'user_token': userToken,
     })
+  }).catch((error) => {
+    console.error('Unable to get user devices', error);
   });
   const responseJson = await response.json();
 
@@ -23,10 +25,9 @@ export default async function getUserDevices(userToken) {
 
   // Validate response
   if (response_code !== 200 || raw_devices.length === 0) {
-    const device = { name: 'No Devices', uuid: null, registration_number: null }
+    const device = { name: 'No Devices', friendlyName: 'No Devices',uuid: null, registration_number: null }
     devices.push(device);
-    this.setState({ device, devices }, () => this.props.onSelectDevice(device));
-    return;
+    return devices;
   }
 
   // Parse and sort devices
