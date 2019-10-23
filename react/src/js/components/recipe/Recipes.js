@@ -1,5 +1,8 @@
 import React from "react";
 import { withCookies } from "react-cookie";
+import { Container, Row, Col } from 'reactstrap';
+
+// Import components
 import { RecipeCard } from "./RecipeCard";
 
 class recipes extends React.Component {
@@ -23,43 +26,29 @@ class recipes extends React.Component {
     if (allRecipes.size) {
       const recipes = [...allRecipes.values()]
       listRecipes.push(recipes.map((recipe) =>
-        <RecipeCard
-          key={recipe.recipe_uuid}
-          by_user={recipe.by_user}
-          recipe={recipe}
-          users_recipe={this.state.filter_recipe_button_state === 'user'}
-          onSelectRecipe={this.goToRecipe}
-          onSaveRecipe={this.onSaveRecipe}
-          onDeleteRecipe={this.onDeleteRecipe}
-          onEditRecipe={this.editRecipe}
-        />
+        <Col md="4" sm="6" xs="12" style={{ marginTop: 30 }}>
+          <RecipeCard
+            key={recipe.recipe_uuid}
+            by_user={recipe.by_user}
+            recipe={recipe}
+            users_recipe={this.state.filter_recipe_button_state === 'user'}
+            onSelectRecipe={this.goToRecipe}
+            onSaveRecipe={this.onSaveRecipe}
+            onDeleteRecipe={this.onDeleteRecipe}
+            onEditRecipe={this.editRecipe}
+          />
+        </Col>
       ));
     }
 
-
-    if (allRecipes.size < 1) {
-      return (
-        <div className="container-fluid p-0 m-0">
-          <div className={"row graphs-row mt-5 mb-5"}>
-            <div className="col-md-2 offset-5 text-center">
-              Loading Recipes...
-            </div>
-          </div>
-        </div>
-      )
-    }
-
     return (
-      <div className="container-fluid p-0 m-0">
-        <div className="row p-2">
-          <div className="col m-3">
-            <div className="card-columns">
-              {listRecipes}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+      <Container fluid style={{ marginBottom: 30 }}>
+        { allRecipes.size < 1 && <div style={{ display: 'flex', justifyContent: 'center', marginTop: 100 }}>Loading Recipes...</div>}
+        <Row style={{ marginLeft: 0, marginRight: 0 }}>
+          {listRecipes}
+        </Row>
+      </Container >
+    )
   }
 }
 
