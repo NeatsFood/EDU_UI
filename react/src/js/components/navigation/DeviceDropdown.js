@@ -49,6 +49,7 @@ class DeviceDropdown extends React.Component {
         <Nav className="mr-auto" navbar style={{ flexDirection: 'row', marginTop: 6, paddingRight: 4 }}>
           <UncontrolledDropdown inNavbar >
             <DropdownToggle
+              caret={devices.length > 1}
               disabled={noDevices}
               style={{
                 borderTopRightRadius: 0,
