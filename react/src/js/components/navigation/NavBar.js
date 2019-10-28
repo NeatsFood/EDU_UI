@@ -9,6 +9,7 @@ import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid
 
 // Import assets
 import logo from "../../../images/logo-initiative-white.png";
+import favicon from "../../../images/favicon-initiative-white.png";
 
 // Import components
 import LoginNavItem from './LoginNavItem';
@@ -113,7 +114,10 @@ class NavBar extends React.Component {
         <Navbar expand="md" dark color="dark" style={{ textAlign: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
             <NavbarBrand tag={RouterNavLink} to="/dashboard">
-              <img className="home-icon" src={logo} alt='' style={{ width: '140px' }} />
+              {window.innerWidth > 575
+                ? <img className="home-icon" src={logo} alt='' style={{ width: '140px' }} />
+                : <img className="home-icon" src={favicon} alt='' style={{ width: '40px' }} />
+              }
             </NavbarBrand>
             {(loading || isAuthenticated) && (
               <div style={{ display: 'flex', flexDirection: 'row' }}>

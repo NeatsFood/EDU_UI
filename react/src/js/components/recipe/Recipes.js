@@ -1,6 +1,6 @@
 import React from "react";
 import { withCookies } from "react-cookie";
-import { Container, Row, Col, Spinner, Button, Tooltip } from 'reactstrap';
+import { Container, Row, Col, Spinner, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -17,12 +17,10 @@ class recipes extends React.Component {
       showAllRecipes: true,
       showMyRecipes: false,
       createRecipeModalIsOpen: false,
-      createRecipeTooltipIsOpen: false,
     };
     this.onClickAllRecipes = this.onClickAllRecipes.bind(this);
     this.onClickMyRecipes = this.onClickMyRecipes.bind(this);
     this.toggleCreateRecipeModal = this.toggleCreateRecipeModal.bind(this);
-    this.toggleCreateRecipeTooltip = this.toggleCreateRecipeTooltip.bind(this);
     this.goToRecipe = this.goToRecipe.bind(this);
   }
 
@@ -38,10 +36,6 @@ class recipes extends React.Component {
     this.setState({ createRecipeModalIsOpen: !this.state.createRecipeModalIsOpen });
   }
 
-  toggleCreateRecipeTooltip = () => {
-    this.setState({ createRecipeTooltipIsOpen: !this.state.createRecipeTooltipIsOpen });
-  }
-
   goToRecipe(value, e) {
     return this.props.history.push("/recipe_details/" + (value).toString());
   }
@@ -50,14 +44,13 @@ class recipes extends React.Component {
     // Get parameters
     const { showAllRecipes, showMyRecipes } = this.state;
     const allRecipes = this.props.allRecipes || new Map();
-    console.log('createRecipeTooltipIsOpen:', this.state.createRecipeTooltipIsOpen);
 
     // Create recipes card
     let listRecipes = [];
     if (allRecipes.size) {
       const recipes = [...allRecipes.values()]
       listRecipes.push(recipes.map((recipe) =>
-        <Col md="4" sm="6" xs="12" style={{ marginTop: 30 }}>
+        <Col md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
           <RecipeCard
             key={recipe.recipe_uuid}
             by_user={recipe.by_user}
@@ -82,7 +75,20 @@ class recipes extends React.Component {
 
     return (
       <Container fluid style={{ marginBottom: 30 }}>
-        <div style={{ marginTop: 30, marginLeft: 15, display: 'flex', justifyContent: 'center' }}>
+        <div style={{ margin: 20, marginBottom: 0, display: 'flex', justifyContent: 'flex-end' }}>
+          <span>
+            <Button
+              size="sm"
+              id="create-recipe-button"
+              style={{ marginLeft: 10, borderRadius: 50 }}
+              onClick={this.toggleCreateRecipeModal}
+            >
+              <FontAwesomeIcon icon={faPlus} style={{}} />
+              {window.innerWidth > 575 && <span style={{ marginLeft: 10 }}>Create Recipe</span>}
+            </Button>
+          </span>
+        </div>
+        <div style={{ margin: 15, marginTop: 0, display: 'flex', justifyContent: 'center' }}>
           <Button
             onClick={this.onClickAllRecipes}
             color={showAllRecipes ? '' : 'white'}
@@ -109,24 +115,6 @@ class recipes extends React.Component {
               My Recipes
             </span>
           </Button>
-          <span>
-            <Button
-              id="create-recipe-button"
-              style={{ marginLeft: 10, borderRadius: 20 }}
-              onClick={this.toggleCreateRecipeModal}
-            >
-              <FontAwesomeIcon icon={faPlus} style={{}} />
-            </Button>
-            <Tooltip
-              placement="right"
-              isOpen={this.state.createRecipeTooltipIsOpen}
-              target={"create-recipe-button"}
-              toggle={this.toggleCreateRecipeTooltip}
-            >
-              Create Recipe
-            </Tooltip>
-          </span>
-
         </div>
         <Row style={{ marginLeft: 0, marginRight: 0 }}>
           {listRecipes}
