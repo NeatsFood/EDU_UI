@@ -12,7 +12,6 @@ export class RecipeCard extends React.Component {
     // Get parameters
     const { recipe } = this.props;
     const imageUrl = recipe.image_url || "https://cdn.shopify.com/s/files/1/0156/0137/products/refill_0012_basil.jpg?v=1520501227";
-    
 
 
     // Render component

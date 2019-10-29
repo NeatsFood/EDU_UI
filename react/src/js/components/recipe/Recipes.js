@@ -20,7 +20,7 @@ class recipes extends React.Component {
       showUserRecipes: false,
       createRecipeModalIsOpen: false,
     };
-    this.updateRecipeCards = this.updateRecipeCards.bind(this);
+    this.getRecipeCards = this.getRecipeCards.bind(this);
     this.onClickExampleRecipes = this.onClickExampleRecipes.bind(this);
     this.onClickUserRecipes = this.onClickUserRecipes.bind(this);
     this.toggleCreateRecipeModal = this.toggleCreateRecipeModal.bind(this);
@@ -30,7 +30,6 @@ class recipes extends React.Component {
   componentDidMount() {
     const recipes = this.props.recipes || {};
     if (this.state.loading && recipes.example && recipes.user) {
-      this.updateRecipeCards();
       this.setState({ loading: false });
     }
   }
@@ -38,7 +37,6 @@ class recipes extends React.Component {
   componentDidUpdate() {
     const recipes = this.props.recipes || {};
     if (this.state.loading && recipes.example && recipes.user) {
-      this.updateRecipeCards();
       this.setState({ loading: false });
     }
   }
@@ -52,18 +50,23 @@ class recipes extends React.Component {
   }
 
   toggleCreateRecipeModal = () => {
-    this.setState({ createRecipeModalIsOpen: !this.state.createRecipeModalIsOpen });
+    this.setState({
+      createRecipeModalIsOpen: !this.state.createRecipeModalIsOpen,
+      showExampleRecipes: false,
+      showUserRecipes: true,
+    });
   }
 
   goToRecipe(value, e) {
     return this.props.history.push("/recipe_details/" + (value).toString());
   }
 
-  updateRecipeCards() {
+  getRecipeCards() {
     // Get parameters
     const recipes = this.props.recipes || {};
     const exampleRecipes = recipes.example || {};
     const userRecipes = recipes.user || {};
+    const { showExampleRecipes } = this.state;
 
     // Create example recipe cards
     const exampleRecipeCards = [];
@@ -101,19 +104,17 @@ class recipes extends React.Component {
       ));
     }
 
-    // Update state
-    this.setState({ exampleRecipeCards, userRecipeCards });
-
+    // Return recipe cards
+    return showExampleRecipes ? exampleRecipeCards : userRecipeCards
   }
 
   render() {
+
     // Get parameters
     const {
-      loading, showExampleRecipes, showUserRecipes, exampleRecipeCards, userRecipeCards,
+      loading, showExampleRecipes, showUserRecipes,
     } = this.state;
-
-    // Initialize recipe cards
-    const recipeCards = showExampleRecipes ? exampleRecipeCards : userRecipeCards;
+    const recipeCards = this.getRecipeCards();
 
     // Check if loading
     if (loading) {
@@ -177,10 +178,9 @@ class recipes extends React.Component {
           user={this.props.user}
           isOpen={this.state.createRecipeModalIsOpen}
           toggle={this.toggleCreateRecipeModal}
-          fetchRecipes={this.props.fetchRecipes}
+          setRecipes={this.props.setRecipes}
         />
       </Container >
-
     )
   }
 }

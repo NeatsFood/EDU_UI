@@ -7,6 +7,7 @@ import {
 // Import services
 import generateRecipe from "../../utils/generateRecipe";
 import createRecipe from "../../services/createRecipe";
+import getRecipes from "../../services/getRecipes";
 
 const DEFAULT_STATE = {
   errorMessage: null,
@@ -72,8 +73,8 @@ export default class CreateRecipeModal extends React.PureComponent {
     }
 
     // Successfully created recipe
+    getRecipes(this.props.user.token).then(recipes => this.props.setRecipes(recipes))
     this.toggle();
-    // this.props.getRecipes();
   };
 
   render() {
@@ -159,7 +160,7 @@ export default class CreateRecipeModal extends React.PureComponent {
             <FormGroup>
               <Label for="lightSpectrum">Light Spectrum</Label>
               <div style={{ margin: 10, marginBottom: 20, display: 'flex', justifyContent: 'center', color: 'grey' }}>
-                <CustomInput type="radio" id="radio1" name="lightSpectrum" value="white" label="White" inline onChange={this.onChange} defaultChecked/>
+                <CustomInput type="radio" id="radio1" name="lightSpectrum" value="white" label="White" inline onChange={this.onChange} defaultChecked />
                 <CustomInput type="radio" id="radio2" name="lightSpectrum" value="red" label="Red" inline onChange={this.onChange} />
                 <CustomInput type="radio" id="radio3" name="lightSpectrum" value="green" label="Green" inline onChange={this.onChange} />
                 <CustomInput type="radio" id="radio4" name="lightSpectrum" value="blue" label="Blue" inline onChange={this.onChange} />
