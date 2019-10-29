@@ -24,7 +24,7 @@ import getDeviceRecipe from "../../services/getDeviceRecipe";
 import getDeviceEnvironment from "../../services/getDeviceEnvironment";
 import getDeviceImageUrls from "../../services/getDeviceImageUrls";
 import getDeviceDatasets from "../../services/getDeviceDatasets";
-import getAllRecipes from "../../services/getAllRecipes";
+import getRecipes from "../../services/getRecipes";
 import getDeviceTelemetry from "../../services/getDeviceTelemetry";
 
 // Import utilities
@@ -38,9 +38,8 @@ class NavBar extends React.Component {
       initialized: false,
       devices: [],
       currentDevice: { friendlyName: 'Loading...' },
-      allRecipes: new Map(),
+      recipes: new Map(),
       navMenuIsOpen: false,
-
     };
     this.toggleNavMenu = this.toggleNavMenu.bind(this);
     this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
@@ -54,7 +53,7 @@ class NavBar extends React.Component {
       this.setState({ initialized: true });
       const promises = [];
       promises.push(this.initializeDevices());
-      promises.push(getAllRecipes(user.token).then(allRecipes => this.props.setAllRecipes(allRecipes)));
+      promises.push(getRecipes(user.token).then(recipes => this.props.setRecipes(recipes)));
       await Promise.all(promises);
     }
   }

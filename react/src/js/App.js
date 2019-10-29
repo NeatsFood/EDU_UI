@@ -50,7 +50,7 @@ function App() {
       startDateString: 'Started: -----',
     },
   });
-  const [allRecipes, setAllRecipes] = useState(new Map());
+  const [recipes, setRecipes] = useState({});
   const [currentData, setCurrentData] = useState({
     datasets: [{ name: 'Loading...' }],
     dataset: { name: 'Loading...' },
@@ -76,7 +76,7 @@ function App() {
             user={user}
             setCurrentDevice={setCurrentDevice}
             setCurrentData={setCurrentData}
-            setAllRecipes={setAllRecipes}
+            setRecipes={setRecipes}
           />
         </header>
         <Switch>
@@ -87,7 +87,7 @@ function App() {
           />
           <PrivateRoute
             path="/recipes"
-            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} allRecipes={allRecipes} />}
+            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} recipes={recipes} />}
           />
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"

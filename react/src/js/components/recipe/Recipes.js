@@ -12,24 +12,43 @@ class recipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      allRecipes: new Map(),
-      gotAllRecipes: false,
-      showAllRecipes: true,
-      showMyRecipes: false,
+      loading: true,
+      recipes: {},
+      exampleRecipeCards: [],
+      userRecipeCards: [],
+      showExampleRecipes: true,
+      showUserRecipes: false,
       createRecipeModalIsOpen: false,
     };
-    this.onClickAllRecipes = this.onClickAllRecipes.bind(this);
-    this.onClickMyRecipes = this.onClickMyRecipes.bind(this);
+    this.updateRecipeCards = this.updateRecipeCards.bind(this);
+    this.onClickExampleRecipes = this.onClickExampleRecipes.bind(this);
+    this.onClickUserRecipes = this.onClickUserRecipes.bind(this);
     this.toggleCreateRecipeModal = this.toggleCreateRecipeModal.bind(this);
     this.goToRecipe = this.goToRecipe.bind(this);
   }
 
-  onClickAllRecipes() {
-    this.setState({ showAllRecipes: true, showMyRecipes: false })
+  componentDidMount() {
+    const recipes = this.props.recipes || {};
+    if (this.state.loading && recipes.example && recipes.user) {
+      this.updateRecipeCards();
+      this.setState({ loading: false });
+    }
   }
 
-  onClickMyRecipes() {
-    this.setState({ showAllRecipes: false, showMyRecipes: true })
+  componentDidUpdate() {
+    const recipes = this.props.recipes || {};
+    if (this.state.loading && recipes.example && recipes.user) {
+      this.updateRecipeCards();
+      this.setState({ loading: false });
+    }
+  }
+
+  onClickExampleRecipes() {
+    this.setState({ showExampleRecipes: true, showUserRecipes: false })
+  }
+
+  onClickUserRecipes() {
+    this.setState({ showExampleRecipes: false, showUserRecipes: true })
   }
 
   toggleCreateRecipeModal = () => {
@@ -40,32 +59,64 @@ class recipes extends React.Component {
     return this.props.history.push("/recipe_details/" + (value).toString());
   }
 
-  render() {
+  updateRecipeCards() {
     // Get parameters
-    const { showAllRecipes, showMyRecipes } = this.state;
-    const allRecipes = this.props.allRecipes || new Map();
+    const recipes = this.props.recipes || {};
+    const exampleRecipes = recipes.example || {};
+    const userRecipes = recipes.user || {};
 
-    // Create recipes card
-    let listRecipes = [];
-    if (allRecipes.size) {
-      const recipes = [...allRecipes.values()]
-      listRecipes.push(recipes.map((recipe) =>
-        <Col md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
-          <RecipeCard
-            key={recipe.recipe_uuid}
-            by_user={recipe.by_user}
-            recipe={recipe}
-            users_recipe={this.state.filter_recipe_button_state === 'user'}
-            onSelectRecipe={this.goToRecipe}
-            onSaveRecipe={this.onSaveRecipe}
-            onDeleteRecipe={this.onDeleteRecipe}
-            onEditRecipe={this.editRecipe}
-          />
-        </Col>
+    // Create example recipe cards
+    const exampleRecipeCards = [];
+    const exampleRecipeUuids = Object.keys(exampleRecipes);
+    if (exampleRecipeUuids.length > 0) {
+      exampleRecipeCards.push(exampleRecipeUuids.map((recipeUuid) => {
+        const recipe = exampleRecipes[recipeUuid];
+        return (
+          <Col key={recipeUuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
+            <RecipeCard
+              recipe={recipe}
+              onViewRecipe={this.goToRecipe}
+            />
+          </Col>
+        );
+      }
       ));
     }
 
-    if (allRecipes.size < 1) {
+    // Create user recipe cards
+    const userRecipeCards = [];
+    const userRecipeUuids = Object.keys(userRecipes);
+    if (userRecipeUuids.length > 0) {
+      userRecipeCards.push(userRecipeUuids.map((recipeUuid) => {
+        const recipe = userRecipes[recipeUuid];
+        return (
+          <Col key={recipeUuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
+            <RecipeCard
+              recipe={recipe}
+              onViewRecipe={this.goToRecipe}
+            />
+          </Col>
+        );
+      }
+      ));
+    }
+
+    // Update state
+    this.setState({ exampleRecipeCards, userRecipeCards });
+
+  }
+
+  render() {
+    // Get parameters
+    const {
+      loading, showExampleRecipes, showUserRecipes, exampleRecipeCards, userRecipeCards,
+    } = this.state;
+
+    // Initialize recipe cards
+    const recipeCards = showExampleRecipes ? exampleRecipeCards : userRecipeCards;
+
+    // Check if loading
+    if (loading) {
       return (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 200 }}>
           <Spinner color="dark" />
@@ -73,6 +124,11 @@ class recipes extends React.Component {
       )
     }
 
+    const recipeList = recipeCards.length > 0
+      ? <Row style={{ marginLeft: 0, marginRight: 0 }}> {recipeCards} </Row>
+      : <div style={{ textAlign: 'center', marginTop: 100 }}> No Recipes </div>;
+
+    // Render component
     return (
       <Container fluid style={{ marginBottom: 30 }}>
         <div style={{ margin: 20, marginBottom: 0, display: 'flex', justifyContent: 'flex-end' }}>
@@ -90,35 +146,33 @@ class recipes extends React.Component {
         </div>
         <div style={{ margin: 15, marginTop: 0, display: 'flex', justifyContent: 'center' }}>
           <Button
-            onClick={this.onClickAllRecipes}
-            color={showAllRecipes ? '' : 'white'}
+            onClick={this.onClickExampleRecipes}
+            color={showExampleRecipes ? '' : 'white'}
             style={{
               borderRadius: 20,
               fontWeight: 550,
-              backgroundColor: showAllRecipes ? 'lightgrey' : null,
+              backgroundColor: showExampleRecipes ? 'lightgrey' : null,
             }}
           >
-            <span style={{ color: showAllRecipes ? '#343a40' : '#6c757d' }}>
-              All Recipes
+            <span style={{ color: showExampleRecipes ? '#343a40' : '#6c757d' }}>
+              Example Recipes
             </span>
           </Button>
           <Button
-            onClick={this.onClickMyRecipes}
-            color={showMyRecipes ? '' : 'white'}
+            onClick={this.onClickUserRecipes}
+            color={showUserRecipes ? '' : 'white'}
             style={{
               borderRadius: 30,
               fontWeight: 550,
-              backgroundColor: showMyRecipes ? 'lightgrey' : null,
+              backgroundColor: showUserRecipes ? 'lightgrey' : null,
             }}
           >
-            <span style={{ color: showMyRecipes ? '#343a40' : '#6c757d' }}>
+            <span style={{ color: showUserRecipes ? '#343a40' : '#6c757d' }}>
               My Recipes
             </span>
           </Button>
         </div>
-        <Row style={{ marginLeft: 0, marginRight: 0 }}>
-          {listRecipes}
-        </Row>
+        {recipeList}
         <CreateRecipeModal
           userToken={this.props.userToken}
           isOpen={this.state.createRecipeModalIsOpen}
