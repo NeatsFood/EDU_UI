@@ -33,6 +33,5 @@ export default async function getRecipes(userToken) {
       recipes.user[recipe.recipe_uuid] = recipe;
     }
   }
-  console.log(recipes);
   return recipes;
 }

@@ -21,7 +21,6 @@ export default async function getCurrentEnvironment(userToken, deviceUuid) {
   })
   const responseJson = await response.json();
   const results = responseJson.results || {};
-  console.log('device.environment.results:', results);
   const environment = {
     airTemperature: parseFloat(results.current_temp).toFixed(0).toString() || 'N/A',
     airHumidity: parseFloat(results.current_rh).toFixed(0).toString() || 'N/A',

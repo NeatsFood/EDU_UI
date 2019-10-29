@@ -5,15 +5,15 @@ import {
 } from 'reactstrap';
 
 // Import services
-// import createRecipe from "../../services/createRecipe";
+import generateRecipe from "../../utils/generateRecipe";
+import createRecipe from "../../services/createRecipe";
 
 const DEFAULT_STATE = {
-  deviceName: '',
-  deviceNumber: '',
   errorMessage: null,
-  dayLength: 18,
   duration: 8,
+  dayLength: 18,
   lightIntensity: 300,
+  lightSpectrum: 'white',
 };
 
 export default class CreateRecipeModal extends React.PureComponent {
@@ -43,18 +43,28 @@ export default class CreateRecipeModal extends React.PureComponent {
   };
 
   onSubmit = async (event) => {
-    console.log('Submitting new device');
-
     // Prevent default
     event.preventDefault();
 
     // Get parameters
-    const { userToken } = this.props;
-    const { recipe } = this.state;
+    const {
+      recipeName, recipeDescription, duration, dayLength, lightIntensity, lightSpectrum,
+    } = this.state;
+
+    // Create recipe object
+    const rawRecipe = {
+      name: recipeName,
+      description: recipeDescription,
+      duration,
+      dayLength,
+      nightLength: 24 - dayLength,
+      lightIntensity,
+      lightSpectrum,
+    }
 
     // Create recipe
-    // const errorMessage = await createRecipe(userToken, recipe);
-    const errorMessage = null;
+    const recipe = generateRecipe(this.props.user, rawRecipe);
+    const errorMessage = await createRecipe(this.props.user.token, recipe);
 
     // Check if successful
     if (errorMessage) {
@@ -63,7 +73,7 @@ export default class CreateRecipeModal extends React.PureComponent {
 
     // Successfully created recipe
     this.toggle();
-    this.props.fetchRecipes();
+    // this.props.getRecipes();
   };
 
   render() {
@@ -91,7 +101,6 @@ export default class CreateRecipeModal extends React.PureComponent {
                 name="recipeName"
                 id="recipeName"
                 placeholder="E.g. Get Growing - Long Green Day"
-                value={this.state.recipeName}
                 onChange={this.onChange}
                 required
               />
@@ -100,9 +109,9 @@ export default class CreateRecipeModal extends React.PureComponent {
               <Label for="recipeDescription">Description</Label>
               <Input
                 type="textarea"
-                name="recipeDescription" id="recipeDescription"
+                name="recipeDescription"
+                id="recipeDescription"
                 placeholder="E.g. Grows a seedling from 2 cm to 18 cm over 8 weeks with 18 hour days and 6 hour nights. The daytime light spectrum is green with an intensity of 300 PAR at the canopy surface."
-                value={this.state.recipeDescription}
                 onChange={this.onChange}
                 required
                 style={{ height: 85 }}
@@ -150,11 +159,11 @@ export default class CreateRecipeModal extends React.PureComponent {
             <FormGroup>
               <Label for="lightSpectrum">Light Spectrum</Label>
               <div style={{ margin: 10, marginBottom: 20, display: 'flex', justifyContent: 'center', color: 'grey' }}>
-                <CustomInput type="radio" id="lightSpectrumWhite" name="lightSpectrum" label="White" inline defaultChecked />
-                <CustomInput type="radio" id="lightSpectrumRed" name="lightSpectrum" label="Red" inline />
-                <CustomInput type="radio" id="lightSpectrumGreen" name="lightSpectrum" label="Green" inline />
-                <CustomInput type="radio" id="lightSpectrumBlue" name="lightSpectrum" label="Blue" inline />
-                <CustomInput type="radio" id="lightSpectrumRedBlue" name="lightSpectrum" label="Red/Blue" inline />
+                <CustomInput type="radio" id="radio1" name="lightSpectrum" value="white" label="White" inline onChange={this.onChange} defaultChecked/>
+                <CustomInput type="radio" id="radio2" name="lightSpectrum" value="red" label="Red" inline onChange={this.onChange} />
+                <CustomInput type="radio" id="radio3" name="lightSpectrum" value="green" label="Green" inline onChange={this.onChange} />
+                <CustomInput type="radio" id="radio4" name="lightSpectrum" value="blue" label="Blue" inline onChange={this.onChange} />
+                <CustomInput type="radio" id="radio5" name="lightSpectrum" value="purple" label="Purple" inline onChange={this.onChange} />
               </div>
             </FormGroup>
 

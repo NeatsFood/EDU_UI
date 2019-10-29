@@ -27,7 +27,8 @@
     "react-select": "^3.0.4",
     "react-timeseries-charts": "^0.16.1",
     "reactstrap": "^8.0.1",
-    "sass-loader": "^7.1.0"
+    "sass-loader": "^7.1.0",
+    "uuid": "^3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",

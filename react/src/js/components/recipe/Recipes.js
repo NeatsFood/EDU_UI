@@ -174,7 +174,7 @@ class recipes extends React.Component {
         </div>
         {recipeList}
         <CreateRecipeModal
-          userToken={this.props.userToken}
+          user={this.props.user}
           isOpen={this.state.createRecipeModalIsOpen}
           toggle={this.toggleCreateRecipeModal}
           fetchRecipes={this.props.fetchRecipes}
