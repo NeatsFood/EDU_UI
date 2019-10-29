@@ -25,13 +25,21 @@ export default async function getRecipes(userToken) {
   // TODO: This is insecure. The data api should not return other users recipes
   // TODO: Rework the sharing mechanism to be shared with specific users
   // TODO: Add option to set recipe public or private
-  const recipes = { example: {}, user: {} };
+  const recipes = { example: [], user: [] };
   for (const recipe of rawRecipes) {
     if (recipe.user_uuid === 'all') {
-      recipes.example[recipe.recipe_uuid] = recipe;
+      recipes.example.push(recipe);
     } else if (recipe.user_uuid === userUuid) {
-      recipes.user[recipe.recipe_uuid] = recipe;
+      recipes.user.push(recipe);
     }
-  }
+  };
+  console.log('recipes:', recipes)
+
+  // Sort recipes
+  recipes.example.sort((a, b) => (a.name > b.name ? 1 : -1));
+  // recipes.user.sort((a, b) => (a.name > b.name ? 1 : -1));
+  recipes.user.sort((a, b) => (a.recipe_json.creation_timestamp_utc < b.recipe_json.creation_timestamp_utc? 1 : -1));
+
+  // Succesfully got recipes
   return recipes;
 }

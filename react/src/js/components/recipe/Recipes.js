@@ -63,19 +63,17 @@ class recipes extends React.Component {
 
   getRecipeCards() {
     // Get parameters
-    const recipes = this.props.recipes || {};
-    const exampleRecipes = recipes.example || {};
+    const recipes = this.props.recipes || [];
+    const exampleRecipes = recipes.example || [];
     const userRecipes = recipes.user || {};
     const { showExampleRecipes } = this.state;
 
     // Create example recipe cards
     const exampleRecipeCards = [];
-    const exampleRecipeUuids = Object.keys(exampleRecipes);
-    if (exampleRecipeUuids.length > 0) {
-      exampleRecipeCards.push(exampleRecipeUuids.map((recipeUuid) => {
-        const recipe = exampleRecipes[recipeUuid];
+    if (exampleRecipes.length > 0) {
+      exampleRecipeCards.push(exampleRecipes.map((recipe) => {
         return (
-          <Col key={recipeUuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
+          <Col key={recipe.recipe_uuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
             <RecipeCard
               recipe={recipe}
               onViewRecipe={this.goToRecipe}
@@ -88,12 +86,10 @@ class recipes extends React.Component {
 
     // Create user recipe cards
     const userRecipeCards = [];
-    const userRecipeUuids = Object.keys(userRecipes);
-    if (userRecipeUuids.length > 0) {
-      userRecipeCards.push(userRecipeUuids.map((recipeUuid) => {
-        const recipe = userRecipes[recipeUuid];
+    if (userRecipes.length > 0) {
+      userRecipeCards.push(userRecipes.map((recipe) => {
         return (
-          <Col key={recipeUuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
+          <Col key={recipe.recipe_uuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
             <RecipeCard
               recipe={recipe}
               onViewRecipe={this.goToRecipe}
