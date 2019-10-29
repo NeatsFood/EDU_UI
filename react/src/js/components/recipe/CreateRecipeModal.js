@@ -1,3 +1,4 @@
+// Import modules
 import React from 'react';
 import {
   Button, Form, FormGroup, Input, Label, Modal,
@@ -9,6 +10,16 @@ import generateRecipe from "../../utils/generateRecipe";
 import createRecipe from "../../services/createRecipe";
 import getRecipes from "../../services/getRecipes";
 
+// Initialize max light intensities
+const MAX_LIGHT_INTENSITY = {
+  white: 700,
+  red: 500,
+  green: 400,
+  blue: 400,
+  purple: 600,
+}
+
+// Initialize default state
 const DEFAULT_STATE = {
   errorMessage: null,
   duration: 8,
@@ -33,13 +44,23 @@ export default class CreateRecipeModal extends React.PureComponent {
   onChange = (event) => {
     const state = { [event.target.name]: event.target.value }
 
-    // TODO: Do we want to enforce this?
+    // Force day and night length to sum to 24h
     if (event.target.name === 'dayLength') {
       state.nightLength = 24 - event.target.value;
     }
     else if (event.target.name === 'nightLength') {
       state.dayLength = 24 - event.target.value;
     }
+
+    // Ensure light intensity stays within spectrum's max range
+    if (event.target.name === 'lightSpectrum') {
+      const lightSpectrum = event.target.value;
+      const { lightIntensity } = this.state;
+      if (lightIntensity > MAX_LIGHT_INTENSITY[lightSpectrum]) {
+        state.lightIntensity = MAX_LIGHT_INTENSITY[lightSpectrum];
+      }
+    }
+
     this.setState(state);
   };
 
@@ -79,7 +100,7 @@ export default class CreateRecipeModal extends React.PureComponent {
 
   render() {
     // Get parameters
-    const { errorMessage } = this.state;
+    const { errorMessage, lightSpectrum } = this.state;
     const { isOpen } = this.props;
 
     // Render component
@@ -177,12 +198,12 @@ export default class CreateRecipeModal extends React.PureComponent {
                   id="lightIntensity"
                   name="lightIntensity"
                   min={100}
-                  max={1000}
+                  max={MAX_LIGHT_INTENSITY[lightSpectrum]}
                   step={100}
                   value={this.state.lightIntensity}
                   onChange={this.onChange}
                 />
-                <span style={{ margin: 10, color: 'grey' }}>1000</span>
+                <span style={{ margin: 10, color: 'grey' }}>{MAX_LIGHT_INTENSITY[lightSpectrum]}</span>
               </div>
               <div style={{ textAlign: 'center', color: 'grey' }}>
                 <span>{this.state.lightIntensity} PAR</span>
