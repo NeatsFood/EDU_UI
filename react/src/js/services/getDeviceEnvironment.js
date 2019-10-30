@@ -21,6 +21,7 @@ export default async function getCurrentEnvironment(userToken, deviceUuid) {
   })
   const responseJson = await response.json();
   const results = responseJson.results || {};
+  console.log('Got environment: ', results);
   const environment = {
     airTemperature: parseFloat(results.current_temp).toFixed(0).toString() || 'N/A',
     airHumidity: parseFloat(results.current_rh).toFixed(0).toString() || 'N/A',
@@ -30,6 +31,8 @@ export default async function getCurrentEnvironment(userToken, deviceUuid) {
     waterEc: parseFloat(results.current_h20_ec).toFixed(1).toString() || 'N/A',
     lightIntensity: parseFloat(results.current_light_intensity).toFixed().toString() || 'N/A',
     lightSpectrum: parseJson(results.current_light_spectrum),
+    plantHeight: parseFloat(results.current_plant_height).toFixed().toString() || 'N/A',
+    leafCount: parseFloat(results.current_leaf_count).toFixed().toString() || 'N/A',
   };
   return environment;
 };

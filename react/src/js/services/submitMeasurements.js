@@ -16,7 +16,7 @@ export default async function submitMeasurements(userToken, deviceUuid, plantHei
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      'user_token': userToken,
+      user_token: userToken,
       device_uuid: deviceUuid,
       plant_height: plantHeight,
       leaf_count: leafCount,
