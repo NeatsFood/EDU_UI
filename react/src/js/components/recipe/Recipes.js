@@ -2,7 +2,7 @@ import React from "react";
 import { withCookies } from "react-cookie";
 import { Container, Row, Col, Spinner, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 
 // Import components
 import { RecipeCard } from "./RecipeCard";
@@ -77,12 +77,15 @@ class recipes extends React.Component {
     const userRecipes = recipes.user || {};
     const { showExampleRecipes } = this.state;
 
+    // Configure styling
+    const padding = 7.5;
+
     // Create example recipe cards
     const exampleRecipeCards = [];
     if (exampleRecipes.length > 0) {
       exampleRecipeCards.push(exampleRecipes.map((recipe) => {
         return (
-          <Col key={recipe.recipe_uuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
+          <Col key={recipe.recipe_uuid} md="4" sm="6" xs="12" style={{ padding }}>
             <RecipeCard
               recipe={recipe}
               onViewRecipe={this.goToRecipe}
@@ -98,7 +101,7 @@ class recipes extends React.Component {
     if (userRecipes.length > 0) {
       userRecipeCards.push(userRecipes.map((recipe) => {
         return (
-          <Col key={recipe.recipe_uuid} md="4" sm="6" xs="12" style={{ marginBottom: 15, marginTop: 15 }}>
+          <Col key={recipe.recipe_uuid} md="4" sm="6" xs="12" style={{ padding }}>
             <RecipeCard
               recipe={recipe}
               onViewRecipe={this.goToRecipe}
@@ -131,13 +134,13 @@ class recipes extends React.Component {
     }
 
     const recipeList = recipeCards.length > 0
-      ? <Row style={{ marginLeft: 0, marginRight: 0 }}> {recipeCards} </Row>
+      ? <Row style={{ padding: 7.5 }}> {recipeCards} </Row>
       : <div style={{ textAlign: 'center', marginTop: 100 }}> No Recipes </div>;
 
     // Render component
     return (
-      <Container fluid style={{ marginBottom: 30 }}>
-        <div style={{ margin: 20, marginBottom: 0, display: 'flex', justifyContent: 'flex-end' }}>
+      <Container fluid style={{ padding: 15 }}>
+        <div style={{ margin: 0, padding: 0, display: 'flex', justifyContent: 'flex-end' }}>
           <span>
             <Button
               size="sm"
@@ -145,7 +148,7 @@ class recipes extends React.Component {
               style={{ marginLeft: 10, borderRadius: 50 }}
               onClick={this.toggleCreateRecipeModal}
             >
-              <FontAwesomeIcon icon={faPlus} style={{}} />
+              <FontAwesomeIcon icon={faPencilAlt} style={{}} />
               {window.innerWidth > 575 && <span style={{ marginLeft: 10 }}>Create Recipe</span>}
             </Button>
           </span>
