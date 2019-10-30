@@ -40,7 +40,7 @@ class Dashboard extends Component {
     });
   }
 
-  getLightSpectrumString = (lightSpectrum) => {
+  getLightString = (lightSpectrum) => {
     // Check for null
     if (!lightSpectrum || Object.keys(lightSpectrum).length < 1) {
       lightSpectrum = { UV: '--', B: '--', G: '--', R: '--', FR: '--' };
@@ -58,31 +58,52 @@ class Dashboard extends Component {
     });
 
     // Convert to string with known channel abbreviations
-    const lightSpectrumString = JSON.stringify(fixedLightSpectrum)
-      .replace(/["{}]/g, '').replace(/,/g, '%, ').replace(/:/g, ': ')
-      .replace('380-399', 'UV').replace('400-499', 'B').replace('500-599', 'G')
-      .replace('600-700', 'R').replace('701-780', 'FR') + '%';
-    return lightSpectrumString;
+    // const lightString = JSON.stringify(fixedLightSpectrum)
+    //   .replace(/["{}]/g, '').replace(/,/g, '%, ').replace(/:/g, ': ')
+    //   .replace('380-399', 'UV').replace('400-499', 'B').replace('500-599', 'G')
+    //   .replace('600-700', 'R').replace('701-780', 'FR') + '%';
+    // <b>UV:</b> 0%, <b>B:</b> 30%<br /><b>G:</b> 25%, <b>R:</b> 35%, <b>FR:</b> 10%
+    const knownKeys = {
+      '380-399': 'UV',
+      '400-499': 'B',
+      '500-599': 'G',
+      '600-700': 'R',
+      '701-780': 'FR',
+    }
+    const numKeys = Object.keys(fixedLightSpectrum).length;
+    let keyCount = 0;
+    const lightString = (
+      <span>
+        {Object.keys(fixedLightSpectrum).map((key) => {
+          const value = fixedLightSpectrum[key];
+          keyCount++;
+          return <span key={knownKeys[key] || key}><b>{knownKeys[key] || key}:</b> {value} %{keyCount < numKeys && ', '}</span>;
+        })}
+      </span>
+    );
+    return lightString;
   }
 
   render() {
     // Get parameters
-    const { currentDevice } = this.props;
+    const currentDevice = this.props.currentDevice || {};
     const environment = currentDevice.environment || {};
     const {
       airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
-      lightIntensity, lightSpectrum,
+      lightIntensity, lightSpectrum, plantHeight, leafCount,
     } = environment;
     const recipe = currentDevice.recipe || { name: 'No Recipe' };
     const { name, currentDay, startDateString } = recipe;
     const imageUrls = currentDevice.imageUrls || [];
-    const lightSpectrumString = this.getLightSpectrumString(lightSpectrum);
     const noDevices = currentDevice.friendlyName === 'No Devices';
+    const status = currentDevice.status || {}
+    const wifiStatus = status.wifiStatus || 'Unknown';
+    const deviceStatus = wifiStatus === 'Connected' ? 'All Systems Online' 
+      : wifiStatus === 'Disconnected' ? 'Wifi Disconnected' : 'Wifi Disconnected';
+    const deviceHealth = wifiStatus === 'Connected' ? '100' 
+      : wifiStatus === 'Disconnected' ? '0' : '--';
 
-    // Fake
-    const plantHeight = 10;
-    const leafCount = 20;
-
+    // Check if loading
     if (currentDevice.loading) {
       return (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 200 }}>
@@ -91,6 +112,7 @@ class Dashboard extends Component {
       )
     }
 
+    // Check for no devices
     if (noDevices) {
       return (
         <Container style={{ display: 'flex', justifyContent: 'center' }} >
@@ -104,14 +126,13 @@ class Dashboard extends Component {
       )
     }
 
+    // Create region strings
+    const lightString = this.getLightString(lightSpectrum);
     const deviceString = (
-      <span><b>Status:</b> All Systems Online</span>
+      <span><b>Status:</b> {deviceStatus}</span>
     )
     const recipeString = (
       <span><b>Name:</b> {name}<br /><b>Started:</b> {startDateString}</span>
-    )
-    const lightString = (
-      <span><b>UV:</b> 0%, <b>B:</b> 30%<br /><b>G:</b> 25%, <b>R:</b> 35%, <b>FR:</b> 10%</span>
     )
     const plantString = (
       <span><b>Leaf Count:</b> {isNaN(leafCount) ? '--' : leafCount}</span>
@@ -141,7 +162,7 @@ class Dashboard extends Component {
                     icon={device}
                     backgroundColor='#ededed'
                     title='Device'
-                    value={100}
+                    value={isNaN(deviceHealth) ? '--' : deviceHealth}
                     unit='%'
                     variable='Health'
                     string={deviceString}
@@ -154,7 +175,7 @@ class Dashboard extends Component {
                     icon={temperature}
                     backgroundColor='#fff066'
                     title='Recipe'
-                    value={currentDay}
+                    value={isNaN(currentDay) ? '--' : currentDay}
                     unit={currentDay === 1 ? 'day' : 'days'}
                     variable='Growing'
                     string={recipeString}
@@ -168,7 +189,7 @@ class Dashboard extends Component {
                     icon={plants}
                     backgroundColor='#c8f3b2'
                     title='Plants'
-                    value={plantHeight}
+                    value={isNaN(plantHeight) ? '--' : plantHeight}
                     unit='cm'
                     variable='Height'
                     string={plantString}
@@ -181,7 +202,7 @@ class Dashboard extends Component {
                     icon={light}
                     backgroundColor='#fff7b2'
                     title='Light'
-                    value={lightIntensity}
+                    value={isNaN(lightIntensity) ? '--' : lightIntensity}
                     unit='par'
                     variable='Intensity'
                     string={lightString}
@@ -195,7 +216,7 @@ class Dashboard extends Component {
                     icon={air}
                     backgroundColor='#e6f7ff'
                     title='Air'
-                    value={airTemperature}
+                    value={isNaN(airTemperature) ? '--' : airTemperature}
                     unit='&deg;C'
                     variable='Temperature'
                     string={airString}
@@ -207,7 +228,7 @@ class Dashboard extends Component {
                     icon={water}
                     backgroundColor='#99dbf7'
                     title='Water'
-                    value={waterTemperature}
+                    value={isNaN(waterTemperature) ? '--' : waterTemperature}
                     unit='&deg;C'
                     variable='Temperature'
                     string={waterString}
