@@ -239,7 +239,11 @@ class Dashboard extends Component {
             </Col>
             <Col xl="6" style={{ padding }}>
               <Card>
-                <ImageTimelapse images={imageUrls} deviceUuid={currentDevice.uuid} />
+                <ImageTimelapse
+                  images={imageUrls}
+                  deviceUuid={currentDevice.uuid}
+                  borderRadius={borderRadius}
+                />
               </Card>
             </Col>
           </Row>

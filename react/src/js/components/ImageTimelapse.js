@@ -43,17 +43,21 @@ export default class ImageTimelapse extends React.Component {
     const { index } = this.state;
     const images = this.props.images || [];
     const image = images.length > 0 ? images[index] : PLACEHOLDER_IMAGE_URL;
+    const borderRadius = this.props.borderRadius || 0;
 
     return (
       <React.Fragment>
         <img
-          src={image} alt=''
-          className="img-fluid" />
+          src={image} 
+          alt='Device Aerial Camera Shot'
+          className='img-fluid' 
+          style={{ borderRadius }}
+        />
         <input
           style={{ width: '100%' }}
-          className="range-slider__range"
-          type="range"
-          min="0"
+          className='range-slider__range'
+          type='range'
+          min='0'
           value={index}
           max={images.length - 1}
           onChange={this.onSliderChange} />
