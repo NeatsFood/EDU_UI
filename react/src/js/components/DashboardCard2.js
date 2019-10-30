@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 export class DashboardCard2 extends React.PureComponent {
 
   render() {

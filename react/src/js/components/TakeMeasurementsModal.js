@@ -1,31 +1,20 @@
+// Import modules
 import React from 'react';
 import {
-  Button,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
+  Button, Form, FormGroup, Input, Label, Modal, ModalHeader, ModalBody, ModalFooter,
 } from 'reactstrap';
 
+// Import services
+import submitMeasurements from '../services/submitMeasurements';
+
+// Initialize state
 const DEFAULT_STATE = {
   deviceName: '',
   deviceNumber: '',
   errorMessage: null,
 };
 
-/**
- * AddDeviceModal
- *
- * props
- * - cookies (object): Interface to access browser cookies.
- * - isOpen (bool): Whether modal is open.
- * - toggle (function): Callback for opening and closing the modal.
- */
-export class TakeMeasurementsModal extends React.PureComponent {
+export default class TakeMeasurementsModal extends React.PureComponent {
 
   state = DEFAULT_STATE;
 
@@ -38,55 +27,27 @@ export class TakeMeasurementsModal extends React.PureComponent {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     // Prevent default
     event.preventDefault();
 
     // Get parameters
-    const userToken = this.props.cookies.get('user_token');
-    const { deviceUuid } = this.props;
+    const { userToken, deviceUuid } = this.props;
     const { plantHeight, leafCount } = this.state;
 
-    // Send registration request to api
-    return fetch(process.env.REACT_APP_FLASK_URL + '/api/daily_horticulture_measurements/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        'user_token': userToken,
-        device_uuid: deviceUuid,
-        plant_height: plantHeight,
-        leaf_count: leafCount,
-      })
-    })
-      .then(async (response) => {
-    
-        // Parse response json
-        const responseJson = await response.json();
+    // Submit measurements
+    const errorMessage = await submitMeasurements(userToken, deviceUuid, plantHeight, leafCount);
+    this.setState({ errorMessage });
 
-        // Validate response
-        if (responseJson["response_code"] !== 200) {
-          const errorMessage = responseJson["message"] || "Unable to submit measurements, please try again later."
-          console.log('Invalid response:', errorMessage);
-          this.setState({ errorMessage });
-          return;
-        }
-
-        // Successfully submitted, hide modal
-        this.toggle();
-      }).catch((error) => {
-        console.error('Unable to add new device', error);
-        const errorMessage = "Unable to submit measurements, please try again later."
-        this.setState({ errorMessage });
-      });
+    // Check if successful
+    if (!errorMessage) {
+      this.toggle();
+    }
   };
 
   render() {
     // Get parameters
-    const { plantHeight, leafCount, errorMessage } = this.state;
+    const { errorMessage } = this.state;
     const { isOpen } = this.props;
 
     // Render component
@@ -109,7 +70,6 @@ export class TakeMeasurementsModal extends React.PureComponent {
                 name="plantHeight"
                 id="plantHeight"
                 placeholder="E.g. 5"
-                value={plantHeight}
                 onChange={this.onChange}
                 required
               />
@@ -121,7 +81,6 @@ export class TakeMeasurementsModal extends React.PureComponent {
                 name="leafCount"
                 id="leafCount"
                 placeholder="E.g. 20"
-                value={leafCount}
                 onChange={this.onChange}
                 required
               />

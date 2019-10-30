@@ -1,11 +1,16 @@
+// Import modules
 import React from 'react';
 import {
-  Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, Tooltip,
+  Nav, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
 } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWifi, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faWifi, faPlus, faPencilAlt, faMicroscope } from '@fortawesome/free-solid-svg-icons'
+
+// Import components
 import AddDeviceModal from './AddDeviceModal';
+import CreateRecipeModal from '../recipe/CreateRecipeModal';
+import TakeMeasurementsModal from '../TakeMeasurementsModal';
 
 
 class DeviceDropdown extends React.Component {
@@ -13,9 +18,13 @@ class DeviceDropdown extends React.Component {
     super(props);
     this.state = {
       addDeviceModalIsOpen: false,
-      tooltipIsOpen: false,
+      createRecipeModalIsOpen: false,
+      takeMeasurementsModalIsOpen: false,
     };
     this.toggleAddDeviceModal = this.toggleAddDeviceModal.bind(this);
+    this.toggleCreateRecipeModal = this.toggleCreateRecipeModal.bind(this);
+    this.toggleTakeMeasurementsModal = this.toggleTakeMeasurementsModal.bind(this);
+
   }
 
   onSelectDevice = (event) => {
@@ -27,9 +36,14 @@ class DeviceDropdown extends React.Component {
     this.setState({ addDeviceModalIsOpen: !this.state.addDeviceModalIsOpen });
   }
 
-  toggleTooltip = () => {
-    this.setState({ tooltipIsOpen: !this.state.tooltipIsOpen });
+  toggleCreateRecipeModal = () => {
+    this.setState({ createRecipeModalIsOpen: !this.state.createRecipeModalIsOpen });
   }
+
+  toggleTakeMeasurementsModal = () => {
+    this.setState({ takeMeasurementsModalIsOpen: !this.state.takeMeasurementsModalIsOpen });
+  }
+
 
   render() {
     const devices = this.props.devices || [];
@@ -82,36 +96,41 @@ class DeviceDropdown extends React.Component {
             )}
           </UncontrolledDropdown>
           <span>
-            <Button
-              id="add-device-button"
-              style={{
-                marginLeft: 3,
-                borderTopLeftRadius: 0,
-                borderBottomLeftRadius: 0,
-                maxHeight: 38,
-              }}
-              color="secondary"
-              onClick={this.toggleAddDeviceModal}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </Button>
-            <Tooltip
-              placement="bottom"
-              isOpen={this.state.tooltipIsOpen}
-              target={"add-device-button"}
-              toggle={this.toggleTooltip}
-            >
-              Add Device
-            </Tooltip>
+            <UncontrolledDropdown inNavbar >
+              <DropdownToggle style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, marginLeft: 3 }}>
+                <FontAwesomeIcon icon={faPlus} />
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={this.toggleAddDeviceModal}>
+                  <FontAwesomeIcon icon={faPlus} style={{ marginRight: 10 }} />Add Device
+                </DropdownItem>
+                <DropdownItem onClick={this.toggleCreateRecipeModal}>
+                  <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: 10 }} />Create Recipe
+                </DropdownItem>
+                <DropdownItem onClick={this.toggleTakeMeasurementsModal}>
+                  <FontAwesomeIcon icon={faMicroscope} style={{ marginRight: 10 }} />Take Measurements
+                </DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
           </span>
-
-
         </Nav >
         <AddDeviceModal
-          userToken={this.props.userToken}
+          userToken={this.props.user.token}
           isOpen={this.state.addDeviceModalIsOpen}
           toggle={this.toggleAddDeviceModal}
           fetchDevices={this.props.fetchDevices}
+        />
+        <CreateRecipeModal
+          user={this.props.user}
+          isOpen={this.state.createRecipeModalIsOpen}
+          toggle={this.toggleCreateRecipeModal}
+          setRecipes={this.props.setRecipes}
+        />
+        <TakeMeasurementsModal
+          userToken={this.props.user.token}
+          deviceUuid={currentDevice.uuid}
+          isOpen={this.state.takeMeasurementsModalIsOpen}
+          toggle={this.toggleTakeMeasurementsModal}
         />
       </div>
     );

@@ -58,11 +58,6 @@ class Dashboard extends Component {
     });
 
     // Convert to string with known channel abbreviations
-    // const lightString = JSON.stringify(fixedLightSpectrum)
-    //   .replace(/["{}]/g, '').replace(/,/g, '%, ').replace(/:/g, ': ')
-    //   .replace('380-399', 'UV').replace('400-499', 'B').replace('500-599', 'G')
-    //   .replace('600-700', 'R').replace('701-780', 'FR') + '%';
-    // <b>UV:</b> 0%, <b>B:</b> 30%<br /><b>G:</b> 25%, <b>R:</b> 35%, <b>FR:</b> 10%
     const knownKeys = {
       '380-399': 'UV',
       '400-499': 'B',
@@ -77,7 +72,11 @@ class Dashboard extends Component {
         {Object.keys(fixedLightSpectrum).map((key) => {
           const value = fixedLightSpectrum[key];
           keyCount++;
-          return <span key={knownKeys[key] || key}><b>{knownKeys[key] || key}:</b> {value} %{keyCount < numKeys && ', '}</span>;
+          return (
+            <span style={{ display: 'inline-block', marginRight: 3 }} key={knownKeys[key] || key}>
+              <b>{knownKeys[key] || key}:</b> {value}%{keyCount < numKeys && ','}
+            </span>
+          );
         })}
       </span>
     );
@@ -98,9 +97,9 @@ class Dashboard extends Component {
     const noDevices = currentDevice.friendlyName === 'No Devices';
     const status = currentDevice.status || {}
     const wifiStatus = status.wifiStatus || 'Unknown';
-    const deviceStatus = wifiStatus === 'Connected' ? 'All Systems Online' 
+    const deviceStatus = wifiStatus === 'Connected' ? 'All Systems Online'
       : wifiStatus === 'Disconnected' ? 'Wifi Disconnected' : 'Wifi Disconnected';
-    const deviceHealth = wifiStatus === 'Connected' ? '100' 
+    const deviceHealth = wifiStatus === 'Connected' ? '100'
       : wifiStatus === 'Disconnected' ? '0' : '--';
 
     // Check if loading

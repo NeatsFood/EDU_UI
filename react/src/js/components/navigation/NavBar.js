@@ -121,11 +121,12 @@ class NavBar extends React.Component {
             {(loading || isAuthenticated) && (
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <DeviceDropdown
-                  userToken={user.token}
+                  user={user}
                   devices={this.state.devices}
                   currentDevice={this.state.currentDevice}
                   updateCurrentDevice={this.updateCurrentDevice}
                   fetchDevices={this.initializeDevices}
+                  setRecipes={this.props.setRecipes}
                 />
               </div>
             )}
