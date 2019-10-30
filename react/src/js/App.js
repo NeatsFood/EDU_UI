@@ -46,8 +46,8 @@ function App() {
     },
     recipe: {
       currentDay: '--',
-      name: 'Recipe: -----',
-      startDateString: 'Started: -----',
+      name: '-----',
+      startDateString: '-----',
     },
   });
   const [recipes, setRecipes] = useState({});

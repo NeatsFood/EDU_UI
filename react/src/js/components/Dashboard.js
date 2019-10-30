@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 // Import components
 // import { TakeMeasurementsModal } from './TakeMeasurementsModal';
-import { DashboardCard } from './DashboardCard';
 import { DashboardCard2 } from './DashboardCard2';
 import ImageTimelapse from "./ImageTimelapse";
 import OnboardingCard from "./OnboardingCard";
@@ -105,22 +104,30 @@ class Dashboard extends Component {
       )
     }
 
+    const deviceString = (
+      <span><b>Status:</b> All Systems Online</span>
+    )
+    const recipeString = (
+      <span><b>Name:</b> {name}<br /><b>Started:</b> {startDateString}</span>
+    )
     const lightString = (
-      <span><b>UV:</b> 0%, <b>B:</b> 30%, <b>G:</b> 25% <br /><b>R:</b> 35%, <b>FR:</b> 10%</span>
+      <span><b>UV:</b> 0%, <b>B:</b> 30%<br /><b>G:</b> 25%, <b>R:</b> 35%, <b>FR:</b> 10%</span>
     )
     const plantString = (
-      <span><b>Leaf Count:</b> {leafCount}</span>
+      <span><b>Leaf Count:</b> {isNaN(leafCount) ? '--' : leafCount}</span>
     )
     const airString = (
-      <span><b>Humidity:</b> {airHumidity}% <br /><b>CO2:</b> -- ppm</span>
+      <span><b>Humidity:</b> {isNaN(airHumidity) ? '--' : airHumidity}% <br /><b>CO2:</b> {isNaN(airCo2) ? '--' : airCo2} ppm</span>
     )
     const waterString = (
-      <span><b>EC:</b> {waterEc} mS/cm <br /><b>pH:</b> --</span>
+      <span><b>EC:</b> {isNaN(waterEc) ? '--' : waterEc} mS/cm <br /><b>pH:</b> {isNaN(waterPh) ? '--' : waterPh}</span>
     )
 
+    // Configure style options
     const color1 = '#ffffff';
     const color2 = '#f1f1f1';
     const padding = 7.5;
+    const borderRadius = 5;
 
     // Render component
     return (
@@ -137,9 +144,9 @@ class Dashboard extends Component {
                     value={100}
                     unit='%'
                     variable='Health'
-                    string={lightString}
+                    string={deviceString}
                     colors={{ value: color1, unit: color2, variable: color2 }}
-                    borderRadius={5}
+                    borderRadius={borderRadius}
                   />
                 </Col>
                 <Col style={{ padding }}>
@@ -147,11 +154,11 @@ class Dashboard extends Component {
                     icon={temperature}
                     backgroundColor='#fff066'
                     title='Recipe'
-                    value={45}
-                    unit='days'
-                    variable='Intensity'
-                    string={lightString}
-                    borderRadius={5}
+                    value={currentDay}
+                    unit={currentDay === 1 ? 'day' : 'days'}
+                    variable='Growing'
+                    string={recipeString}
+                    borderRadius={borderRadius}
                   />
                 </Col>
               </Row>
@@ -166,7 +173,7 @@ class Dashboard extends Component {
                     variable='Height'
                     string={plantString}
                     colors={{ value: color1, unit: color2, variable: color2 }}
-                    borderRadius={5}
+                    borderRadius={borderRadius}
                   />
                 </Col>
                 <Col style={{ padding }}>
@@ -178,7 +185,7 @@ class Dashboard extends Component {
                     unit='par'
                     variable='Intensity'
                     string={lightString}
-                    borderRadius={5}
+                    borderRadius={borderRadius}
                   />
                 </Col>
               </Row>
@@ -192,7 +199,7 @@ class Dashboard extends Component {
                     unit='&deg;C'
                     variable='Temperature'
                     string={airString}
-                    borderRadius={5}
+                    borderRadius={borderRadius}
                   />
                 </Col>
                 <Col style={{ padding }}>
@@ -205,7 +212,7 @@ class Dashboard extends Component {
                     variable='Temperature'
                     string={waterString}
                     colors={{ value: color1, unit: color2, variable: color2 }}
-                    borderRadius={5}
+                    borderRadius={borderRadius}
                   />
                 </Col>
               </Row>

@@ -1,3 +1,7 @@
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
+
 export default async function getDeviceRecipe(userToken, deviceUuid) {
 
   // Get data from api
@@ -17,7 +21,7 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
     return {
       currentDay: '--',
       name: 'No Recipe',
-      startDateString: null,
+      startDateString: '----',
     };
   });
 
@@ -29,9 +33,9 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
   // Validate response
   if (response_code !== 200 || runs.length === 0) {
     return {
-      currentDay: '0',
+      currentDay: '--',
       name: 'No Recipe',
-      startDateString: null,
+      startDateString: '----',
     };
   }
 
@@ -51,7 +55,7 @@ export default async function getDeviceRecipe(userToken, deviceUuid) {
     name = recipe_name;
     startDate = new Date(Date.parse(start));
     currentDay = Math.ceil((Date.now() - startDate.getTime()) / (1000 * 3600 * 24))
-    startDateString = `Started ${startDate.toDateString()}`;
+    startDateString = `${MONTH_NAMES[startDate.getMonth()]} ${startDate.getDate()}`;
   }
 
   // Update recipe

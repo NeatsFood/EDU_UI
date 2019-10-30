@@ -42,11 +42,11 @@ export class DashboardCard2 extends React.PureComponent {
         borderTopRightRadius: borderRadius || 0,
         borderBottomRightRadius: borderRadius || 0,
       }}>
-        <div style={{ margin: 10 }}>
+        <div style={{ marginBottom: 5 }}>
           <span style={{ fontWeight: 600, color: colors.title || '#343a40' }}>{title}</span>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <span style={{ color: 'grey', margin: 10 }}>{string}</span>
+        <div style={{ margin: 5, textAlign: 'center' }}>
+          <span style={{ color: 'grey' }}>{string}</span>
         </div>
       </div>
     )
