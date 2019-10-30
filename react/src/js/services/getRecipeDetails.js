@@ -1,7 +1,6 @@
 const DEFAULT_IMAGE_URL = 'https://cdn.shopify.com/s/files/1/0156/0137/products/refill_0012_basil.jpg?v=1520501227';
 
 export default async function getRecipeDetails(userToken, recipeUuid) {
-  console.log('Getting recipe details for user:', userToken);
   const response = await fetch(process.env.REACT_APP_FLASK_URL + "/api/get_recipe_by_uuid/", {
     method: 'POST',
     headers: {
@@ -44,7 +43,7 @@ export default async function getRecipeDetails(userToken, recipeUuid) {
     uuid: recipeUuid,
     name: rawRecipe["name"] || "Unknown",
     description: rawRecipe["description"]["verbose"] || rawRecipe["description"]["brief"] || "Unknown",
-    author: rawRecipe["authors"][0]["name"] || "Unknown",
+    authors: rawRecipe["authors"] || [{ name: "Unknown" }],
     method: rawRecipe["cultivation_methods"][0]["name"] || "Unknown",
     imageUrl: rawRecipe["image_url"] || DEFAULT_IMAGE_URL,
   };

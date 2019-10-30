@@ -18,8 +18,6 @@ const IMAGE_URLS = {
 };
 
 export default function generateRecipe(user, rawRecipe) {
-  console.log('Generating recipe from:', rawRecipe);
-
   // Get parameters
   const {
     name, description, duration, dayLength, nightLength, lightIntensity, lightSpectrum,
@@ -135,6 +133,5 @@ export default function generateRecipe(user, rawRecipe) {
   }
 
   // Successfully generated recipe
-  console.log('Generated recipe:', JSON.stringify(recipe));
   return recipe;
 }

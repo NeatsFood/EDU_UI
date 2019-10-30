@@ -91,7 +91,7 @@ function App() {
           />
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"
-            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice} />}
+            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice} setRecipes={setRecipes}/>}
           />
           <PrivateRoute
             path="/data"

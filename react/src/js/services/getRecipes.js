@@ -33,7 +33,6 @@ export default async function getRecipes(userToken) {
       recipes.user.push(recipe);
     }
   };
-  console.log('recipes:', recipes)
 
   // Sort recipes
   recipes.example.sort((a, b) => (a.name > b.name ? 1 : -1));

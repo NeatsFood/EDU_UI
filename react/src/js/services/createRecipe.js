@@ -7,7 +7,6 @@ export default async function createRecipe(userToken, recipe) {
   }
 
   // Send request to api
-  console.log('Sending request to api, recipe:', recipe);
   const response = await fetch(process.env.REACT_APP_FLASK_URL + '/api/submit_recipe/', {
     method: 'POST',
     headers: {
@@ -22,12 +21,14 @@ export default async function createRecipe(userToken, recipe) {
     })
   }).catch((error) => {
     console.error('Unable to create recipe', error);
-    return "Failed request";
+    return `Unable to create recipe: ${error.message}`;
   });
   const responseJson = await response.json();
 
-  // TODO: Validate response
-  console.log('Created recipe, response:', responseJson);
+  // Validate response
+  if (responseJson.response_code !== 200) {
+    return "Unable to create recipe, please try again later."
+  }
 
   // Successfully created recipe
   return null;

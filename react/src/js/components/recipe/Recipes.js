@@ -28,6 +28,15 @@ class recipes extends React.Component {
   }
 
   componentDidMount() {
+    // Check which recipe set to show
+    if (this.props.location && this.props.location.state) {
+      const { showUserRecipes } = this.props.location.state;
+      if (showUserRecipes) {
+        this.setState({ showExampleRecipes: false, showUserRecipes });
+      }
+    }
+
+    // Check loading state
     const recipes = this.props.recipes || {};
     if (this.state.loading && recipes.example && recipes.user) {
       this.setState({ loading: false });

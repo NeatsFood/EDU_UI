@@ -31,8 +31,6 @@ export class RunRecipeModal extends React.PureComponent {
   };
 
   onSubmit = async (event) => {
-    console.log('Applying recipe to device');
-
     // Prevent default
     event.preventDefault();
 

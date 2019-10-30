@@ -66,7 +66,7 @@ class NavBar extends React.Component {
     if (currentDevice.friendlyName === "Loading..." && devices.length > 0) {
       const cachedDeviceUuid = this.props.cookies.get('deviceUuid');
       const device = devices.find(device => device.uuid === cachedDeviceUuid) || devices[0];
-      this.props.cookies.set('deviceUuid', device.uuid);
+      this.props.cookies.set('deviceUuid', device.uuid, { sameSite: 'strict', secure: true });
       await this.updateCurrentDevice(device.uuid);
     }
   }
@@ -76,7 +76,7 @@ class NavBar extends React.Component {
     const { user } = this.props;
     const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
     this.setState({ currentDevice }); // Keep the dropdown responsive
-    this.props.cookies.set('deviceUuid', deviceUuid); // Update cached device uuid
+    this.props.cookies.set('deviceUuid', deviceUuid, { sameSite: 'strict', secure: true }); // Update cached device uuid
 
     // Get all device parameters asyncrhonously
     if (deviceUuid) {
