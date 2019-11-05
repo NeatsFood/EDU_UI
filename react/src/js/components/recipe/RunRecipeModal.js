@@ -52,13 +52,13 @@ export class RunRecipeModal extends React.PureComponent {
     // Successfully started recipe
     if (response.successful) {
       this.toggle();
-      setTimeout(async () => {
-        console.log('Pulling recipe data now')
-        getDeviceRecipe(userToken, currentDevice.uuid).then((recipe) => {
-          currentDevice.recipe = recipe;
-          this.props.setCurrentDevice(currentDevice);
-        });
-      }, 30000);
+      // setTimeout(async () => {
+      //   console.log('Pulling recipe data now')
+      //   getDeviceRecipe(userToken, currentDevice.uuid).then((recipe) => {
+      //     currentDevice.recipe = recipe;
+      //     this.props.setCurrentDevice(currentDevice);
+      //   });
+      // }, 30000);
     };
 
   };
