@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../App.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { useAuth0 } from "./react-auth0-wrapper";
 import { withCookies } from "react-cookie";
 
@@ -80,18 +80,19 @@ function App() {
           />
         </header>
         <Switch>
-          <Route path="/" exact component={Landing} />
+          <Route exact path="/" component={Landing} />
+          <Route path="/login"> <Redirect to="/" /> </Route>
           <PrivateRoute
             path="/dashboard"
             render={(props) => <Dashboard {...props} user={user} currentDevice={currentDevice} />}
           />
           <PrivateRoute
             path="/recipes"
-            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} recipes={recipes} setRecipes={setRecipes}/>}
+            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} recipes={recipes} setRecipes={setRecipes} />}
           />
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"
-            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice} setRecipes={setRecipes}/>}
+            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice} setRecipes={setRecipes} />}
           />
           <PrivateRoute
             path="/data"
