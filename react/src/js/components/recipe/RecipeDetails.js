@@ -73,6 +73,11 @@ class RecipeDetails extends Component {
     const authors = recipeDetails.authors || [{ name: "Unknown" }];
     const author = authors[0] || {}; // Hack
     const isUserRecipe = author.uuid === user.uuid;
+    const noDevices = currentDevice.friendlyName === 'No Devices';
+    const status = currentDevice.status || {}
+    const wifiStatus = status.wifiStatus || 'Unknown';
+    const errorMessage = noDevices ? 'Please add a device before trying to run a recipe.'
+      : wifiStatus === 'Disconnected' ? 'Please ensure your device is connected to the internet before trying to run a recipe.' : null;
 
     // Render component
     return (
@@ -102,7 +107,11 @@ class RecipeDetails extends Component {
                 <strong>Method:</strong> {recipeDetails.method} <br />
                 <strong>Author:</strong> {author.name} <br />
               </p>
-              <Button onClick={this.toggleRunRecipeModal}>
+              {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+              <Button
+                onClick={this.toggleRunRecipeModal}
+                disabled={noDevices || wifiStatus === 'Disconnected'}
+              >
                 Run Recipe on Food Computer
               </Button>
 

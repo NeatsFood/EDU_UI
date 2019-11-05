@@ -61,7 +61,11 @@ export class DownloadCsvButton extends React.Component {
   render() {
     return (
       <div>
-        <Button size="small" onClick={this.fetchData}>
+        <Button
+          size="small"
+          onClick={this.fetchData}
+          disabled={this.props.noData}
+        >
           Download CSV
         </Button>
         <CSVLink

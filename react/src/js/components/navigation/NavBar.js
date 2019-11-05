@@ -42,6 +42,7 @@ class NavBar extends React.Component {
       navMenuIsOpen: false,
     };
     this.toggleNavMenu = this.toggleNavMenu.bind(this);
+    this.initializeDevices = this.initializeDevices.bind(this);
     this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
   }
 
@@ -93,6 +94,14 @@ class NavBar extends React.Component {
         this.props.setCurrentData(currentData);
       }));
       await Promise.all(promises);
+    } else {
+      await getDeviceDatasets(user.token, deviceUuid).then(async (datasets) => {
+        const currentData = { datasets, dataset: datasets[0] };
+        const { startDate, endDate } = currentData.dataset;
+        const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
+        currentData.telemetry = formatTelemetryData(rawTelemetryData);
+        this.props.setCurrentData(currentData);
+      });
     }
 
     // Update state

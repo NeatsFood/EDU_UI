@@ -30,6 +30,10 @@ export class RunRecipeModal extends React.PureComponent {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  // componentDidUpdate = () => {
+
+  // }
+
   onSubmit = async (event) => {
     // Prevent default
     event.preventDefault();
@@ -52,7 +56,9 @@ export class RunRecipeModal extends React.PureComponent {
     // Get parameters
     const { errorMessage } = this.state;
     const { isOpen, recipeDetails, currentDevice } = this.props;
-    const currentRecipeName = currentDevice.recipe.name;
+    const currentRecipe = currentDevice.recipe || {};
+    const currentRecipeName = currentRecipe.name || 'Unknown';
+
 
     // Get system state
     const wifiDisconnected = currentDevice.wifiStatus === 'Disconnected';

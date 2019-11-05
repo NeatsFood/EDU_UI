@@ -1,4 +1,8 @@
 export default async function getUserDevices(userToken) {
+  console.log('Getting user devices')
+
+  // Initialize devices
+  const devices = [];
 
   // Fetch devices from api
   const response = await fetch(process.env.REACT_APP_FLASK_URL + '/api/get_user_devices/', {
@@ -13,6 +17,9 @@ export default async function getUserDevices(userToken) {
     })
   }).catch((error) => {
     console.error('Unable to get user devices', error);
+    const device = { name: 'No Devices', friendlyName: 'No Devices', uuid: null, registration_number: null }
+    devices.push(device);
+    return devices;
   });
   const responseJson = await response.json();
 
@@ -20,12 +27,9 @@ export default async function getUserDevices(userToken) {
   const { response_code, results } = responseJson;
   const raw_devices = (results && results["devices"]) || [];
 
-  // Initialize devices
-  const devices = [];
-
   // Validate response
   if (response_code !== 200 || raw_devices.length === 0) {
-    const device = { name: 'No Devices', friendlyName: 'No Devices',uuid: null, registration_number: null }
+    const device = { name: 'No Devices', friendlyName: 'No Devices', uuid: null, registration_number: null }
     devices.push(device);
     return devices;
   }

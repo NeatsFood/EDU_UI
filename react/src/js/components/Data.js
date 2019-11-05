@@ -15,6 +15,10 @@ class Data extends Component {
   render() {
     // Get parameters
     const { user, currentData, currentDeviceUuid } = this.props;
+    const { telemetry } = this.props.currentData;
+    const channels = telemetry.channels || {};
+    const displayChannelNames = Object.keys(channels) || [];
+    const noData = displayChannelNames.length < 1; // HACK
 
     // Render components
     return (
@@ -31,6 +35,7 @@ class Data extends Component {
               userToken={user.token}
               deviceUuid={currentDeviceUuid}
               dataset={currentData.dataset}
+              noData={noData}
             />
           </div>
         </div>

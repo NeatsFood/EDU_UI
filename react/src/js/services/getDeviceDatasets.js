@@ -34,7 +34,6 @@ export default async function getDeviceDatasets(userToken, deviceUuid) {
 
   // Validate response
   if (response_code !== 200 || runs.length === 0) {
-    console.log('Did not get any new recipe runs');
     return datasets;
   };
 
