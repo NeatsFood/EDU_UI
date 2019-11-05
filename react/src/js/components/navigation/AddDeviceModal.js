@@ -55,7 +55,7 @@ export default class AddDeviceModal extends React.PureComponent {
 
     // Successfully registered
     this.toggle();
-    this.props.fetchDevices();
+    this.props.fetchDevices(deviceNumber);
   };
 
   render() {

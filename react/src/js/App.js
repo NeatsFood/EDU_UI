@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "../App.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { useAuth0 } from "./react-auth0-wrapper";
-import { withCookies } from "react-cookie";
+import { useCookies } from 'react-cookie';
+
 
 // Import components
 import PrivateRoute from "./components/PrivateRoute";
@@ -20,7 +21,9 @@ import getDeviceTelemetry from "./services/getDeviceTelemetry";
 // Import utilities
 import formatTelemetryData from "./utils/formatTelemetryData";
 
-function App() {
+
+export default function App() {
+  const [cookies, setCookie] = useCookies(['deviceUuid']);
   const { isAuthenticated, loading } = useAuth0();
   let { user } = useAuth0();
   if (!user) {
@@ -77,6 +80,8 @@ function App() {
             setCurrentDevice={setCurrentDevice}
             setCurrentData={setCurrentData}
             setRecipes={setRecipes}
+            cookies={cookies}
+            setCookie={setCookie}
           />
         </header>
         <Switch>
@@ -111,5 +116,3 @@ function App() {
     </div>
   );
 }
-
-export default withCookies(App);

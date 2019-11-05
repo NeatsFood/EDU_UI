@@ -3,7 +3,7 @@ import {
   Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink,
 } from 'reactstrap';
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { withCookies } from "react-cookie";
+// import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid-svg-icons'
 
@@ -31,7 +31,7 @@ import getDeviceTelemetry from "../../services/getDeviceTelemetry";
 import formatTelemetryData from "../../utils/formatTelemetryData";
 
 
-class NavBar extends React.Component {
+export default class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,6 +43,7 @@ class NavBar extends React.Component {
     };
     this.toggleNavMenu = this.toggleNavMenu.bind(this);
     this.initializeDevices = this.initializeDevices.bind(this);
+    this.fetchDevices = this.fetchDevices.bind(this);
     this.updateCurrentDevice = this.updateCurrentDevice.bind(this);
   }
 
@@ -65,9 +66,23 @@ class NavBar extends React.Component {
     this.setState({ devices });
     let { currentDevice } = this.state;
     if (currentDevice.friendlyName === "Loading..." && devices.length > 0) {
-      const cachedDeviceUuid = this.props.cookies.get('deviceUuid');
+      const cachedDeviceUuid = this.props.cookies['deviceUuid']
       const device = devices.find(device => device.uuid === cachedDeviceUuid) || devices[0];
-      this.props.cookies.set('deviceUuid', device.uuid, { sameSite: 'strict', secure: true });
+      this.props.setCookie('deviceUuid', device.uuid, { path: '/' });
+      await this.updateCurrentDevice(device.uuid);
+    }
+  }
+
+  async fetchDevices(registrationNumber) {
+    console.log('Fetching devices, registrationNumber: ', registrationNumber)
+    const { user } = this.props;
+    const devices = await getUserDevices(user.token);
+    this.setState({ devices });
+
+    // Check if setting current device
+    if (registrationNumber) {
+      const device = devices.find(device => device.registrationNumber === registrationNumber) || devices[0];
+      this.props.setCookie('deviceUuid', device.uuid, { path: '/' });
       await this.updateCurrentDevice(device.uuid);
     }
   }
@@ -77,7 +92,7 @@ class NavBar extends React.Component {
     const { user } = this.props;
     const currentDevice = devices.find(({ uuid }) => uuid === deviceUuid);
     this.setState({ currentDevice }); // Keep the dropdown responsive
-    this.props.cookies.set('deviceUuid', deviceUuid, { sameSite: 'strict', secure: true }); // Update cached device uuid
+    this.props.setCookie('deviceUuid', deviceUuid, { path: '/' });
 
     // Get all device parameters asyncrhonously
     if (deviceUuid) {
@@ -134,7 +149,7 @@ class NavBar extends React.Component {
                   devices={this.state.devices}
                   currentDevice={this.state.currentDevice}
                   updateCurrentDevice={this.updateCurrentDevice}
-                  fetchDevices={this.initializeDevices}
+                  fetchDevices={this.fetchDevices}
                   setRecipes={this.props.setRecipes}
                 />
               </div>
@@ -180,4 +195,4 @@ class NavBar extends React.Component {
   }
 }
 
-export default withCookies(NavBar);
+// export default withCookies(NavBar);
