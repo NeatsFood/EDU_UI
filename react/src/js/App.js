@@ -89,15 +89,34 @@ export default function App() {
           <Route path="/login"> <Redirect to="/" /> </Route>
           <PrivateRoute
             path="/dashboard"
-            render={(props) => <Dashboard {...props} user={user} currentDevice={currentDevice} />}
+            render={(props) =>
+              <Dashboard
+                {...props}
+                user={user}
+                currentDevice={currentDevice}
+              />}
           />
           <PrivateRoute
             path="/recipes"
-            render={(props) => <Recipes {...props} user={user} currentDevice={currentDevice} recipes={recipes} setRecipes={setRecipes} />}
+            render={(props) =>
+              <Recipes
+                {...props}
+                user={user}
+                currentDevice={currentDevice}
+                recipes={recipes}
+                setRecipes={setRecipes}
+              />}
           />
           <PrivateRoute
             path="/recipe_details/:recipe_uuid"
-            render={(props) => <RecipeDetails {...props} user={user} currentDevice={currentDevice} setRecipes={setRecipes} />}
+            render={(props) =>
+              <RecipeDetails
+                {...props}
+                user={user}
+                currentDevice={currentDevice}
+                setRecipes={setRecipes}
+                setCurrentDevice={setCurrentDevice}
+              />}
           />
           <PrivateRoute
             path="/data"

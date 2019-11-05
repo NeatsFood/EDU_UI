@@ -124,6 +124,7 @@ class RecipeDetails extends Component {
           recipeDetails={recipeDetails}
           isOpen={this.state.runRecipeModalIsOpen}
           toggle={this.toggleRunRecipeModal}
+          setCurrentDevice={this.props.setCurrentDevice}
         />
         <ConfirmDeleteModal
           userToken={userToken}

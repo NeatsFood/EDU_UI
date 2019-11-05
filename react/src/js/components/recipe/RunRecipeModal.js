@@ -1,8 +1,12 @@
+// Import modules
 import React from 'react';
 import { Button, Form, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
+// Import services
 import runRecipe from "../../services/runRecipe";
+import getDeviceRecipe from "../../services/getDeviceRecipe";
 
+// Initialize default state
 const DEFAULT_STATE = {
   errorMessage: null,
 };
@@ -45,9 +49,16 @@ export class RunRecipeModal extends React.PureComponent {
     // Update state
     this.setState({ errorMessage: response.errorMessage });
 
-    // Toggle modal if successful
+    // Successfully started recipe
     if (response.successful) {
-      this.toggle(); 
+      this.toggle();
+      setTimeout(async () => {
+        console.log('Pulling recipe data now')
+        getDeviceRecipe(userToken, currentDevice.uuid).then((recipe) => {
+          currentDevice.recipe = recipe;
+          this.props.setCurrentDevice(currentDevice);
+        });
+      }, 30000);
     };
 
   };
