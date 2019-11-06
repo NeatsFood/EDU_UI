@@ -8,6 +8,8 @@ export class DashboardCard2 extends React.PureComponent {
       icon, backgroundColor, title, value, unit, variable, string, borderRadius,
     } = this.props;
     const colors = this.props.colors || {};
+    const valueLength = value.toString().length;
+    const valueSize = valueLength < 4 ? 40 : valueLength < 6 ? 30 : 20;
 
     const overlay = (
       <div style={{
@@ -22,7 +24,7 @@ export class DashboardCard2 extends React.PureComponent {
         borderBottomLeftRadius: borderRadius || 0,
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div style={{ paddingTop: 5, fontSize: 40, fontWeight: 800, color: colors.value || '#343a40' }}>{value}
+          <div style={{ paddingTop: 5, fontSize: valueSize, fontWeight: 800, color: colors.value || '#343a40' }}>{value}
             <sup><span style={{ fontSize: 20, color: colors.unit || 'grey', paddingLeft: 5 }}>{unit}</span></sup>
           </div>
           <div style={{ fontSize: 20, fontWeight: 500, color: colors.variable || 'grey', fontStyle: 'italic' }}>{variable}</div>
