@@ -9,7 +9,9 @@ export class DashboardCard2 extends React.PureComponent {
     } = this.props;
     const colors = this.props.colors || {};
     const valueLength = value.toString().length;
-    const valueSize = valueLength < 4 ? 40 : valueLength < 6 ? 30 : 20;
+    const valueSize = valueLength < 4 ? 40 : valueLength < 6 ? 30 : 25;
+    const variableLength = variable.toString().length;
+    const variableSize = variableLength < 10 ? 20 : variableLength < 15 ? 18 : 16;
 
     const overlay = (
       <div style={{
@@ -27,7 +29,7 @@ export class DashboardCard2 extends React.PureComponent {
           <div style={{ paddingTop: 5, fontSize: valueSize, fontWeight: 800, color: colors.value || '#343a40' }}>{value}
             <sup><span style={{ fontSize: 20, color: colors.unit || 'grey', paddingLeft: 5 }}>{unit}</span></sup>
           </div>
-          <div style={{ fontSize: 20, fontWeight: 500, color: colors.variable || 'grey', fontStyle: 'italic' }}>{variable}</div>
+          <div style={{ fontSize: variableSize, fontWeight: 500, color: colors.variable || 'grey', fontStyle: 'italic' }}>{variable}</div>
         </div>
       </div>
     )
