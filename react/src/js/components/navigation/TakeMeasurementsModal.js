@@ -5,7 +5,7 @@ import {
 } from 'reactstrap';
 
 // Import services
-import submitMeasurements from '../services/submitMeasurements';
+import submitMeasurements from '../../services/submitMeasurements';
 
 // Initialize state
 const DEFAULT_STATE = {

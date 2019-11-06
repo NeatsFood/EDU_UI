@@ -10,7 +10,7 @@ import { faWifi, faPlus, faPencilAlt, faMicroscope } from '@fortawesome/free-sol
 // Import components
 import AddDeviceModal from './AddDeviceModal';
 import CreateRecipeModal from '../recipe/CreateRecipeModal';
-import TakeMeasurementsModal from '../TakeMeasurementsModal';
+import TakeMeasurementsModal from './TakeMeasurementsModal';
 
 
 class DeviceDropdown extends React.Component {

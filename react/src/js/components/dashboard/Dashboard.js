@@ -4,40 +4,29 @@ import { withCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 
 // Import components
-// import { TakeMeasurementsModal } from './TakeMeasurementsModal';
-import { DashboardCard2 } from './DashboardCard2';
+import { DashboardCard } from './DashboardCard';
 import ImageTimelapse from "./ImageTimelapse";
-import OnboardingCard from "./OnboardingCard";
+import OnboardingCard from "../OnboardingCard";
 
 
 // Import assets
-import device from '../../images/device.png' // from fuse design
-import temperature from '../../images/temperature.png' // from fuse design
-import light from '../../images/light.png'
-import air from '../../images/air.png'
-import water from '../../images/water.png'
-import plants from '../../images/plants.png'
-import click from '../../images/click-here.svg' // from manypixels.co
+import device from '../../../images/device.png' // from fuse design
+import temperature from '../../../images/temperature.png' // from fuse design
+import light from '../../../images/light.png'
+import air from '../../../images/air.png'
+import water from '../../../images/water.png'
+import plants from '../../../images/plants.png'
+import click from '../../../images/click-here.svg' // from manypixels.co
 
 // Import styles
-import '../../scss/home.scss';
+import '../../../scss/home.scss';
 
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.set_modal = false;
-    this.state = {
-      showTakeMeasurementsModal: false,
-    };
-  }
 
-  toggleTakeMeasurementsModal = () => {
-    this.setState(prevState => {
-      return {
-        showTakeMeasurementsModal: !prevState.showTakeMeasurementsModal,
-      }
-    });
   }
 
   getLightString = (lightSpectrum) => {
@@ -157,7 +146,7 @@ class Dashboard extends Component {
             <Col xl="6">
               <Row style={{ display: 'flex', height: '33.33%' }}>
                 <Col style={{ padding }}>
-                  <DashboardCard2
+                  <DashboardCard
                     icon={device}
                     backgroundColor='#ededed'
                     title='Device'
@@ -170,7 +159,7 @@ class Dashboard extends Component {
                   />
                 </Col>
                 <Col style={{ padding }}>
-                  <DashboardCard2
+                  <DashboardCard
                     icon={temperature}
                     backgroundColor='#fff066'
                     title='Recipe'
@@ -184,7 +173,7 @@ class Dashboard extends Component {
               </Row>
               <Row style={{ display: 'flex', height: '33.33%' }}>
                 <Col style={{ padding }}>
-                  <DashboardCard2
+                  <DashboardCard
                     icon={plants}
                     backgroundColor='#c8f3b2'
                     title='Plants'
@@ -197,7 +186,7 @@ class Dashboard extends Component {
                   />
                 </Col>
                 <Col style={{ padding }}>
-                  <DashboardCard2
+                  <DashboardCard
                     icon={light}
                     backgroundColor='#fff7b2'
                     title='Light'
@@ -211,7 +200,7 @@ class Dashboard extends Component {
               </Row>
               <Row style={{ display: 'flex', height: '33.33%' }}>
                 <Col style={{ padding }}>
-                  <DashboardCard2
+                  <DashboardCard
                     icon={air}
                     backgroundColor='#e6f7ff'
                     title='Air'
@@ -223,7 +212,7 @@ class Dashboard extends Component {
                   />
                 </Col>
                 <Col style={{ padding }}>
-                  <DashboardCard2
+                  <DashboardCard
                     icon={water}
                     backgroundColor='#99dbf7'
                     title='Water'

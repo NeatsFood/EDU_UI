@@ -6,9 +6,9 @@ import { Link } from "react-router-dom";
 // Import components
 // import { TakeMeasurementsModal } from './TakeMeasurementsModal';
 import { DashboardCard } from './DashboardCard';
-import { DashboardCard2 } from './DashboardCard2';
-import ImageTimelapse from "./ImageTimelapse";
-import OnboardingCard from "./OnboardingCard";
+import { DashboardCard2 } from '../components/dashboard/DashboardCard';
+import ImageTimelapse from "../components/dashboard/ImageTimelapse";
+import OnboardingCard from "../components/OnboardingCard";
 
 
 // Import assets

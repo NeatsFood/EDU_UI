@@ -4,7 +4,7 @@ import { DatasetsDropdown } from './DatasetsDropdown';
 import { DownloadCsvButton } from './DownloadCsvButton';
 import { TimeseriesChart } from './TimeseriesChart';
 
-import '../../scss/data.scss';
+import '../../../scss/data.scss';
 
 class Data extends Component {
 

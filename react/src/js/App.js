@@ -9,10 +9,10 @@ import { useCookies } from 'react-cookie';
 import PrivateRoute from "./components/PrivateRoute";
 import NavBar from "./components/navigation/NavBar";
 import Landing from "./components/Landing";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/dashboard/Dashboard";
 import Recipes from "./components/recipe/Recipes";
 import RecipeDetails from "./components/recipe/RecipeDetails";
-import Data from "./components/Data";
+import Data from "./components/data/Data";
 import Profile from "./components/Profile";
 
 // Import services
