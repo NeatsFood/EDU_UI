@@ -20,7 +20,6 @@ function Landing() {
     <Container style={{ display: 'flex', justifyContent: 'center' }} >
       <Card className="text-center" style={{ marginTop: '50px', width: '400px' }}>
         <CardHeader style={{ fontSize: '20px' }}>
-          {/* Welcome! */}
           Welcome to the OpenAg Education UI
         </CardHeader>
         <CardBody>
@@ -32,6 +31,7 @@ function Landing() {
             Create an account to get started.
           </CardText>
           <Button onClick={() => loginWithRedirect()}>Create Account</Button>
+          <Button style={{ marginLeft: 10 }} outline onClick={() => loginWithRedirect()}>Login</Button>
         </CardBody>
         <CardFooter className="text-muted">
           <span style={{ flexDirection: 'row' }}>
