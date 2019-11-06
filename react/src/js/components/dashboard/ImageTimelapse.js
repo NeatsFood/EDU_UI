@@ -51,7 +51,11 @@ export default class ImageTimelapse extends React.Component {
           src={image} 
           alt='Device Aerial Camera Shot'
           className='img-fluid' 
-          style={{ borderRadius }}
+          style={{
+            borderTopRightRadius: borderRadius,
+            borderTopLeftRadius: borderRadius,
+            marginBottom: 2,
+        }}
         />
         <input
           style={{ width: '100%' }}
