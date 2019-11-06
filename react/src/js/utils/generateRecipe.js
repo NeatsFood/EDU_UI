@@ -20,11 +20,12 @@ const IMAGE_URLS = {
 export default function generateRecipe(user, rawRecipe) {
   // Get parameters
   const {
-    name, description, duration, dayLength, nightLength, lightIntensity, lightSpectrum,
+    name, description, duration, dayLength, nightLength,
+    lightIntensity, lightSpectrum, waterAerationDuration,
   } = rawRecipe;
 
   // Validate recipe parameters
-  if (!name || !description || !duration || !dayLength || !nightLength || !lightIntensity || !lightSpectrum) {
+  if (!name || !description || !duration || !dayLength || !nightLength || !lightIntensity || !lightSpectrum || !waterAerationDuration) {
     console.error('Invalid recipe parameters, rawRecipe:', rawRecipe);
     return {};
   }
@@ -34,6 +35,10 @@ export default function generateRecipe(user, rawRecipe) {
     console.error('Invalid user parameters, user: ', user);
     return {};
   }
+
+  // Initialize aeration duty cycle 
+  const waterAerationDutyCycle = Math.round(waterAerationDuration / 60 * 100)
+  console.log('waterAerationDutyCycle:', waterAerationDutyCycle)
 
   // Initialize recipe
   const recipe = {
@@ -72,31 +77,46 @@ export default function generateRecipe(user, rawRecipe) {
         name: 'Daytime Week 1',
         light_spectrum_nm_percent: LIGHT_SPECTRUMS[lightSpectrum],
         light_ppfd_umol_m2_s: parseFloat(lightIntensity),
-        light_illumination_distance_cm: 18
+        light_illumination_distance_cm: 18,
+        water_aeration_rate_liter_liter_minute: 1,
+        water_aeration_period_minutes: 60,
+        water_aeration_duty_cycle_percent: waterAerationDutyCycle,
       },
       day_week2: {
         name: 'Daytime Week 2',
         light_spectrum_nm_percent: LIGHT_SPECTRUMS[lightSpectrum],
         light_ppfd_umol_m2_s: parseFloat(lightIntensity),
-        light_illumination_distance_cm: 14
+        light_illumination_distance_cm: 14,
+        water_aeration_rate_liter_liter_minute: 1,
+        water_aeration_period_minutes: 60,
+        water_aeration_duty_cycle_percent: waterAerationDutyCycle,
       },
       day_week3: {
         name: 'Daytime Week 3',
         light_spectrum_nm_percent: LIGHT_SPECTRUMS[lightSpectrum],
         light_ppfd_umol_m2_s: parseFloat(lightIntensity),
-        light_illumination_distance_cm: 10
+        light_illumination_distance_cm: 10,
+        water_aeration_rate_liter_liter_minute: 1,
+        water_aeration_period_minutes: 60,
+        water_aeration_duty_cycle_percent: waterAerationDutyCycle,
       },
       day_week4: {
         name: 'Daytime Week 4',
         light_spectrum_nm_percent: LIGHT_SPECTRUMS[lightSpectrum],
         light_ppfd_umol_m2_s: parseFloat(lightIntensity),
-        light_illumination_distance_cm: 6
+        light_illumination_distance_cm: 6,
+        water_aeration_rate_liter_liter_minute: 1,
+        water_aeration_period_minutes: 60,
+        water_aeration_duty_cycle_percent: waterAerationDutyCycle,
       },
       night: {
         name: 'Night',
         light_spectrum_nm_percent: LIGHT_SPECTRUMS.night,
         light_ppfd_umol_m2_s: 0,
-        light_illumination_distance_cm: 15
+        light_illumination_distance_cm: 15,
+        water_aeration_rate_liter_liter_minute: 1,
+        water_aeration_period_minutes: 60,
+        water_aeration_duty_cycle_percent: waterAerationDutyCycle,
       }
     },
     phases: [],
@@ -108,7 +128,10 @@ export default function generateRecipe(user, rawRecipe) {
       name: `Daytime Week 5-${duration}`,
       light_spectrum_nm_percent: LIGHT_SPECTRUMS[lightSpectrum],
       light_ppfd_umol_m2_s: parseFloat(lightIntensity),
-      light_illumination_distance_cm: 2
+      light_illumination_distance_cm: 2,
+      water_aeration_rate_liter_liter_minute: 1,
+      water_aeration_period_minutes: 60,
+      water_aeration_duty_cycle_percent: waterAerationDutyCycle,
     };
   };
 

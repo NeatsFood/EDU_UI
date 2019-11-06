@@ -4,7 +4,7 @@ import { Button, Form, Modal, ModalHeader, ModalBody, ModalFooter } from 'reacts
 
 // Import services
 import runRecipe from "../../services/runRecipe";
-import getDeviceRecipe from "../../services/getDeviceRecipe";
+// import getDeviceRecipe from "../../services/getDeviceRecipe";
 
 // Initialize default state
 const DEFAULT_STATE = {
@@ -69,7 +69,6 @@ export class RunRecipeModal extends React.PureComponent {
     const { isOpen, recipeDetails, currentDevice } = this.props;
     const currentRecipe = currentDevice.recipe || {};
     const currentRecipeName = currentRecipe.name || 'Unknown';
-
 
     // Get system state
     const wifiDisconnected = currentDevice.wifiStatus === 'Disconnected';

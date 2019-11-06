@@ -26,6 +26,7 @@ const DEFAULT_STATE = {
   dayLength: 18,
   lightIntensity: 300,
   lightSpectrum: 'white',
+  waterAerationDuration: 6,
 };
 
 export default class CreateRecipeModal extends React.PureComponent {
@@ -70,7 +71,8 @@ export default class CreateRecipeModal extends React.PureComponent {
 
     // Get parameters
     const {
-      recipeName, recipeDescription, duration, dayLength, lightIntensity, lightSpectrum,
+      recipeName, recipeDescription, duration, dayLength,
+      lightIntensity, lightSpectrum, waterAerationDuration,
     } = this.state;
 
     // Create recipe object
@@ -82,6 +84,7 @@ export default class CreateRecipeModal extends React.PureComponent {
       nightLength: 24 - dayLength,
       lightIntensity,
       lightSpectrum,
+      waterAerationDuration,
     }
 
     // Create recipe
@@ -188,7 +191,6 @@ export default class CreateRecipeModal extends React.PureComponent {
                 <CustomInput type="radio" id="radio5" name="lightSpectrum" value="purple" label="Purple" inline onChange={this.onChange} />
               </div>
             </FormGroup>
-
             <FormGroup>
               <Label for="lightIntensity">Light Intensity</Label>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -207,6 +209,26 @@ export default class CreateRecipeModal extends React.PureComponent {
               </div>
               <div style={{ textAlign: 'center', color: 'grey' }}>
                 <span>{this.state.lightIntensity} PAR</span>
+              </div>
+            </FormGroup>
+            <FormGroup>
+              <Label for="dayLength">Water Aeration (Hourly)</Label>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <span style={{ margin: 10, color: 'grey' }}>0</span>
+                <CustomInput
+                  type="range"
+                  id="waterAerationDuration"
+                  name="waterAerationDuration"
+                  min={0}
+                  max={60}
+                  value={this.state.waterAerationDuration}
+                  onChange={this.onChange}
+                />
+                <span style={{ margin: 10, color: 'grey' }}>60</span>
+              </div>
+              <div style={{ textAlign: 'center', color: 'grey', marginBottom: 10 }}>
+                <span><b>On: </b>{this.state.waterAerationDuration} {this.state.waterAerationDuration !== 1 ? 'Minutes' : 'Minute'}</span>
+                <span style={{ marginLeft: 20 }}><b>Off: </b>{60 - this.state.waterAerationDuration} {60 - this.state.waterAerationDuration !== 1 ? 'Minutes' : 'Minute'}</span>
               </div>
             </FormGroup>
           </ModalBody>
