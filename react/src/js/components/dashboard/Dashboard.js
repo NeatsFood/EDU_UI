@@ -136,16 +136,19 @@ class Dashboard extends Component {
     const color1 = '#ffffff';
     const color2 = '#f1f1f1';
     const padding = 7.5;
+    const margin = 0;
     const borderRadius = 5;
+    console.log('innerWidth:', window.innerWidth);
+    const cardHeight = window.innerWidth > 1200 ? '33.33%' : null;
 
     // Render component
     return (
       <div>
         <Container fluid style={{ paddingTop: 0 }}>
-          <Row style={{ padding }}>
-            <Col xl="6">
-              <Row style={{ display: 'flex', height: '33.33%' }}>
-                <Col style={{ padding }}>
+          <Row style={{ padding, margin }}>
+            <Col xl="6" style={{}}>
+              <Row style={{ display: 'flex', height: cardHeight }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={device}
                     backgroundColor='#ededed'
@@ -158,7 +161,7 @@ class Dashboard extends Component {
                     borderRadius={borderRadius}
                   />
                 </Col>
-                <Col style={{ padding }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={temperature}
                     backgroundColor='#fff066'
@@ -171,8 +174,8 @@ class Dashboard extends Component {
                   />
                 </Col>
               </Row>
-              <Row style={{ display: 'flex', height: '33.33%' }}>
-                <Col style={{ padding }}>
+              <Row style={{ display: 'flex', height: cardHeight }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={plants}
                     backgroundColor='#c8f3b2'
@@ -185,7 +188,7 @@ class Dashboard extends Component {
                     borderRadius={borderRadius}
                   />
                 </Col>
-                <Col style={{ padding }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={light}
                     backgroundColor='#fff7b2'
@@ -198,8 +201,8 @@ class Dashboard extends Component {
                   />
                 </Col>
               </Row>
-              <Row style={{ display: 'flex', height: '33.33%' }}>
-                <Col style={{ padding }}>
+              <Row style={{ display: 'flex', height: cardHeight }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={air}
                     backgroundColor='#e6f7ff'
@@ -211,7 +214,7 @@ class Dashboard extends Component {
                     borderRadius={borderRadius}
                   />
                 </Col>
-                <Col style={{ padding }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={water}
                     backgroundColor='#99dbf7'
@@ -226,7 +229,7 @@ class Dashboard extends Component {
                 </Col>
               </Row>
             </Col>
-            <Col xl="6" style={{ padding }}>
+            <Col xl="6" style={{ padding, margin }}>
               <Card>
                 <ImageTimelapse
                   images={imageUrls}

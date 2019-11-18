@@ -44,7 +44,6 @@ export default class ImageTimelapse extends React.Component {
     const images = this.props.images || [];
     const image = images.length > 0 ? images[index] : PLACEHOLDER_IMAGE_URL;
     const borderRadius = this.props.borderRadius || 0;
-    console.log('image:', image)
 
     // Get date-time string
     let dateTimeString = null;
@@ -57,7 +56,6 @@ export default class ImageTimelapse extends React.Component {
       const date = new Date(Date.parse(isoString));
       dateTimeString = date.toLocaleString();
     }
-    console.log('dateTimeString:', dateTimeString)
 
     return (
       <React.Fragment>

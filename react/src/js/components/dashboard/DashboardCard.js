@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-solid-svg-icons'
 
 
 export class DashboardCard extends React.PureComponent {
@@ -12,6 +14,7 @@ export class DashboardCard extends React.PureComponent {
     const valueSize = valueLength < 4 ? 40 : valueLength < 6 ? 30 : 25;
     const variableLength = variable.toString().length;
     const variableSize = variableLength < 10 ? 20 : variableLength < 15 ? 18 : 16;
+    const updated = '11/18, 11:19 AM';
 
     const overlay = (
       <div style={{
@@ -50,8 +53,11 @@ export class DashboardCard extends React.PureComponent {
         <div style={{ marginBottom: 5 }}>
           <span style={{ fontWeight: 600, color: colors.title || '#343a40' }}>{title}</span>
         </div>
-        <div style={{ margin: 5, textAlign: 'center' }}>
+        <div style={{ margin: 5, marginBottom: 0, textAlign: 'center' }}>
           <span style={{ color: 'grey' }}>{string}</span>
+        </div>
+        <div style={{ margin: 5, marginTop: 0, textAlign: 'center' }}>
+          <span style={{ color: 'grey' }}><b>Updated:</b> {updated}</span>
         </div>
       </div>
     )
