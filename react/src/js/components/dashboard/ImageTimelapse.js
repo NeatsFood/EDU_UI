@@ -54,7 +54,10 @@ export default class ImageTimelapse extends React.Component {
       const isoString = `${rawString[1]}-${rawString[2]}-${rawString[3]}`
         + `T${rawString[4]}:${rawString[5]}:${rawString[6]}Z`
       const date = new Date(Date.parse(isoString));
-      dateTimeString = date.toLocaleString();
+      dateTimeString = date.toLocaleString("en-US", {
+        month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
+      });
+
     }
 
     return (
@@ -80,7 +83,7 @@ export default class ImageTimelapse extends React.Component {
         />
         {dateTimeString && (
           <div style={{ textAlign: 'center', margin: 5, color: '#808080' }}>
-            {dateTimeString}
+            <b>Updated:</b> {dateTimeString}
           </div>
         )}
       </React.Fragment>

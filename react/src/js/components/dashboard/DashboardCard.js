@@ -1,20 +1,31 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock } from '@fortawesome/free-solid-svg-icons'
+
+function getUpdateString(updated) {
+  const dateString = updated.toLocaleDateString("en-US", { month: 'numeric', day: 'numeric' });
+  const timeString = updated.toLocaleTimeString("en-US", { hour: 'numeric', minute: 'numeric' });
+
+  return (
+    <span>
+      <span style={{ display: "inline-block" }}>{dateString},</span>
+      <span style={{ display: "inline-block" }}>{timeString}</span>
+    </span>
+  )
+
+}
 
 
 export class DashboardCard extends React.PureComponent {
 
   render() {
     const {
-      icon, backgroundColor, title, value, unit, variable, string, borderRadius,
+      icon, backgroundColor, title, value, unit, variable, string, borderRadius, updated,
     } = this.props;
     const colors = this.props.colors || {};
     const valueLength = value.toString().length;
     const valueSize = valueLength < 4 ? 40 : valueLength < 6 ? 30 : 25;
     const variableLength = variable.toString().length;
     const variableSize = variableLength < 10 ? 20 : variableLength < 15 ? 18 : 16;
-    const updated = '11/18, 11:19 AM';
+    const updateString = updated ? getUpdateString(updated) : null;
 
     const overlay = (
       <div style={{
@@ -56,9 +67,11 @@ export class DashboardCard extends React.PureComponent {
         <div style={{ margin: 5, marginBottom: 0, textAlign: 'center' }}>
           <span style={{ color: 'grey' }}>{string}</span>
         </div>
-        <div style={{ margin: 5, marginTop: 0, textAlign: 'center' }}>
-          <span style={{ color: 'grey' }}><b>Updated:</b> {updated}</span>
-        </div>
+        {updateString && (
+          <div style={{ margin: 5, marginTop: 0, textAlign: 'center' }}>
+            <span style={{ color: 'grey' }}><b>Updated:</b> {updateString}</span>
+          </div>
+        )}
       </div>
     )
 

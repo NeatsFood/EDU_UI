@@ -78,7 +78,7 @@ class Dashboard extends Component {
     const environment = currentDevice.environment || {};
     const {
       airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
-      lightIntensity, lightSpectrum, plantHeight, leafCount,
+      lightIntensity, lightSpectrum, plantHeight, leafCount, horticultureLogUpdated,
     } = environment;
     const recipe = currentDevice.recipe || { name: 'No Recipe' };
     const { name, currentDay, startDateString } = recipe;
@@ -138,7 +138,6 @@ class Dashboard extends Component {
     const padding = 7.5;
     const margin = 0;
     const borderRadius = 5;
-    console.log('innerWidth:', window.innerWidth);
     const cardHeight = window.innerWidth > 1200 ? '33.33%' : null;
 
     // Render component
@@ -186,6 +185,7 @@ class Dashboard extends Component {
                     string={plantString}
                     colors={{ value: color1, unit: color2, variable: color2 }}
                     borderRadius={borderRadius}
+                    updated={horticultureLogUpdated}
                   />
                 </Col>
                 <Col style={{ padding, margin }}>

@@ -33,6 +33,7 @@ export default async function getCurrentEnvironment(userToken, deviceUuid) {
     lightSpectrum: parseJson(results.current_light_spectrum),
     plantHeight: parseFloat(results.current_plant_height).toFixed().toString() || 'N/A',
     leafCount: parseFloat(results.current_leaf_count).toFixed().toString() || 'N/A',
+    horticultureLogUpdated: new Date(Date.parse(results.horticulture_log_updated)) || null,
   };
   return environment;
 };
