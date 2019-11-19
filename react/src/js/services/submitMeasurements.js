@@ -1,4 +1,4 @@
-export default async function submitMeasurements(userToken, deviceUuid, plantHeight, leafCount) {
+export default async function submitMeasurements(userToken, deviceUuid, plantHeight, leafCount, notes) {
   // Validate parameters
   if (!userToken || !deviceUuid) {
     console.log('Invalid parameters')
@@ -20,6 +20,7 @@ export default async function submitMeasurements(userToken, deviceUuid, plantHei
       device_uuid: deviceUuid,
       plant_height: plantHeight,
       leaf_count: leafCount,
+      horticulture_notes: notes,
     })
   }).catch((error) => {
     console.error('Unable to submit measurements', error);

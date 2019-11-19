@@ -33,10 +33,10 @@ export default class TakeMeasurementsModal extends React.PureComponent {
 
     // Get parameters
     const { userToken, deviceUuid } = this.props;
-    const { plantHeight, leafCount } = this.state;
+    const { plantHeight, leafCount, notes } = this.state;
 
     // Submit measurements
-    const errorMessage = await submitMeasurements(userToken, deviceUuid, plantHeight, leafCount);
+    const errorMessage = await submitMeasurements(userToken, deviceUuid, plantHeight, leafCount, notes);
     this.setState({ errorMessage });
 
     // Check if successful
@@ -71,7 +71,6 @@ export default class TakeMeasurementsModal extends React.PureComponent {
                 id="plantHeight"
                 placeholder="E.g. 5"
                 onChange={this.onChange}
-                required
               />
             </FormGroup>
             <FormGroup>
@@ -81,6 +80,16 @@ export default class TakeMeasurementsModal extends React.PureComponent {
                 name="leafCount"
                 id="leafCount"
                 placeholder="E.g. 20"
+                onChange={this.onChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="notes">Notes</Label>
+              <Input
+                type="textarea"
+                name="notes"
+                id="notes"
+                placeholder="E.g. The edges of the leaves are starting to burn."
                 onChange={this.onChange}
                 required
               />
