@@ -1,15 +1,19 @@
 import React from 'react';
 
 function getUpdateString(updated) {
-  const dateString = updated.toLocaleDateString("en-US", { month: 'numeric', day: 'numeric' });
-  const timeString = updated.toLocaleTimeString("en-US", { hour: 'numeric', minute: 'numeric' });
+  // const dateString = updated.toLocaleDateString("en-US", { month: 'numeric', day: 'numeric' });
+  // const timeString = updated.toLocaleTimeString("en-US", { hour: 'numeric', minute: 'numeric' });
 
-  return (
-    <span>
-      <span style={{ display: "inline-block" }}>{dateString},</span>
-      <span style={{ display: "inline-block" }}>{timeString}</span>
-    </span>
-  )
+  // return (
+  //   <span>
+  //     <span style={{ display: "inline-block" }}>{`${dateString}, `}</span>
+  //     <span style={{ display: "inline-block" }}>{timeString}</span>
+  //   </span>
+  // )
+
+  return updated.toLocaleString("en-US", {
+    month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
+  });
 
 }
 
@@ -37,7 +41,7 @@ export class DashboardCard extends React.PureComponent {
         textAlign: 'center',
         minWidth: 120,
         borderTopLeftRadius: borderRadius || 0,
-        borderBottomLeftRadius: borderRadius || 0,
+        borderBottomLeftRadius: updateString ? 0 : (borderRadius || 0),
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ paddingTop: 5, fontSize: valueSize, fontWeight: 800, color: colors.value || '#343a40' }}>{value}
@@ -59,7 +63,7 @@ export class DashboardCard extends React.PureComponent {
         justifyItems: 'center',
         alignItems: 'center',
         borderTopRightRadius: borderRadius || 0,
-        borderBottomRightRadius: borderRadius || 0,
+        borderBottomRightRadius: updateString ? 0 : (borderRadius || 0),
       }}>
         <div style={{ marginBottom: 5 }}>
           <span style={{ fontWeight: 600, color: colors.title || '#343a40' }}>{title}</span>
@@ -67,19 +71,39 @@ export class DashboardCard extends React.PureComponent {
         <div style={{ margin: 5, marginBottom: 0, textAlign: 'center' }}>
           <span style={{ color: 'grey' }}>{string}</span>
         </div>
-        {updateString && (
+        {/* {updateString && (
           <div style={{ margin: 5, marginTop: 0, textAlign: 'center' }}>
             <span style={{ color: 'grey' }}><b>Updated:</b> {updateString}</span>
           </div>
-        )}
+        )} */}
+      </div>
+    )
+
+    const footer = !updateString ? null : (
+      <div style={{
+        backgroundColor: colors.footer || backgroundColor,
+        textAlign: 'center',
+        fontSize: 15,
+        fontStyle: 'italic',
+        padding: 5,
+        borderBottomLeftRadius: borderRadius || 0,
+        borderBottomRightRadius: borderRadius || 0,
+        borderTopStyle: 'solid',
+        borderTopWidth: '2.5px',
+        borderColor: colors.footerBar || 'grey',
+      }}>
+        <span style={{ color: 'grey' }}><b>Updated:</b> {updateString}</span>
       </div>
     )
 
     // Render component
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', height: '100%', minWidth: 275, borderRadius: 10 }}>
-        {overlay}
-        {content}
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', height: '100%', minWidth: 275, borderRadius: 10 }}>
+          {overlay}
+          {content}
+        </div>
+        {footer}
       </div>
     )
   }

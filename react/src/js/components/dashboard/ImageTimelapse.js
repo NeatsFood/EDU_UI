@@ -82,7 +82,7 @@ export default class ImageTimelapse extends React.Component {
           onChange={this.onSliderChange}
         />
         {dateTimeString && (
-          <div style={{ textAlign: 'center', margin: 5, color: '#808080' }}>
+          <div style={{ textAlign: 'center', margin: 5, color: '#808080', fontStyle: 'italic', fontSize: 15 }}>
             <b>Updated:</b> {dateTimeString}
           </div>
         )}

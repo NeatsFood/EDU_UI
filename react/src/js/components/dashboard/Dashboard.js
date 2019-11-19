@@ -77,8 +77,8 @@ class Dashboard extends Component {
     const currentDevice = this.props.currentDevice || {};
     const environment = currentDevice.environment || {};
     const {
-      airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
-      lightIntensity, lightSpectrum, plantHeight, leafCount, horticultureLogUpdated,
+      airTemperature, airHumidity, airCo2, airUpdated, waterTemperature, waterEc, waterPh, waterUpdated,
+      lightIntensity, lightSpectrum, lightUpdated, plantHeight, leafCount, plantsUpdated,
     } = environment;
     const recipe = currentDevice.recipe || { name: 'No Recipe' };
     const { name, currentDay, startDateString } = recipe;
@@ -183,9 +183,9 @@ class Dashboard extends Component {
                     unit='cm'
                     variable='Height'
                     string={plantString}
-                    colors={{ value: color1, unit: color2, variable: color2 }}
+                    colors={{ value: color1, unit: color2, variable: color2, footerBar: '#b4daa0' }}
                     borderRadius={borderRadius}
-                    updated={horticultureLogUpdated}
+                    updated={plantsUpdated}
                   />
                 </Col>
                 <Col style={{ padding, margin }}>
@@ -198,6 +198,8 @@ class Dashboard extends Component {
                     variable='Intensity'
                     string={lightString}
                     borderRadius={borderRadius}
+                    updated={lightUpdated}
+                    colors={{ footerBar: '#e5dea0' }}
                   />
                 </Col>
               </Row>
@@ -212,6 +214,8 @@ class Dashboard extends Component {
                     variable='Temperature'
                     string={airString}
                     borderRadius={borderRadius}
+                    updated={airUpdated}
+                    colors={{ footerBar: '#cfdee5' }}
                   />
                 </Col>
                 <Col style={{ padding, margin }}>
@@ -223,8 +227,9 @@ class Dashboard extends Component {
                     unit='&deg;C'
                     variable='Temperature'
                     string={waterString}
-                    colors={{ value: color1, unit: color2, variable: color2 }}
+                    colors={{ value: color1, unit: color2, variable: color2, footerBar: '#89c5de' }}
                     borderRadius={borderRadius}
+                    updated={waterUpdated}
                   />
                 </Col>
               </Row>
