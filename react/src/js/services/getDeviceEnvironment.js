@@ -10,8 +10,10 @@ function getLastUpdated(timestamps) {
   let latestTime = 0;
   let latestTimestamp = null;
   for (const timestamp of timestamps) {
-    if (Date.parse(timestamp) > latestTime) {
+    const time = Date.parse(timestamp);
+    if (time > latestTime) {
       latestTimestamp = timestamp;
+      latestTime = time;
     }
   }
   if (!latestTimestamp) {
