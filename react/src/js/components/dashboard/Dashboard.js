@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Container, Card, Row, Col, Spinner, CardImg } from 'reactstrap';
+import { Container, Card, Row, Col, Spinner, CardImg, DropdownMenu, DropdownItem } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboardList } from '@fortawesome/free-solid-svg-icons'
 
 // Import components
 import { DashboardCard } from './DashboardCard';
@@ -132,6 +134,16 @@ class Dashboard extends Component {
       <span><b>EC:</b> {isNaN(waterEc) ? '--' : waterEc} mS/cm <br /><b>pH:</b> {isNaN(waterPh) ? '--' : waterPh}</span>
     )
 
+    // Create menus
+    const plantMenu = (
+      <DropdownMenu right>
+        <DropdownItem onClick={() => console.log('Viewing notes')}>
+          <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: 10 }} />
+          View Notes
+      </DropdownItem>
+      </DropdownMenu>
+    )
+
     // Configure style options
     const color1 = '#ffffff';
     const color2 = '#f1f1f1';
@@ -186,6 +198,7 @@ class Dashboard extends Component {
                     colors={{ value: color1, unit: color2, variable: color2, footerBar: '#b4daa0' }}
                     borderRadius={borderRadius}
                     updated={plantsUpdated}
+                    menu={plantMenu}
                   />
                 </Col>
                 <Col style={{ padding, margin }}>
