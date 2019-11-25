@@ -137,7 +137,7 @@ class Dashboard extends Component {
     // Create menus
     const plantMenu = (
       <DropdownMenu right>
-        <DropdownItem onClick={() => console.log('Viewing notes')}>
+        <DropdownItem tag={Link} to="/notes">
           <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: 10 }} />
           View Notes
       </DropdownItem>

@@ -37,11 +37,12 @@ export default async function getDeviceTelemetry(userToken, deviceUuid, startDat
   const responseJson = await response.json();
 
   // Parse response (TODO: Make this general case)
-  const { temp, RH, co2, leaf_count, plant_height } = responseJson;
+  const { temp, RH, co2, leaf_count, plant_height, horticulture_notes } = responseJson;
 
   // HACK: Fixes data chronology bug
   plant_height.sort((a, b) => (a.time > b.time) ? 1 : -1)
   leaf_count.sort((a, b) => (a.time > b.time) ? 1 : -1)
+  horticulture_notes.sort((a, b) => (a.time > b.time) ? 1 : -1)
 
   // Create telemetry object (TODO: Make this general case)
   const telemetry = {
@@ -50,6 +51,7 @@ export default async function getDeviceTelemetry(userToken, deviceUuid, startDat
     co2Data: co2,
     leafCount: leaf_count,
     plantHeight: plant_height,
+    plantNotes: horticulture_notes,
   };
 
   // Successfully got device telemetry

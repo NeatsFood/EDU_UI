@@ -14,6 +14,8 @@ import Recipes from "./components/recipe/Recipes";
 import RecipeDetails from "./components/recipe/RecipeDetails";
 import Data from "./components/data/Data";
 import Profile from "./components/Profile";
+import Notes from "./components/Notes";
+
 
 // Import services
 import getDeviceTelemetry from "./services/getDeviceTelemetry";
@@ -65,7 +67,9 @@ export default function App() {
     setCurrentData({ ...currentData, dataset, telemetry: { ready: false } });
     const { startDate, endDate } = dataset;
     const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
-    currentData.telemetry = formatTelemetryData(rawTelemetryData);
+    const data = formatTelemetryData(rawTelemetryData);
+    currentData.telemetry = data.formattedData;
+    currentData.plantNotes = data.plantNotes;
     setCurrentData(currentData);
   }
 
@@ -130,6 +134,14 @@ export default function App() {
               />}
           />
           <PrivateRoute path="/profile" component={Profile} />
+          <PrivateRoute
+            path="/notes"
+            render={(props) =>
+              <Notes
+                {...props}
+                currentData={currentData}
+              />}
+          />
         </Switch>
       </BrowserRouter>
     </div>

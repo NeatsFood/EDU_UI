@@ -8,13 +8,14 @@ const REFERENCE_CHANNELS = {
   middleTempData: { units: "deg C", label: "Mid Temp", format: ",.1f", series: null, show: false, type: "line" },
   bottomTempData: { units: "deg C", label: "Bottom Temp", format: ",.1f", series: null, show: false, type: "line" },
   leafCount: { units: "", label: "Leaf Count", format: "d", series: null, show: false, type: "scatter" },
-  plantHeight: { units: "cm", label: "Plant Height", format: ",.2f", series: null, show: false, type: "scatter" }
+  plantHeight: { units: "cm", label: "Plant Height", format: ",.2f", series: null, show: false, type: "scatter" },
 };
 
 export default function formatTelemetryData(rawData) {
   // Initialize parameters
   const channels = {};
   let timeRange = null;
+  let plantNotes = null;
 
   // Get channel data
   Object.keys(rawData).forEach((channelName) => {
@@ -24,6 +25,18 @@ export default function formatTelemetryData(rawData) {
     if (channelData.length < 1) {
       return;
     };
+
+    if (channelName === "plantNotes") {
+      plantNotes = [];
+      channelData.forEach((dataPoint) => {
+        if (dataPoint.value !== "") {
+          const date = new Date(dataPoint.time);
+          plantNotes.push({date, value: dataPoint.value});
+        }
+      });
+      return;
+    }
+
 
     // Format data points
     const dataPoints = [];
@@ -36,13 +49,17 @@ export default function formatTelemetryData(rawData) {
     channels[channelName] = REFERENCE_CHANNELS[channelName] || { units: "", label: channelName, format: ",.1f", series: null, show: true, type: "line" };
 
     // Set channel display state
-    channels[channelName].show = true;
+    if (channelName === "plantNotes") {
+      channels[channelName].show = false;
+    } else {
+      channels[channelName].show = true;
+    }
 
     // Set channel series
     channels[channelName].series = new TimeSeries({
       name: channelName,
       columns: ["time", channelName],
-      points: (channelName === "plantHeight" || channelName === "leafCount") ?
+      points: (channelName === "plantHeight" || channelName === "leafCount" || channelName === "plantNotes") ?
         dataPoints : dataPoints.reverse() // HACK: Backend stores data in multiple ways
     });
 
@@ -60,5 +77,5 @@ export default function formatTelemetryData(rawData) {
 
   // Successfully formatted data
   const formattedData = { channels, timeRange, ready: true };
-  return formattedData;
+  return { formattedData, plantNotes };
 }
