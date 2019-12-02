@@ -11,7 +11,7 @@ export default async function getDeviceDatasets(userToken, deviceUuid) {
     const { name, type, durationDays } = timeWindow;
     const endDate = new Date();
     const date = new Date();
-    date.setDate(date.getDate() - 30)
+    date.setDate(date.getDate() - durationDays)
     const startDate = new Date(date);
     const dataset = { name, type, durationDays, startDate, endDate }
     datasets.push(dataset);
