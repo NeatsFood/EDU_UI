@@ -1,4 +1,8 @@
-const TIME_WINDOWS = [{ name: 'Past 30 Days', type: 'time-window', durationDays: 30 }]
+const TIME_WINDOWS = [
+    { name: 'Past 1 Day', type: 'time-window', durationDays: 1 },
+    { name: 'Past 7 Days', type: 'time-window', durationDays: 7 },
+    { name: 'Past 30 Days', type: 'time-window', durationDays: 30 },
+]
 
 export default async function getDeviceDatasets(userToken, deviceUuid) {
   // Initialize time-window datasets
@@ -7,7 +11,7 @@ export default async function getDeviceDatasets(userToken, deviceUuid) {
     const { name, type, durationDays } = timeWindow;
     const endDate = new Date();
     const date = new Date();
-    date.setDate(date.getDate() - 30)
+    date.setDate(date.getDate() - durationDays)
     const startDate = new Date(date);
     const dataset = { name, type, durationDays, startDate, endDate }
     datasets.push(dataset);

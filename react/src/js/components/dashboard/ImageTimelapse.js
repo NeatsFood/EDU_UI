@@ -45,17 +45,32 @@ export default class ImageTimelapse extends React.Component {
     const image = images.length > 0 ? images[index] : PLACEHOLDER_IMAGE_URL;
     const borderRadius = this.props.borderRadius || 0;
 
+    // Get date-time string
+    let dateTimeString = null;
+    const rawString = image.match(
+      /(\d{4})-(\d{2})-(\d{2})_T(\d{2})-(\d{2})-(\d{2})Z/
+    );
+    if (rawString) {
+      const isoString = `${rawString[1]}-${rawString[2]}-${rawString[3]}`
+        + `T${rawString[4]}:${rawString[5]}:${rawString[6]}Z`
+      const date = new Date(Date.parse(isoString));
+      dateTimeString = date.toLocaleString("en-US", {
+        month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
+      });
+
+    }
+
     return (
       <React.Fragment>
         <img
-          src={image} 
-          alt='Device Aerial Camera Shot'
-          className='img-fluid' 
+          src={image}
+          alt='Device Camera Shot'
+          className='img-fluid'
           style={{
             borderTopRightRadius: borderRadius,
             borderTopLeftRadius: borderRadius,
             marginBottom: 2,
-        }}
+          }}
         />
         <input
           style={{ width: '100%' }}
@@ -64,7 +79,13 @@ export default class ImageTimelapse extends React.Component {
           min='0'
           value={index}
           max={images.length - 1}
-          onChange={this.onSliderChange} />
+          onChange={this.onSliderChange}
+        />
+        {dateTimeString && (
+          <div style={{ textAlign: 'center', margin: 5, color: '#808080', fontStyle: 'italic', fontSize: 15 }}>
+            <b>Updated:</b> {dateTimeString}
+          </div>
+        )}
       </React.Fragment>
     );
   }

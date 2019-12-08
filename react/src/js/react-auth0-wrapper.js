@@ -50,7 +50,6 @@ export const Auth0Provider = ({
         user.uuid = oathUser.uuid;
         user.isAdmin = oathUser.isAdmin;
         setUser(user);
-        console.log('Setting user');
       }
 
       setLoading(false);

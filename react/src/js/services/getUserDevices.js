@@ -1,5 +1,4 @@
 export default async function getUserDevices(userToken) {
-  console.log('Getting user devices')
 
   // Initialize devices
   const devices = [];

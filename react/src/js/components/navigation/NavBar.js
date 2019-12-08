@@ -105,7 +105,9 @@ export default class NavBar extends React.Component {
         const currentData = { datasets, dataset: datasets[0] };
         const { startDate, endDate } = currentData.dataset;
         const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
-        currentData.telemetry = formatTelemetryData(rawTelemetryData);
+        const data = formatTelemetryData(rawTelemetryData);
+        currentData.telemetry = data.formattedData;
+        currentData.plantNotes = data.plantNotes;
         this.props.setCurrentData(currentData);
       }));
       await Promise.all(promises);
@@ -114,7 +116,9 @@ export default class NavBar extends React.Component {
         const currentData = { datasets, dataset: datasets[0] };
         const { startDate, endDate } = currentData.dataset;
         const rawTelemetryData = await getDeviceTelemetry(user.token, currentDevice.uuid, startDate, endDate);
-        currentData.telemetry = formatTelemetryData(rawTelemetryData);
+        const data = formatTelemetryData(rawTelemetryData);
+        currentData.telemetry = data.formattedData;
+        currentData.plantNotes = data.plantNotes;
         this.props.setCurrentData(currentData);
       });
     }

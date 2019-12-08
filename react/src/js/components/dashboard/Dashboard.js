@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Container, Card, Row, Col, Spinner, CardImg } from 'reactstrap';
+import { Container, Card, Row, Col, Spinner, CardImg, DropdownMenu, DropdownItem } from 'reactstrap';
 import { withCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboardList } from '@fortawesome/free-solid-svg-icons'
 
 // Import components
 import { DashboardCard } from './DashboardCard';
@@ -77,8 +79,8 @@ class Dashboard extends Component {
     const currentDevice = this.props.currentDevice || {};
     const environment = currentDevice.environment || {};
     const {
-      airTemperature, airHumidity, airCo2, waterTemperature, waterEc, waterPh,
-      lightIntensity, lightSpectrum, plantHeight, leafCount,
+      airTemperature, airHumidity, airCo2, airUpdated, waterTemperature, waterEc, waterPh, waterUpdated,
+      lightIntensity, lightSpectrum, lightUpdated, plantHeight, leafCount, plantsUpdated,
     } = environment;
     const recipe = currentDevice.recipe || { name: 'No Recipe' };
     const { name, currentDay, startDateString } = recipe;
@@ -132,20 +134,32 @@ class Dashboard extends Component {
       <span><b>EC:</b> {isNaN(waterEc) ? '--' : waterEc} mS/cm <br /><b>pH:</b> {isNaN(waterPh) ? '--' : waterPh}</span>
     )
 
+    // Create menus
+    const plantMenu = (
+      <DropdownMenu right>
+        <DropdownItem tag={Link} to="/notes">
+          <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: 10 }} />
+          View Notes
+      </DropdownItem>
+      </DropdownMenu>
+    )
+
     // Configure style options
     const color1 = '#ffffff';
     const color2 = '#f1f1f1';
     const padding = 7.5;
+    const margin = 0;
     const borderRadius = 5;
+    const cardHeight = window.innerWidth > 1200 ? '33.33%' : null;
 
     // Render component
     return (
       <div>
         <Container fluid style={{ paddingTop: 0 }}>
-          <Row style={{ padding }}>
-            <Col xl="6">
-              <Row style={{ display: 'flex', height: '33.33%' }}>
-                <Col style={{ padding }}>
+          <Row style={{ padding, margin }}>
+            <Col xl="6" style={{}}>
+              <Row style={{ display: 'flex', height: cardHeight }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={device}
                     backgroundColor='#ededed'
@@ -158,7 +172,7 @@ class Dashboard extends Component {
                     borderRadius={borderRadius}
                   />
                 </Col>
-                <Col style={{ padding }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={temperature}
                     backgroundColor='#fff066'
@@ -171,8 +185,8 @@ class Dashboard extends Component {
                   />
                 </Col>
               </Row>
-              <Row style={{ display: 'flex', height: '33.33%' }}>
-                <Col style={{ padding }}>
+              <Row style={{ display: 'flex', height: cardHeight }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={plants}
                     backgroundColor='#c8f3b2'
@@ -181,11 +195,13 @@ class Dashboard extends Component {
                     unit='cm'
                     variable='Height'
                     string={plantString}
-                    colors={{ value: color1, unit: color2, variable: color2 }}
+                    colors={{ value: color1, unit: color2, variable: color2, footerBar: '#b4daa0' }}
                     borderRadius={borderRadius}
+                    updated={plantsUpdated}
+                    menu={plantMenu}
                   />
                 </Col>
-                <Col style={{ padding }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={light}
                     backgroundColor='#fff7b2'
@@ -195,11 +211,13 @@ class Dashboard extends Component {
                     variable='Intensity'
                     string={lightString}
                     borderRadius={borderRadius}
+                    updated={lightUpdated}
+                    colors={{ footerBar: '#e5dea0' }}
                   />
                 </Col>
               </Row>
-              <Row style={{ display: 'flex', height: '33.33%' }}>
-                <Col style={{ padding }}>
+              <Row style={{ display: 'flex', height: cardHeight }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={air}
                     backgroundColor='#e6f7ff'
@@ -209,9 +227,11 @@ class Dashboard extends Component {
                     variable='Temperature'
                     string={airString}
                     borderRadius={borderRadius}
+                    updated={airUpdated}
+                    colors={{ footerBar: '#cfdee5' }}
                   />
                 </Col>
-                <Col style={{ padding }}>
+                <Col style={{ padding, margin }}>
                   <DashboardCard
                     icon={water}
                     backgroundColor='#99dbf7'
@@ -220,13 +240,14 @@ class Dashboard extends Component {
                     unit='&deg;C'
                     variable='Temperature'
                     string={waterString}
-                    colors={{ value: color1, unit: color2, variable: color2 }}
+                    colors={{ value: color1, unit: color2, variable: color2, footerBar: '#89c5de' }}
                     borderRadius={borderRadius}
+                    updated={waterUpdated}
                   />
                 </Col>
               </Row>
             </Col>
-            <Col xl="6" style={{ padding }}>
+            <Col xl="6" style={{ padding, margin }}>
               <Card>
                 <ImageTimelapse
                   images={imageUrls}
