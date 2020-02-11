@@ -10,6 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import NavBar from "./components/navigation/NavBar";
 import Landing from "./components/Landing";
 import Dashboard from "./components/dashboard/Dashboard";
+import Cluster from "./components/cluster/Cluster";
 import Recipes from "./components/recipe/Recipes";
 import RecipeDetails from "./components/recipe/RecipeDetails";
 import Data from "./components/data/Data";
@@ -56,6 +57,8 @@ export default function App() {
     },
   });
   const [recipes, setRecipes] = useState({});
+  const [pfcs, setPfcs] = useState([]);
+  const [clusterLoaded, setClusterLoaded] = useState(false);
   const [currentData, setCurrentData] = useState({
     datasets: [{ name: 'Loading...' }],
     dataset: { name: 'Loading...' },
@@ -71,7 +74,7 @@ export default function App() {
     currentData.telemetry = data.formattedData;
     currentData.plantNotes = data.plantNotes;
     setCurrentData(currentData);
-  }
+  };
 
   return (
     <div className="App">
@@ -99,6 +102,18 @@ export default function App() {
                 user={user}
                 currentDevice={currentDevice}
               />}
+          />
+          <PrivateRoute
+              path="/cluster"
+              render={(props) =>
+                  <Cluster
+                      {...props}
+                      user={user}
+//                      pfcs={pfcs}
+//                      setPfcs={setPfcs}
+//                      clusterLoaded={clusterLoaded}
+//                      setClusterLoaded={setClusterLoaded}
+                  />}
           />
           <PrivateRoute
             path="/recipes"

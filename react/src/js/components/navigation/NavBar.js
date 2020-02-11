@@ -189,6 +189,14 @@ export default class NavBar extends React.Component {
                   </NavLink>
                 </NavItem>
               )}
+              {(loading || isAuthenticated) && (
+                  <NavItem>
+                    <NavLink tag={RouterNavLink} to="/cluster">
+                      <FontAwesomeIcon icon={faChartLine} style={{ marginRight: 5 }} />
+                      Cluster
+                    </NavLink>
+                  </NavItem>
+              )}
               {(loading || isAuthenticated) ? <LogoutNavItem /> : <LoginNavItem />}
             </Nav>
           </Collapse>
