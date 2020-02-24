@@ -109,6 +109,7 @@ export default function App() {
                   <Cluster
                       {...props}
                       user={user}
+                      recipes={recipes}
 //                      pfcs={pfcs}
 //                      setPfcs={setPfcs}
 //                      clusterLoaded={clusterLoaded}

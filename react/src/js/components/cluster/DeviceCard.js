@@ -4,19 +4,23 @@ import {Media,
         Badge,
         Row,
         Col,
+        Input,
 } from "reactstrap";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretSquareRight, faCaretSquareDown } from '@fortawesome/free-solid-svg-icons'
 
 export function DeviceCard(props) {
     let device = props.device;
     const connectedClass = device.connected ? "border border-success" : "border border-danger";
     const dislayRecipe = device.currentRecipe ? device.currentRecipe.replace("@", " ") : "";
-    console.log("current_recipe:" + device.currentRecipe + ":");
+    const infoExpand = () => {props.clickExpandHandler(device.uuid)};
     return (
         <Media className={"m-1 p-2 " + connectedClass}>
 
             <Media body left>
                 <Media heading>
-                    {device.friendlyName}
+                    <FontAwesomeIcon icon={faCaretSquareDown} className={"mr1"} onClick={infoExpand}/> {device.friendlyName}
                 </Media>
                 <Badge className="mr-1"
                        color={device.connected ? "success" : "danger"}>{device.connected ? "Connected" : "Disconnected"}</Badge>
@@ -58,16 +62,18 @@ export function CompactDeviceCard(props){
     if (device.lastSeenMins) {
         lastSeen = convertMinsToFriendly(device.lastSeenMins) + " ago";
     }
+    const infoExpand = () => {props.clickExpandHandler(device.uuid)};
     return (
-        <Row className={connectedClass + " mb-2"}>
-            <Col sm={"3"}><small>{device.friendlyName}</small></Col>
-            <Col sm={"3"}><small><Badge className="mr-1"
+        <Row className={connectedClass + " ml-1 mb-2"}>
+            <Col sm={"4"}><small><FontAwesomeIcon icon={faCaretSquareRight} className={"mr-1"}  onClick={infoExpand}/> {device.friendlyName}</small></Col>
+            <Col sm={"2"}><small><Badge className="mr-1"
                         color={device.connected ? "success" : "danger"}>{device.connected ? "Connected" : "Disconnected"}</Badge></small>
             </Col>
-            <Col sm={"2"}><small><Badge
+            <Col sm={"1"}><small><Badge
                 color={device.available ? "success" : "primary"}>{device.available ? "Available" : "In Use"}</Badge></small>
             </Col>
             <Col><small>{lastSeen}</small></Col>
+            <Col><Input type={"checkbox"} checked={props.selected} onChange={e => props.clickSelectedHandler(device.uuid)}/></Col>
         </Row>
     );
 }

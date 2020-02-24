@@ -2,10 +2,12 @@ import React, {useEffect, useReducer, useState} from 'react';
 import {Container, Row, Col} from 'reactstrap';
 import SimpleClusterList from "./SimpleClusterList";
 import getUserCluster from "../../services/getUserCluster";
+import {RecipeSelector} from "./RecipeSelector";
 
 function Cluster(props) {
     const {user} = props;
     const [data, setData] = useState({devices: [], refreshing: false});
+
     //const [forceRefresh,setForceRefresh] = useReducer((s,x) => {s = x; return s;}, false);
     //const [initilaized, setInitlalized] = useState(false);
     const [forceRefresh,setForceRefresh] = useReducer((s) => {return s + 1},0);
@@ -26,11 +28,17 @@ function Cluster(props) {
             fetchCluster();
     }, [forceRefresh]);
 
+
+
     return (
         <Container fluid>
             <Row>
-                <Col xs={12} sm={4}>
+                <Col xs={12} sm={6}>
                     <SimpleClusterList handleRefresh={() => {setForceRefresh();}} refreshing={data.refreshing} devices={data.devices}/>
+                </Col>
+                <Col sm={6} className={"p-2"}>
+                    <h4>Run Recipe on Selected Devices</h4>
+                    <RecipeSelector recipes={props.recipes}/>
                 </Col>
             </Row>
         </Container>

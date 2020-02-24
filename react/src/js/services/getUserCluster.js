@@ -29,8 +29,8 @@ export default async function getUserCluster(userToken) {
 
   // Validate response
   if (response_code !== 200 || raw_devices.length === 0) {
-    const device = { name: 'No Devices', friendlyName: 'No Devices', uuid: null, registration_number: null }
-    devices.push(device);
+    // const device = { name: 'No Devices', friendlyName: 'No Devices', uuid: null, registration_number: null }
+    // devices.push(device);
     return devices;
   }
 

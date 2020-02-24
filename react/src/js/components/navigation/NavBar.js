@@ -5,7 +5,7 @@ import {
 import { NavLink as RouterNavLink } from 'react-router-dom';
 // import { withCookies } from "react-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid-svg-icons'
+import { faTachometerAlt, faFileAlt, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 // Import assets
 import logo from "../../../images/logo-initiative-white.png";
