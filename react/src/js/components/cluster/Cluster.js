@@ -3,6 +3,7 @@ import {Container, Row, Col} from 'reactstrap';
 import SimpleClusterList from "./SimpleClusterList";
 import getUserCluster from "../../services/getUserCluster";
 import {RecipeSelector} from "./RecipeSelector";
+import stopRecipe from "../../services/stopRecipe";
 
 function Cluster(props) {
     const {user} = props;
@@ -28,13 +29,16 @@ function Cluster(props) {
             fetchCluster();
     }, [forceRefresh]);
 
-
+    const stopRecipeHandler = (device_uuid) => {
+        //alert("Attempting to stop recpie on deivce: " + device_uuid);
+        stopRecipe(user.token, device_uuid);
+    }
 
     return (
         <Container fluid>
             <Row>
                 <Col xs={12} sm={6}>
-                    <SimpleClusterList handleRefresh={() => {setForceRefresh();}} refreshing={data.refreshing} devices={data.devices}/>
+                    <SimpleClusterList handleRefresh={() => {setForceRefresh();}} refreshing={data.refreshing} devices={data.devices} stopHandler={stopRecipeHandler}/>
                 </Col>
                 <Col sm={6} className={"p-2"}>
                     <h4>Run Recipe on Selected Devices</h4>

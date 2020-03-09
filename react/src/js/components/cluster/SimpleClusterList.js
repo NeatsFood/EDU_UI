@@ -35,6 +35,12 @@ const SimpleClusterList = (props) => {
 
     const collapseAll = () => {
         setExpandedDevices(new Set([]));
+    };
+
+    const expandAll = () => {
+        let newExpandedDevices = new Set([]);
+        props.devices.forEach((device) => {newExpandedDevices.add(device.uuid);});
+        setExpandedDevices(newExpandedDevices);
     }
 
     const echoSelected = () => {
@@ -89,7 +95,7 @@ const SimpleClusterList = (props) => {
                     <h1 onClick={echoSelected}>Device List</h1>
                 </Col>
                 <Col sm={2} ><h2 className={"align-bottom"}><RefreshButton onClick={props.handleRefresh} refreshing={props.refreshing}/></h2></Col>
-                <Col sm={4} ><h2 className={"align-bottom"}><Button outline size={"sm"}>Expand All</Button> <Button outline size={"sm"} onClick={collapseAll}>Collapse All</Button></h2></Col>
+                <Col sm={4} ><h2 className={"align-bottom"}><Button outline size={"sm"} onClick={expandAll}>Expand All</Button> <Button outline size={"sm"} onClick={collapseAll}>Collapse All</Button></h2></Col>
             </Row>
             <Row>
                 <Col sm={{size:4,offset:1}}>
@@ -120,7 +126,7 @@ const SimpleClusterList = (props) => {
                         );
                     } else {
                         return (
-                            <DeviceCard device={device} key={device.uuid} selected={selected} clickExpandHandler={clickForInfoHandler} clickSelectedHandler={clickSelectedHandler}/>
+                            <DeviceCard device={device} key={device.uuid} selected={selected} clickExpandHandler={clickForInfoHandler} clickSelectedHandler={clickSelectedHandler} stopHandler={props.stopHandler}/>
                         );
                     }
                 }

@@ -5,16 +5,28 @@ import {Media,
         Row,
         Col,
         Input,
+        Button,
 } from "reactstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretSquareRight, faCaretSquareDown } from '@fortawesome/free-solid-svg-icons'
+import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 
 export function DeviceCard(props) {
     let device = props.device;
     const connectedClass = device.connected ? "border border-success" : "border border-danger";
     const dislayRecipe = device.currentRecipe ? device.currentRecipe.replace("@", " ") : "";
     const infoExpand = () => {props.clickExpandHandler(device.uuid)};
+    const handleStop = (e) => {
+        e.preventDefault();
+        const uuid = e.target.getAttribute("deviceUUID");
+        const name = e.target.getAttribute("deviceName");
+        if(window.confirm("Are you sure you want to stop the recipe running on "+name) ) {
+            props.stopHandler(uuid);
+            alert("Stopping Recipe running on " + uuid);
+        }
+    };
+
     return (
         <Media className={"m-1 p-2 " + connectedClass}>
 
@@ -26,11 +38,17 @@ export function DeviceCard(props) {
                        color={device.connected ? "success" : "danger"}>{device.connected ? "Connected" : "Disconnected"}</Badge>
                 <Badge
                     color={device.available ? "success" : "primary"}>{device.available ? "Available" : "In Use"}</Badge>
+
                 <div className={"ml-4"}>
-                    <b>Current Recipe</b>: {dislayRecipe}<br/>
-                    <b>Recipe Start Time</b>: {device.recipeStart}<br/>
+                    { !device.available &&
+                        <span>
+                        <b>Current Recipe</b>: {dislayRecipe}<br/>
+                        <b>Recipe Start Time</b>: {device.recipeStart} <Badge href={"#"} color={"danger"} deviceName={device.friendlyName} deviceUUID={device.uuid} onClick={handleStop}><FontAwesomeIcon icon={faTimesCircle} size={"xs"}/> Stop Recipe</Badge><br/>
+                        </span>
+                    }
                     <b>Current Temperature</b>: {device.currentTemp}<br/>
-                    <b>Last Status</b>: {device.statusTimestamp}
+                    <b>Last Status</b>: {device.statusTimestamp}<br/>
+                    <Row><Col><b>Selected</b>: </Col><Col><Input type={"checkbox"} checked={props.selected} onChange={e => props.clickSelectedHandler(device.uuid)}/></Col></Row>
                 </div>
             </Media>
             <Media className={"m-3"}>
@@ -39,22 +57,24 @@ export function DeviceCard(props) {
         </Media>
     )
 }
+
 function convertMinsToFriendly(numMins){
     if (numMins < 60) {
-        return numMins + " m";
+        return Math.round(numMins) + " m";
     } else {
         const numHours = numMins / 60;
         if (numHours < 24) {
-            return numHours + " h";
+            return Math.round(numHours) + " h";
         } else {
             const numDays = numHours/24;
             if (numDays < 30){
-                return numDays + " days";
+                return Math.round(numDays) + " days";
             }
             return "over a month";
         }
     }
 }
+
 export function CompactDeviceCard(props){
     let device = props.device;
     const connectedClass = device.connected ? "border border-success" : "border border-danger";

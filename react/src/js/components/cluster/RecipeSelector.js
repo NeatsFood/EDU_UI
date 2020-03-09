@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {InputGroup, InputGroupAddon, InputGroupText, Input} from "reactstrap";
+import {InputGroup, InputGroupAddon, InputGroupText, Input, Card, CardTitle, CardText, CardBody, CardSubtitle, Button} from "reactstrap";
 
 export function RecipeSelector(props){
     const {recipes} = props;
@@ -37,6 +37,7 @@ export function RecipeSelector(props){
             <h6>Fetching Recipes...</h6>
         )
     } else {
+
         return (
             <div>
             <InputGroup>
@@ -54,9 +55,15 @@ export function RecipeSelector(props){
                     })}
                 </Input>
             </InputGroup>
-                <h6>{recipesByUUID.get(selectedRecipe).name}</h6>
-                <p>{recipesByUUID.get(selectedRecipe).recipe_uuid}</p>
-                <p>{recipesByUUID.get(selectedRecipe).recipe_json.description.brief}</p>
+                <Card className={"mt-2"}>
+                    <CardBody>
+                        <CardTitle><h5>{recipesByUUID.get(selectedRecipe).name}</h5></CardTitle>
+                        <CardSubtitle><h6 className={"text-muted"}>{recipesByUUID.get(selectedRecipe).recipe_uuid}</h6></CardSubtitle>
+                        <CardText>{recipesByUUID.get(selectedRecipe).recipe_json.description.brief}<br/>
+                        <small className={"text-muted"}>Created {recipesByUUID.get(selectedRecipe).recipe_json.creation_timestamp_utc}</small></CardText>
+                    </CardBody>
+                </Card>
+                <Button>Start Recipe On Selected Devices</Button>
             </div>
         )
     }
