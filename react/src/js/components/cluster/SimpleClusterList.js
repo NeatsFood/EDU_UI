@@ -4,9 +4,10 @@ import {CompactDeviceCard, DeviceCard} from "./DeviceCard";
 import RefreshButton from "./RefreshButton";
 
 const SimpleClusterList = (props) => {
+    // the list of selected devices is in the parent so it can handle the starting and stopping of recipes
+    const {selectedDevices, setSelectedDevices} = props;
     const [filterOnline, setFilterOnline] = useState(false);
     const [filterAvailable, setFilterAvailable] = useState(false);
-    const [selectedDevices, setSelectedDevices] = useState(new Set([]));
     const [expandedDevices, setExpandedDevices] = useState(new Set([]));
 
     const clickSelectedHandler = device_uuid => {
@@ -41,7 +42,7 @@ const SimpleClusterList = (props) => {
         let newExpandedDevices = new Set([]);
         props.devices.forEach((device) => {newExpandedDevices.add(device.uuid);});
         setExpandedDevices(newExpandedDevices);
-    }
+    };
 
     const echoSelected = () => {
         if(selectedDevices.size < 1){
@@ -122,11 +123,20 @@ const SimpleClusterList = (props) => {
                     (!filterAvailable || device.available)){
                     if(compact) {
                         return (
-                            <CompactDeviceCard device={device} key={device.uuid} selected={selected} clickExpandHandler={clickForInfoHandler} clickSelectedHandler={clickSelectedHandler}/>
+                            <CompactDeviceCard device={device}
+                                               key={device.uuid}
+                                               selected={selected}
+                                               clickExpandHandler={clickForInfoHandler}
+                                               clickSelectedHandler={clickSelectedHandler}/>
                         );
                     } else {
                         return (
-                            <DeviceCard device={device} key={device.uuid} selected={selected} clickExpandHandler={clickForInfoHandler} clickSelectedHandler={clickSelectedHandler} stopHandler={props.stopHandler}/>
+                            <DeviceCard device={device}
+                                        key={device.uuid}
+                                        selected={selected}
+                                        clickExpandHandler={clickForInfoHandler}
+                                        clickSelectedHandler={clickSelectedHandler}
+                                        stopHandler={props.stopHandler}/>
                         );
                     }
                 }

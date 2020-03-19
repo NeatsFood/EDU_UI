@@ -21,7 +21,7 @@ export default async function runRecipe(userToken, deviceUuid, recipeUuid) {
     }
     return { successful: false, errorMessage };
   });
-  const responseJson = await response.json()
+  const responseJson = await response.json();
 
   // Validate response
   if (!response.ok) {
@@ -32,7 +32,7 @@ export default async function runRecipe(userToken, deviceUuid, recipeUuid) {
       errorMessage = "Unable to run recipe, please try again later."
     }
     return { successful: false, errorMessage };
-  };
+  }
 
   // Successfully started recipe
   return { successful: true, errorMessage: null };
