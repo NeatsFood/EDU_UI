@@ -4,9 +4,10 @@ import SimpleClusterList from "./SimpleClusterList";
 import getUserCluster from "../../services/getUserCluster";
 import {RecipeSelector} from "./RecipeSelector";
 import stopRecipe from "../../services/stopRecipe";
+import runRecipe from "../../services/runRecipe";
 
 function Cluster(props) {
-    const {user} = props;
+    const {user, devices} = props;
     const [data, setData] = useState({devices: [], refreshing: false});
     const [selectedDevices, setSelectedDevices] = useState(new Set([]));
 
@@ -31,6 +32,16 @@ function Cluster(props) {
             alert("No devices selected");
         } else {
             alert("Attempting to start " + recipe_uuid + " on " + JSON.stringify(Array.from(selectedDevices)));
+            runRecipe(user.token,Array.from(selectedDevices),recipe_uuid).then((runResult) => {
+                //console.log(runResult.disconnected.length);
+                //alert(runResult.disconnected);
+                if(runResult.successful && runResult.disconnected.length > 0) {
+                    alert("Unable to start recipe on " + JSON.stringify(runResult.disconnected));
+                } else if (runResult.successful && runResult.errorMessage != null){
+                    alert("Unable to start recipe: " + runResult.errorMessage);
+                }
+            });
+
         }
     };
 

@@ -19,10 +19,10 @@ export default async function runRecipe(userToken, deviceUuid, recipeUuid) {
     } else {
       errorMessage = "Unable to run recipe, please try again later."
     }
-    return { successful: false, errorMessage };
+    return { successful: false, errorMessage: errorMessage };
   });
   const responseJson = await response.json();
-
+  //console.log(responseJson);
   // Validate response
   if (!response.ok) {
     let errorMessage;
@@ -31,9 +31,9 @@ export default async function runRecipe(userToken, deviceUuid, recipeUuid) {
     } else {
       errorMessage = "Unable to run recipe, please try again later."
     }
-    return { successful: false, errorMessage };
+    return { successful: false, errorMessage: errorMessage };
   }
 
   // Successfully started recipe
-  return { successful: true, errorMessage: null };
+  return { successful: true, started_on: responseJson.started_on, disconnected: responseJson.disconnected, errorMessage: null };
 }
